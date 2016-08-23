@@ -1,0 +1,401 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		37421AA61CB2FDCC0027B7D4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 37421AA51CB2FDCC0027B7D4 /* AppDelegate.m */; };
+		37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37421AAA1CB2FDCC0027B7D4 /* Assets.xcassets */; };
+		37421AAE1CB2FDCC0027B7D4 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37421AAC1CB2FDCC0027B7D4 /* MainMenu.xib */; };
+		37421ABE1CB2FF930027B7D4 /* libGLFW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37421ABD1CB2FF930027B7D4 /* libGLFW.a */; };
+		37421AC01CB2FFE50027B7D4 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421ABF1CB2FFE50027B7D4 /* main.c */; };
+		37421ACE1CB306220027B7D4 /* gl_core_3_3.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421ACC1CB306220027B7D4 /* gl_core_3_3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
+		37421AD41CB3066D0027B7D4 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421AD21CB3066D0027B7D4 /* window.c */; };
+		37421AD71CB3CF070027B7D4 /* time.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421AD51CB3CF070027B7D4 /* time.c */; };
+		37853D5D1D6622680052A8C8 /* shader.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D5B1D6622680052A8C8 /* shader.c */; };
+		37853D621D6627890052A8C8 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D601D6627890052A8C8 /* file.c */; };
+		37853D681D662D520052A8C8 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D661D662D520052A8C8 /* error.c */; };
+		37853D6B1D68AA720052A8C8 /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D691D68AA720052A8C8 /* object.c */; };
+		37853D6D1D68B16D0052A8C8 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 37853D6C1D68B16D0052A8C8 /* assets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		37421AC51CB301AE0027B7D4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 37421AC11CB301AE0027B7D4 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 373FC7BC1B3AFBFD00AEBB25;
+			remoteInfo = GLFW;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		37421AA11CB2FDCB0027B7D4 /* Fighting Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Fighting Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		37421AA41CB2FDCC0027B7D4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		37421AA51CB2FDCC0027B7D4 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		37421AAA1CB2FDCC0027B7D4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		37421AAD1CB2FDCC0027B7D4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		37421AAF1CB2FDCC0027B7D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		37421ABD1CB2FF930027B7D4 /* libGLFW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLFW.a; path = "../../Library/Developer/Xcode/DerivedData/Fighting_Game-fyrllnffzlvwycdxlwdddrrkvrre/Build/Products/Debug/libGLFW.a"; sourceTree = "<group>"; };
+		37421ABF1CB2FFE50027B7D4 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		37421AC11CB301AE0027B7D4 /* GLFW.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GLFW.xcodeproj; path = Libs/GLFW/GLFW.xcodeproj; sourceTree = "<group>"; };
+		37421ACC1CB306220027B7D4 /* gl_core_3_3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gl_core_3_3.c; path = Libs/GL/gl_core_3_3.c; sourceTree = "<group>"; };
+		37421ACD1CB306220027B7D4 /* gl_core_3_3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl_core_3_3.h; path = Libs/GL/gl_core_3_3.h; sourceTree = "<group>"; };
+		37421AD21CB3066D0027B7D4 /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = window.c; sourceTree = "<group>"; };
+		37421AD31CB3066D0027B7D4 /* window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = window.h; sourceTree = "<group>"; };
+		37421AD51CB3CF070027B7D4 /* time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = time.c; sourceTree = "<group>"; };
+		37421AD61CB3CF070027B7D4 /* time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = time.h; sourceTree = "<group>"; };
+		37853D5B1D6622680052A8C8 /* shader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shader.c; sourceTree = "<group>"; };
+		37853D5C1D6622680052A8C8 /* shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shader.h; sourceTree = "<group>"; };
+		37853D5F1D6624BC0052A8C8 /* gl_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gl_types.h; path = Libs/GL/gl_types.h; sourceTree = "<group>"; };
+		37853D601D6627890052A8C8 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = file.c; sourceTree = "<group>"; };
+		37853D611D6627890052A8C8 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
+		37853D661D662D520052A8C8 /* error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = error.c; sourceTree = "<group>"; };
+		37853D671D662D520052A8C8 /* error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
+		37853D691D68AA720052A8C8 /* object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = object.c; sourceTree = "<group>"; };
+		37853D6A1D68AA720052A8C8 /* object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = object.h; sourceTree = "<group>"; };
+		37853D6C1D68B16D0052A8C8 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		37421A9E1CB2FDCB0027B7D4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37421ABE1CB2FF930027B7D4 /* libGLFW.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		37421A981CB2FDCB0027B7D4 = {
+			isa = PBXGroup;
+			children = (
+				37853D6C1D68B16D0052A8C8 /* assets */,
+				37421AC91CB305FF0027B7D4 /* Libs */,
+				37421AC11CB301AE0027B7D4 /* GLFW.xcodeproj */,
+				37421ABD1CB2FF930027B7D4 /* libGLFW.a */,
+				37421AA31CB2FDCB0027B7D4 /* Fighting Game */,
+				37421AA21CB2FDCB0027B7D4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		37421AA21CB2FDCB0027B7D4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				37421AA11CB2FDCB0027B7D4 /* Fighting Game.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		37421AA31CB2FDCB0027B7D4 /* Fighting Game */ = {
+			isa = PBXGroup;
+			children = (
+				37421AA41CB2FDCC0027B7D4 /* AppDelegate.h */,
+				37421AA51CB2FDCC0027B7D4 /* AppDelegate.m */,
+				37421AAA1CB2FDCC0027B7D4 /* Assets.xcassets */,
+				37421AAC1CB2FDCC0027B7D4 /* MainMenu.xib */,
+				37421AAF1CB2FDCC0027B7D4 /* Info.plist */,
+				37421AA71CB2FDCC0027B7D4 /* Supporting Files */,
+				37421ABF1CB2FFE50027B7D4 /* main.c */,
+				37421AD21CB3066D0027B7D4 /* window.c */,
+				37421AD31CB3066D0027B7D4 /* window.h */,
+				37421AD51CB3CF070027B7D4 /* time.c */,
+				37421AD61CB3CF070027B7D4 /* time.h */,
+				37853D5B1D6622680052A8C8 /* shader.c */,
+				37853D5C1D6622680052A8C8 /* shader.h */,
+				37853D601D6627890052A8C8 /* file.c */,
+				37853D611D6627890052A8C8 /* file.h */,
+				37853D661D662D520052A8C8 /* error.c */,
+				37853D671D662D520052A8C8 /* error.h */,
+				37853D691D68AA720052A8C8 /* object.c */,
+				37853D6A1D68AA720052A8C8 /* object.h */,
+			);
+			path = "Fighting Game";
+			sourceTree = "<group>";
+		};
+		37421AA71CB2FDCC0027B7D4 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		37421AC21CB301AE0027B7D4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				37421AC61CB301AE0027B7D4 /* libGLFW.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		37421AC91CB305FF0027B7D4 /* Libs */ = {
+			isa = PBXGroup;
+			children = (
+				37421ACA1CB306090027B7D4 /* GL */,
+			);
+			name = Libs;
+			sourceTree = "<group>";
+		};
+		37421ACA1CB306090027B7D4 /* GL */ = {
+			isa = PBXGroup;
+			children = (
+				37853D5F1D6624BC0052A8C8 /* gl_types.h */,
+				37421ACC1CB306220027B7D4 /* gl_core_3_3.c */,
+				37421ACD1CB306220027B7D4 /* gl_core_3_3.h */,
+			);
+			name = GL;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		37421AA01CB2FDCB0027B7D4 /* Fighting Game */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 37421AB21CB2FDCC0027B7D4 /* Build configuration list for PBXNativeTarget "Fighting Game" */;
+			buildPhases = (
+				37421A9D1CB2FDCB0027B7D4 /* Sources */,
+				37421A9E1CB2FDCB0027B7D4 /* Frameworks */,
+				37421A9F1CB2FDCB0027B7D4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Fighting Game";
+			productName = "Fighting Game";
+			productReference = 37421AA11CB2FDCB0027B7D4 /* Fighting Game.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		37421A991CB2FDCB0027B7D4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Daniel Keller";
+				TargetAttributes = {
+					37421AA01CB2FDCB0027B7D4 = {
+						CreatedOnToolsVersion = 7.3;
+					};
+				};
+			};
+			buildConfigurationList = 37421A9C1CB2FDCB0027B7D4 /* Build configuration list for PBXProject "Fighting Game" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 37421A981CB2FDCB0027B7D4;
+			productRefGroup = 37421AA21CB2FDCB0027B7D4 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 37421AC21CB301AE0027B7D4 /* Products */;
+					ProjectRef = 37421AC11CB301AE0027B7D4 /* GLFW.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				37421AA01CB2FDCB0027B7D4 /* Fighting Game */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		37421AC61CB301AE0027B7D4 /* libGLFW.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGLFW.a;
+			remoteRef = 37421AC51CB301AE0027B7D4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		37421A9F1CB2FDCB0027B7D4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37853D6D1D68B16D0052A8C8 /* assets in Resources */,
+				37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */,
+				37421AAE1CB2FDCC0027B7D4 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		37421A9D1CB2FDCB0027B7D4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37421AD71CB3CF070027B7D4 /* time.c in Sources */,
+				37421AC01CB2FFE50027B7D4 /* main.c in Sources */,
+				37853D681D662D520052A8C8 /* error.c in Sources */,
+				37853D6B1D68AA720052A8C8 /* object.c in Sources */,
+				37853D621D6627890052A8C8 /* file.c in Sources */,
+				37421AD41CB3066D0027B7D4 /* window.c in Sources */,
+				37421ACE1CB306220027B7D4 /* gl_core_3_3.c in Sources */,
+				37853D5D1D6622680052A8C8 /* shader.c in Sources */,
+				37421AA61CB2FDCC0027B7D4 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		37421AAC1CB2FDCC0027B7D4 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				37421AAD1CB2FDCC0027B7D4 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		37421AB01CB2FDCC0027B7D4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		37421AB11CB2FDCC0027B7D4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		37421AB31CB2FDCC0027B7D4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_WARN_PEDANTIC = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Libs";
+				INFOPLIST_FILE = "Fighting Game/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "dan.Fighting-Game";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		37421AB41CB2FDCC0027B7D4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_WARN_PEDANTIC = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Libs";
+				INFOPLIST_FILE = "Fighting Game/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "dan.Fighting-Game";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		37421A9C1CB2FDCB0027B7D4 /* Build configuration list for PBXProject "Fighting Game" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37421AB01CB2FDCC0027B7D4 /* Debug */,
+				37421AB11CB2FDCC0027B7D4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		37421AB21CB2FDCC0027B7D4 /* Build configuration list for PBXNativeTarget "Fighting Game" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37421AB31CB2FDCC0027B7D4 /* Debug */,
+				37421AB41CB2FDCC0027B7D4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 37421A991CB2FDCB0027B7D4 /* Project object */;
+}
