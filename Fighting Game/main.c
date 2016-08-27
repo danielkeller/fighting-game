@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #include "window.h"
+#include "fbo.h"
 #include "object.h"
 #include "shader.h"
 #include "time.h"
@@ -29,6 +30,7 @@ float camera[] = {
 float black[] = {0., 0., 0.};
 float red[] = {1., 0., 0.};
 float blue[] = {0., 1., 1.};
+float green[] = {0., 1., 0.};
 float white[] = {1., 1., 1.};
 float bot[] = {0.5, -1.};
 float tl[] = {M_SQRT1_2, M_SQRT1_2};
@@ -36,8 +38,8 @@ float tl[] = {M_SQRT1_2, M_SQRT1_2};
 int main (int argc, char* argv[]) {
     GLFWwindow* window = init_window();
     
-    glEnablei(GL_BLEND, DRAW_BUFFER);
-    glClearDepth(0.);
+    fbo_t fbo;
+    make_fbo(&fbo);
     
     game_time_t game_time;
     
@@ -64,24 +66,44 @@ int main (int argc, char* argv[]) {
         
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
-        glViewport(0, 0, (GLsizei) width, (GLsizei) height);
+        fbo_window_size(&fbo, width, height);
+        
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo.fbo);
+        flip_fbo(&fbo);
+        //Remove me
+        check_fbo_status(&fbo);
         
         /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
+        flip_fbo(&fbo);
+        glClear(GL_COLOR_BUFFER_BIT);
+        
         float time = (float)game_time.current_time / 1000000.f;
         glUniform1f(simple.time, time);
-        
-        glBlendFuncSeparate(GL_ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
         
         glUniform3fv(color_unif, 1, blue);
         glUniform3fv(lead_color_unif, 1, black);
         glUniform2fv(origin_unif, 1, tl);
+        
         glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
+        
+        flip_fbo(&fbo);
         
         glUniform3fv(color_unif, 1, red);
         glUniform3fv(lead_color_unif, 1, white);
         glUniform2fv(origin_unif, 1, bot);
         
+        glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
+        /*
+        flip_fbo(&fbo);
+        
+        glUniform3fv(color_unif, 1, green);
+        glUniform3fv(lead_color_unif, 1, red);
+        glUniform2fv(origin_unif, 1, bot);
+        
+        glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
+        */
+        /*
         glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_REVERSE_SUBTRACT);
         glBlendFuncSeparate(GL_ZERO, GL_ONE, GL_ONE, GL_ONE);
         glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
@@ -89,9 +111,10 @@ int main (int argc, char* argv[]) {
         glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
         glBlendFuncSeparate(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA, GL_ONE, GL_DST_ALPHA);
         glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
-        
+        */
         
         /* Swap front and back buffers */
+        blit_fbo(&fbo);
         glfwSwapBuffers(window);
         render_tick(&game_time);
         
@@ -102,6 +125,7 @@ int main (int argc, char* argv[]) {
     free_object(&box);
     free_program(&simple);
     
+    free_fbo(&fbo);
     glfwTerminate();
     
     return 0;

@@ -12,6 +12,7 @@
 
 #define POSITION_ATTRIB 0
 #define DRAW_BUFFER 0
+#define FB_TEX_UNIT 0
 
 typedef struct program
 {

@@ -27,6 +27,7 @@ GLFWwindow* init_window() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1);
 #endif
     
     GLFWwindow* window = glfwCreateWindow(1024, 768, "Fighting Game", NULL, NULL);
