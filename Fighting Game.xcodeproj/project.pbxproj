@@ -15,11 +15,14 @@
 		37421ACE1CB306220027B7D4 /* gl_core_3_3.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421ACC1CB306220027B7D4 /* gl_core_3_3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		37421AD41CB3066D0027B7D4 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421AD21CB3066D0027B7D4 /* window.c */; };
 		37421AD71CB3CF070027B7D4 /* time.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421AD51CB3CF070027B7D4 /* time.c */; };
+		374EF43C1D722F55001E8C8E /* Utils in Resources */ = {isa = PBXBuildFile; fileRef = 374EF43B1D722F55001E8C8E /* Utils */; };
 		37853D5D1D6622680052A8C8 /* shader.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D5B1D6622680052A8C8 /* shader.c */; };
 		37853D621D6627890052A8C8 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D601D6627890052A8C8 /* file.c */; };
 		37853D681D662D520052A8C8 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D661D662D520052A8C8 /* error.c */; };
 		37853D6B1D68AA720052A8C8 /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D691D68AA720052A8C8 /* object.c */; };
 		37853D6D1D68B16D0052A8C8 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 37853D6C1D68B16D0052A8C8 /* assets */; };
+		37B695081D73636E009A40B1 /* objects in Resources */ = {isa = PBXBuildFile; fileRef = 37B695071D73636E009A40B1 /* objects */; };
+		37B7BC501D6F311400EF0A7E /* fbo.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B7BC4E1D6F311400EF0A7E /* fbo.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +51,7 @@
 		37421AD31CB3066D0027B7D4 /* window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = window.h; sourceTree = "<group>"; };
 		37421AD51CB3CF070027B7D4 /* time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = time.c; sourceTree = "<group>"; };
 		37421AD61CB3CF070027B7D4 /* time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = time.h; sourceTree = "<group>"; };
+		374EF43B1D722F55001E8C8E /* Utils */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Utils; sourceTree = "<group>"; };
 		37853D5B1D6622680052A8C8 /* shader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shader.c; sourceTree = "<group>"; };
 		37853D5C1D6622680052A8C8 /* shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shader.h; sourceTree = "<group>"; };
 		37853D5F1D6624BC0052A8C8 /* gl_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gl_types.h; path = Libs/GL/gl_types.h; sourceTree = "<group>"; };
@@ -58,6 +62,9 @@
 		37853D691D68AA720052A8C8 /* object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = object.c; sourceTree = "<group>"; };
 		37853D6A1D68AA720052A8C8 /* object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = object.h; sourceTree = "<group>"; };
 		37853D6C1D68B16D0052A8C8 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
+		37B695071D73636E009A40B1 /* objects */ = {isa = PBXFileReference; lastKnownFileType = folder; path = objects; sourceTree = "<group>"; };
+		37B7BC4E1D6F311400EF0A7E /* fbo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fbo.c; sourceTree = "<group>"; };
+		37B7BC4F1D6F311400EF0A7E /* fbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fbo.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				37853D6C1D68B16D0052A8C8 /* assets */,
+				374EF43B1D722F55001E8C8E /* Utils */,
 				37421AC91CB305FF0027B7D4 /* Libs */,
 				37421AC11CB301AE0027B7D4 /* GLFW.xcodeproj */,
 				37421ABD1CB2FF930027B7D4 /* libGLFW.a */,
@@ -95,6 +103,7 @@
 		37421AA31CB2FDCB0027B7D4 /* Fighting Game */ = {
 			isa = PBXGroup;
 			children = (
+				37B695071D73636E009A40B1 /* objects */,
 				37421AA41CB2FDCC0027B7D4 /* AppDelegate.h */,
 				37421AA51CB2FDCC0027B7D4 /* AppDelegate.m */,
 				37421AAA1CB2FDCC0027B7D4 /* Assets.xcassets */,
@@ -114,6 +123,8 @@
 				37853D671D662D520052A8C8 /* error.h */,
 				37853D691D68AA720052A8C8 /* object.c */,
 				37853D6A1D68AA720052A8C8 /* object.h */,
+				37B7BC4E1D6F311400EF0A7E /* fbo.c */,
+				37B7BC4F1D6F311400EF0A7E /* fbo.h */,
 			);
 			path = "Fighting Game";
 			sourceTree = "<group>";
@@ -226,6 +237,8 @@
 			files = (
 				37853D6D1D68B16D0052A8C8 /* assets in Resources */,
 				37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */,
+				374EF43C1D722F55001E8C8E /* Utils in Resources */,
+				37B695081D73636E009A40B1 /* objects in Resources */,
 				37421AAE1CB2FDCC0027B7D4 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -240,6 +253,7 @@
 				37421AD71CB3CF070027B7D4 /* time.c in Sources */,
 				37421AC01CB2FFE50027B7D4 /* main.c in Sources */,
 				37853D681D662D520052A8C8 /* error.c in Sources */,
+				37B7BC501D6F311400EF0A7E /* fbo.c in Sources */,
 				37853D6B1D68AA720052A8C8 /* object.c in Sources */,
 				37853D621D6627890052A8C8 /* file.c in Sources */,
 				37421AD41CB3066D0027B7D4 /* window.c in Sources */,
@@ -354,6 +368,7 @@
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Libs";
 				INFOPLIST_FILE = "Fighting Game/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				OTHER_CFLAGS = "-Wall";
 				PRODUCT_BUNDLE_IDENTIFIER = "dan.Fighting-Game";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -369,6 +384,7 @@
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Libs";
 				INFOPLIST_FILE = "Fighting Game/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				OTHER_CFLAGS = "-Wall";
 				PRODUCT_BUNDLE_IDENTIFIER = "dan.Fighting-Game";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
