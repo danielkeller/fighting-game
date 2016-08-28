@@ -71,6 +71,8 @@ void load_shader_program(program_t* prog, const char* vert_name, const char* fra
     glAttachShader(program, fragShdr);
     
     glBindAttribLocation(program, POSITION_ATTRIB, "position");
+    glBindAttribLocation(program, POS_FROM_ATTRIB, "pos_from");
+    glBindAttribLocation(program, POS_TO_ATTRIB, "pos_to");
     
     glBindFragDataLocation(program, DRAW_BUFFER, "color");
     

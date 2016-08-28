@@ -23,10 +23,10 @@ void make_fbo(fbo_t* fbo)
     fbo->cur_tex = 0;
     //Depth?
     
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo->fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo->fbo);
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo->default_fb);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo->default_fb);
 }
 
 void free_fbo(fbo_t* fbo)

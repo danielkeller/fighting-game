@@ -24,16 +24,25 @@ def write_some_data(context, c_path, base_name):
         bm = bmesh.new()
         bm.from_mesh(obj.data)
         bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
+        
         n_verts = len(bm.faces) * 3
-        for sk_n in bm.verts.layers.shape.keys():
-            sk = bm.verts.layers.shape[sk_n]
-            h_f.write('extern float {}_verts[{}];\n'.format(id(base_name, sk_n), n_verts))
-            f.write('float {}_verts[{}] = {{\n'.format(id(base_name, sk_n), n_verts))
-            for fa in bm.faces:
-                for v in fa.verts:
-                    f.write('{}, {},\n'.format(
-                        float.hex(v[sk].x), float.hex(v[sk].y)))
-            f.write('};\n\n')
+        n_keys = len(bm.verts.layers.shape)
+        n_floats = n_verts * n_keys * 2
+        el_sz = 2 * 4 # 2d floats
+        
+        h_f.write('static const GLsizei {}_stride = {};\n'.format(id(base_name), n_keys * el_sz))
+        
+        for sk_n, num in zip(bm.verts.layers.shape.keys(), range(n_keys)):
+            h_f.write('static const GLsizei {} = {};\n'.format(id(base_name, sk_n), num * el_sz))
+                      
+        h_f.write('extern float {}_verts[{}];\n'.format(id(base_name), n_floats))
+        f.write('float {}_verts[{}] = {{\n'.format(id(base_name), n_floats))
+        for fa in bm.faces:
+            for v in fa.verts:
+                for sk_n in bm.verts.layers.shape.keys():
+                    sk = bm.verts.layers.shape[sk_n]
+                    f.write('{}, {},\n'.format(float.hex(v[sk].x), float.hex(v[sk].y)))
+        f.write('};\n\n')
     bm.free()
     return {'FINISHED'}
 

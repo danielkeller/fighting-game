@@ -15,9 +15,14 @@ typedef struct object
     GLuint vertexArrayObject;
     GLuint vertexBufferObject;
     GLsizei numVertecies;
+    GLsizei stride;
 } object_t;
 
 void make_box(object_t*);
+
+void make_anim_obj(object_t*, float* verts, GLsizei verts_sz, GLsizei stride);
+void anim_obj_keys(object_t*, GLsizei from_offset, GLsizei to_offset);
+
 void free_object(object_t*);
 
 #endif /* object_h */

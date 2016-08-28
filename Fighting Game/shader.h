@@ -11,6 +11,8 @@
 #include "gl_types.h"
 
 #define POSITION_ATTRIB 0
+#define POS_FROM_ATTRIB 0
+#define POS_TO_ATTRIB 1
 #define DRAW_BUFFER 0
 #define FB_TEX_UNIT 0
 
