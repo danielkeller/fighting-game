@@ -82,11 +82,10 @@ int main (int argc, char* argv[]) {
         glfwGetFramebufferSize(window, &width, &height);
         fbo_window_size(&fbo, width, height);
         
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo.fbo);
-        flip_fbo(&fbo);
         //check_fbo_status(&fbo);
         
         /* Render here */
+        flip_fbo(&fbo);
         glClear(GL_COLOR_BUFFER_BIT);
         flip_fbo(&fbo);
         glClear(GL_COLOR_BUFFER_BIT);

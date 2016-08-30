@@ -16,22 +16,24 @@ static const int pixel = 1;
 
 void make_fbo(fbo_t* fbo)
 {
-    glGenFramebuffers(1, &fbo->fbo);
+    glGenFramebuffers(2, fbo->fbos);
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&fbo->default_fb);
     fbo->texes[0] = fbo->texes[1] = 0;
     fbo->width = fbo->height = 0;
-    fbo->cur_tex = 0;
+    fbo->cur = 0;
     //Depth?
     
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo->fbo);
-    glDrawBuffer(GL_COLOR_ATTACHMENT0);
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    for (size_t i = 0; i < 2; ++i) {
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo->fbos[i]);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+    }
     glBindFramebuffer(GL_FRAMEBUFFER, fbo->default_fb);
 }
 
 void free_fbo(fbo_t* fbo)
 {
-    glDeleteFramebuffers(1, &fbo->fbo);
+    glDeleteFramebuffers(2, fbo->fbos);
     glDeleteTextures(2, fbo->texes);
 }
 
@@ -54,6 +56,10 @@ void fbo_window_size(fbo_t* fbo, GLsizei width, GLsizei height)
         
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width/pixel, height/pixel, 0,
                      GL_RGBA, GL_FLOAT, NULL);
+        
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo->fbos[i]);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, fbo->texes[i], 0);
     }
     glViewport(0, 0, width/pixel, height/pixel);
 }
@@ -78,19 +84,22 @@ void check_fbo_status(fbo_t* fbo)
 
 void flip_fbo(fbo_t* fbo)
 {
-    fbo->cur_tex = 1 - fbo->cur_tex;
+    fbo->cur = 1 - fbo->cur;
     //Bind this to write in the framebuffer
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                           GL_TEXTURE_2D, fbo->texes[fbo->cur_tex], 0);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo->fbos[fbo->cur]);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo->fbos[1 - fbo->cur]);
+    glBlitFramebuffer(0, 0, fbo->width/pixel, fbo->height/pixel,
+                      0, 0, fbo->width, fbo->height,
+                      GL_COLOR_BUFFER_BIT, GL_NEAREST);
     
     //Bind this to read in the shader
     glActiveTexture(GL_TEXTURE0 + FB_TEX_UNIT);
-    glBindTexture(GL_TEXTURE_2D, fbo->texes[1 - fbo->cur_tex]);
+    glBindTexture(GL_TEXTURE_2D, fbo->texes[1 - fbo->cur]);
 }
 
 void blit_fbo(fbo_t* fbo)
 {
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo->fbo);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo->fbos[fbo->cur]);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo->default_fb);
     glBlitFramebuffer(0, 0, fbo->width/pixel, fbo->height/pixel,
                       0, 0, fbo->width, fbo->height,
