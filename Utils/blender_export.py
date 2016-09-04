@@ -15,35 +15,40 @@ import bpy, bmesh, re, os
 def id(*args):
     return re.sub('[^a-zA-Z0-9]', '_', '_'.join(args))
 
-def write_some_data(context, c_path, base_name):
+def write_some_data(context, c_path):
     h_path = os.path.splitext(c_path)[0] + '.h'
     
     with open(c_path, 'w', encoding='utf-8') as f, open(h_path, 'w', encoding='utf-8') as h_f:
         
-        obj = bpy.context.active_object
-        bm = bmesh.new()
-        bm.from_mesh(obj.data)
-        bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
-        
-        n_verts = len(bm.faces) * 3
-        n_keys = len(bm.verts.layers.shape)
-        n_floats = n_verts * n_keys * 2
-        el_sz = 2 * 4 # 2d floats
-        
-        h_f.write('static const GLsizei {}_stride = {};\n'.format(id(base_name), n_keys * el_sz))
-        
-        for sk_n, num in zip(bm.verts.layers.shape.keys(), range(n_keys)):
-            h_f.write('static const GLsizei {} = {};\n'.format(id(base_name, sk_n), num * el_sz))
-                      
-        h_f.write('extern float {}_verts[{}];\n'.format(id(base_name), n_floats))
-        f.write('float {}_verts[{}] = {{\n'.format(id(base_name), n_floats))
-        for fa in bm.faces:
-            for v in fa.verts:
-                for sk_n in bm.verts.layers.shape.keys():
-                    sk = bm.verts.layers.shape[sk_n]
-                    f.write('{}, {},\n'.format(float.hex(v[sk].x), float.hex(v[sk].y)))
-        f.write('};\n\n')
-    bm.free()
+        for obj in bpy.data.objects:
+            if obj.type != 'MESH':
+                continue
+            bm = bmesh.new()
+            bm.from_mesh(obj.data)
+            bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
+            
+            n_verts = len(bm.faces) * 3
+            n_keys = max(1, len(bm.verts.layers.shape))
+            n_floats = n_verts * n_keys * 2
+            el_sz = 2 * 4 # 2d floats
+            
+            h_f.write('static const GLsizei {}_stride = {};\n'.format(id(obj.name), n_keys * el_sz))
+            
+            for sk_n, num in zip(bm.verts.layers.shape.keys(), range(n_keys)):
+                h_f.write('static const GLsizei {} = {};\n'.format(id(obj.name, sk_n), num * el_sz))
+                          
+            h_f.write('extern float {}_verts[{}];\n'.format(id(obj.name), n_floats))
+            f.write('float {}_verts[{}] = {{\n'.format(id(obj.name), n_floats))
+            for fa in bm.faces:
+                for v in fa.verts:
+                    if bm.verts.layers.shape:
+                        for sk_n in bm.verts.layers.shape.keys():
+                            sk = bm.verts.layers.shape[sk_n]
+                            f.write('{}, {},\n'.format(float.hex(v[sk].x), float.hex(v[sk].y)))
+                    else:
+                        f.write('{}, {},\n'.format(float.hex(v.co.x), float.hex(v.co.y)))
+            f.write('};\n\n')
+            bm.free()
     return {'FINISHED'}
 
 
@@ -65,15 +70,8 @@ class ExportFgm(bpy.types.Operator, ExportHelper):
             options={'HIDDEN'},
             )
 
-    # List of operator properties, the attributes will be assigned
-    # to the class instance from the operator settings before calling.
-    base_name = bpy.props.StringProperty(
-            name="Base Name",
-            description="Must be a valid C identifier",
-            )
-
     def execute(self, context):
-        return write_some_data(context, self.filepath, self.base_name)
+        return write_some_data(context, self.filepath)
 
 
 # Only needed if you want to add into a dynamic menu
