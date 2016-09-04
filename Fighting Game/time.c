@@ -11,16 +11,12 @@
 //todo: utils.h for die
 #include "error.h"
 
-//16 FPS
-const usec_t tick_length = 62500ll;
-//4 FPS
-const usec_t frame_limit = 250000ll;
-
 #ifdef __APPLE__
 #include <mach/clock.h>
 #include <mach/mach.h>
 
-usec_t get_time() {
+usec_t get_time()
+{
     //http://stackoverflow.com/a/11681069/603688
     static clock_serv_t cclock;
     mach_timespec_t mts;
@@ -41,7 +37,8 @@ usec_t get_time() {
 //...
 #endif
 
-void init_game_time(game_time_t* gt) {
+void init_game_time(game_time_t* gt)
+{
     gt->frame = 0;
     gt->current_time = gt->unsimulated_time = 0;
     gt->last_render = get_time();
@@ -49,18 +46,18 @@ void init_game_time(game_time_t* gt) {
 
 //The "Fix Your Timestep" algorithm
 
-int phys_tick(game_time_t *gt) {
+int phys_tick(game_time_t *gt)
+{
     if (gt->unsimulated_time < tick_length)
         return 0;
     
     ++gt->frame;
-    gt->unsimulated_time = gt->unsimulated_time - tick_length;
+    gt->unsimulated_time -= tick_length;
     return 1;
 }
 
-float render_tick(game_time_t *gt) {
-    float alpha = (float)gt->unsimulated_time / (float)tick_length;
-    
+float render_tick(game_time_t *gt)
+{
     usec_t now = get_time();
     usec_t frame_time = now - gt->last_render;
     if (frame_time > frame_limit) frame_time = frame_limit;
@@ -69,5 +66,7 @@ float render_tick(game_time_t *gt) {
     gt->unsimulated_time += frame_time;
     gt->current_time += frame_time;
     
-    return alpha;
+    //The amount of unsimulated time after the next physics step(s)
+    usec_t next_ut = gt->unsimulated_time % tick_length;
+    return (float)next_ut / (float)tick_length;
 }

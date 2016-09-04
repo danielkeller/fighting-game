@@ -34,6 +34,8 @@ GLFWwindow* init_window() {
     if (!window)
         die("Could not create window");
     
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, 1);
+    
     glfwMakeContextCurrent(window);
     //set vsync
     glfwSwapInterval(1);

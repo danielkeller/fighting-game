@@ -13,24 +13,17 @@
 #include "object.h"
 #include "shader.h"
 #include "time.h"
+#include "world.h"
+#include "math.h"
 #include "gl_core_3_3.h"
 #include "objects/test.h"
+#include "stickman.h"
 #include <math.h>
 
-float eye3[] = {
-    1., 0., 0.,
-    0., 1., 0.,
-    0., 0., 1.
-};
 float camera_[] = {
     2., 0., 0.,
     0., 2., 0.,
     -1., -1., 1.
-};
-float camera[] = {
-    .5, 0., 0.,
-    0., .5, 0.,
-    0., 0., 1.
 };
 
 float black[] = {0., 0., 0.};
@@ -54,18 +47,19 @@ int main (int argc, char* argv[]) {
     
     game_time_t game_time;
     
-    program_t simple;
     object_t box;
-    load_shader_program(&simple, "assets/anim.vert", "assets/simple.frag");
     make_anim_obj(&box, test_verts, sizeof(test_verts), test_stride);
     anim_obj_keys(&box, test_Basis, test_Key_1);
-    GLint alpha_unif = glGetUniformLocation(simple.program, "pos_alpha");
     
+    stickman_t stickman;
+    make_stickman(&stickman);
+    
+    program_t simple;
+    load_shader_program(&simple, "assets/anim.vert", "assets/waves.frag");
     GLint origin_unif = glGetUniformLocation(simple.program, "origin");
     GLint color_unif = glGetUniformLocation(simple.program, "main_color");
     GLint lead_color_unif = glGetUniformLocation(simple.program, "lead_color");
     
-    glBindVertexArray(box.vertexArrayObject);
     glUseProgram(simple.program);
     glUniformMatrix3fv(simple.camera, 1, GL_FALSE, camera);
     glUniformMatrix3fv(simple.transform, 1, GL_FALSE, eye3);
@@ -75,8 +69,11 @@ int main (int argc, char* argv[]) {
     
     while (!glfwWindowShouldClose(window))
     {
+        float alpha = render_tick(&game_time);
+        
         while (phys_tick(&game_time))
-            ; //TODO: physics
+            update_stickman(&stickman, game_time.frame,
+                            glfwGetKey(window, GLFW_KEY_Z));
         
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
@@ -85,24 +82,28 @@ int main (int argc, char* argv[]) {
         //check_fbo_status(&fbo);
         
         /* Render here */
+        prepare_fbo(&fbo);
+        
+        draw_stickman(&stickman, game_time.frame, alpha);
         flip_fbo(&fbo);
-        glClear(GL_COLOR_BUFFER_BIT);
-        flip_fbo(&fbo);
-        glClear(GL_COLOR_BUFFER_BIT);
+        
+        glUseProgram(simple.program);
         
         float time = (float)game_time.current_time / 1000000.f;
         glUniform1f(simple.time, time);
         
-        glUniform1f(alpha_unif, sawf(time));
+        glUniform1f(simple.pos_alpha, sawf(time));
         glUniform3fv(color_unif, 1, blue);
         glUniform3fv(lead_color_unif, 1, black);
         glUniform2fv(origin_unif, 1, tl);
+        
+        glBindVertexArray(box.vertexArrayObject);
         
         glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
         
         flip_fbo(&fbo);
         
-        glUniform1f(alpha_unif, 1.f - sawf(time));
+        glUniform1f(simple.pos_alpha, 1.f - sawf(time));
         glUniform3fv(color_unif, 1, red);
         glUniform3fv(lead_color_unif, 1, white);
         glUniform2fv(origin_unif, 1, bot);
@@ -112,12 +113,12 @@ int main (int argc, char* argv[]) {
         /* Swap front and back buffers */
         blit_fbo(&fbo);
         glfwSwapBuffers(window);
-        render_tick(&game_time);
         
         /* Poll for and process events */
         glfwPollEvents();
     }
     
+    free_stickman(&stickman);
     free_object(&box);
     free_program(&simple);
     

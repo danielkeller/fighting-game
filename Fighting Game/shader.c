@@ -106,6 +106,7 @@ void load_shader_program(program_t* prog, const char* vert_name, const char* fra
     prog->camera = glGetUniformLocation(program, "camera");
     prog->transform = glGetUniformLocation(program, "transform");
     prog->time = glGetUniformLocation(program, "time");
+    prog->pos_alpha = glGetUniformLocation(program, "pos_alpha");
     
     glUseProgram(program);
     GLuint framebuffer = glGetUniformLocation(program, "framebuffer");

@@ -21,11 +21,14 @@ typedef struct fbo
 //Note: fbo_window_size must be called before the fbo can be used
 void make_fbo(fbo_t* fbo);
 
-//Note: flip_fbo must be called before the fbo can be used
+//Note: prepare_fbo must be called before the fbo can be used
 void fbo_window_size(fbo_t* fbo, GLsizei width, GLsizei height);
 
 //Note: FBO must be bound
 void check_fbo_status(fbo_t* fbo);
+
+//Clears buffers. Note: changes read and draw fb bindings
+void prepare_fbo(fbo_t* fbo);
 
 //Note: changes read and draw fb bindings
 void flip_fbo(fbo_t* fbo);

@@ -19,7 +19,7 @@
 typedef struct program
 {
     GLuint program;
-    GLint transform, camera, time;
+    GLint transform, camera, time, pos_alpha;
 } program_t;
 
 void load_shader_program(program_t*, const char* vert_name, const char* frag_name);

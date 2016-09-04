@@ -11,6 +11,11 @@
 
 typedef long long usec_t;
 
+//16 FPS
+static const usec_t tick_length = 62500ll;
+//4 FPS
+static const usec_t frame_limit = 250000ll;
+
 typedef struct game_time {
     unsigned long long frame;
     usec_t last_render, current_time, unsimulated_time;
@@ -22,6 +27,8 @@ void init_game_time(game_time_t*);
 int phys_tick(game_time_t*);
 //Update the game_time for one render tick, and return the leftover time as a fraction
 //of the tick length; [0,1).
+//Note that the just-simulated tick is considered to be in the past, and the rendering
+//should be extrapolated from it.
 float render_tick(game_time_t*);
 
 #endif /* time_h */

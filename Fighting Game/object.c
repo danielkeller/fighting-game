@@ -58,6 +58,7 @@ void anim_obj_keys(object_t* obj, GLsizei from_offset, GLsizei to_offset)
     assert(obj->stride > from_offset && obj->stride > to_offset
            && "Not enough shape keys");
     
+    glBindVertexArray(obj->vertexArrayObject);
     glBindBuffer(GL_ARRAY_BUFFER, obj->vertexBufferObject);
     glVertexAttribPointer(POS_FROM_ATTRIB, 2, GL_FLOAT, GL_FALSE,
                           obj->stride, (char*)NULL + from_offset);

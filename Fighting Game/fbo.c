@@ -82,6 +82,14 @@ void check_fbo_status(fbo_t* fbo)
     }
 }
 
+void prepare_fbo(fbo_t* fbo)
+{
+    flip_fbo(fbo);
+    glClear(GL_COLOR_BUFFER_BIT);
+    flip_fbo(fbo);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
 void flip_fbo(fbo_t* fbo)
 {
     fbo->cur = 1 - fbo->cur;
