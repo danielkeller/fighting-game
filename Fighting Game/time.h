@@ -11,8 +11,8 @@
 
 typedef long long usec_t;
 
-//16 FPS
-static const usec_t tick_length = 62500ll;
+//25 FPS
+static const usec_t tick_length = 40000ll;
 //4 FPS
 static const usec_t frame_limit = 250000ll;
 

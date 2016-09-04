@@ -8,8 +8,8 @@
 
 #include "world.h"
 
-float camera[9] = {
+Mat3 camera = {{
     .5, 0., 0.,
     0., .5, 0.,
     0., 0., 1.
-};
+}};

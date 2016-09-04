@@ -9,6 +9,12 @@
 #ifndef math_h
 #define math_h
 
-extern float eye3[9];
+typedef struct Mat3 {
+    float d[9];
+} Mat3;
+
+extern Mat3 eye3;
+
+Mat3 affine(float theta, float x, float y);
 
 #endif /* math_h */

@@ -61,8 +61,8 @@ int main (int argc, char* argv[]) {
     GLint lead_color_unif = glGetUniformLocation(simple.program, "lead_color");
     
     glUseProgram(simple.program);
-    glUniformMatrix3fv(simple.camera, 1, GL_FALSE, camera);
-    glUniformMatrix3fv(simple.transform, 1, GL_FALSE, eye3);
+    glUniformMatrix3fv(simple.camera, 1, GL_FALSE, camera.d);
+    glUniformMatrix3fv(simple.transform, 1, GL_FALSE, eye3.d);
     //glUniform1f(alpha_unif, 0.f);
     
     init_game_time(&game_time);
@@ -73,7 +73,8 @@ int main (int argc, char* argv[]) {
         
         while (phys_tick(&game_time))
             update_stickman(&stickman, game_time.frame,
-                            glfwGetKey(window, GLFW_KEY_Z));
+                            glfwGetKey(window, GLFW_KEY_Z),
+                            glfwGetKey(window, GLFW_KEY_X));
         
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);

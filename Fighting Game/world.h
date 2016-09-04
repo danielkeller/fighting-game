@@ -8,7 +8,8 @@
 
 #ifndef world_h
 #define world_h
+#include "math.h"
 
-extern float camera[9];
+extern Mat3 camera;
 
 #endif /* world_h */

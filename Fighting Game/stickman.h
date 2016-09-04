@@ -13,16 +13,24 @@
 #include "shader.h"
 #include "time.h"
 
+typedef enum advance {
+    ADVANCING,
+    RETREATING,
+    STATIONARY
+} advance_t;
+
 typedef struct stickman {
     object_t obj;
     program_t program;
     GLint color_unif;
     int state;
+    advance_t advancing;
     long long anim_start;
+    float ground_pos;
 } stickman_t;
 
 void make_stickman(stickman_t*);
-void update_stickman(stickman_t*, long long frame, int attack);
+void update_stickman(stickman_t*, long long frame, int advance, int attack);
 void draw_stickman(stickman_t*, long long frame, float alpha);
 void free_stickman(stickman_t*);
 
