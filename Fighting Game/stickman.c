@@ -19,21 +19,22 @@ idle =     {0,  stickman_Basis,  stickman_Basis,  1},
 base_mid = {1,  stickman_Basis,  stickman_DS_Mid, 2},
 mid_bot =  {2,  stickman_DS_Mid, stickman_DS_Bot, 3};
 
-static float speed = .1;
+static const float speed = .05;
+static const float hitbox_width = .1;
 
 #define START_ANIM(anim) \
     do { \
-    sm->state = anim.id; \
+    sm->next.state = anim.id; \
     sm->anim_start = frame; \
     anim_obj_keys(&sm->obj, anim.from, anim.to); \
     } while (0)
 
-#define NEXT_ANIM(cur, next) \
+#define NEXT_ANIM(cur, anim) \
     do { \
     if (frame - sm->anim_start >= cur.frames) { \
-        sm->state = next.id; \
+        sm->next.state = anim.id; \
         sm->anim_start = frame; \
-        anim_obj_keys(&sm->obj, next.from, next.to); \
+        anim_obj_keys(&sm->obj, anim.from, anim.to); \
     } \
     } while (0)
 
@@ -44,20 +45,33 @@ static float speed = .1;
     glUniform1f(sm->program.pos_alpha, anim_alpha); \
     } while (0)
 
-void make_stickman(stickman_t *sm)
+void make_stickman(stickman_t *sm, stickman_t* other, int direction)
 {
     make_anim_obj(&sm->obj, stickman_verts, sizeof(stickman_verts), stickman_stride);
     anim_obj_keys(&sm->obj, stickman_Basis, stickman_Basis);
     load_shader_program(&sm->program, "assets/anim.vert", "assets/color.frag");
     sm->color_unif = glGetUniformLocation(sm->program.program, "main_color");
-    sm->state = 0;
-    sm->advancing = STATIONARY;
-    sm->ground_pos = 1.f;
+    
+    sm->prev = sm->next = (stickman_state_t){
+        .state = 0,
+        .advancing = STATIONARY,
+        .ground_pos = -1.f,
+    };
+    
+    sm->direction = direction;
+    sm->other = other;
 }
 
-void update_stickman(stickman_t* sm, long long frame, int advance, int attack)
+
+//Note that new actions are considered to start epsilon after the previous frame,
+//as opposed to on the start of the next frame.
+//Also, 'frame' is the number of the previous frame.
+void update_stickman(stickman_t* sm, stickman_t* enemy,
+                     long long frame, int advance, int attack)
 {
-    switch (sm->state) {
+    sm->prev = sm->next;
+    
+    switch (sm->prev.state) {
         case 0:
             if (attack)
                 START_ANIM(base_mid);
@@ -72,17 +86,19 @@ void update_stickman(stickman_t* sm, long long frame, int advance, int attack)
             break;
     }
     
-    if (advance && sm->advancing == ADVANCING)
-        sm->ground_pos = fmax(0., sm->ground_pos - speed);
-    else if (!advance && sm->advancing == RETREATING)
-        sm->ground_pos = fmin(1., sm->ground_pos + speed);
+    float other_pos = -sm->other->next.ground_pos;
+    float fwd_limit = fmin(1, other_pos) - hitbox_width;
     
-    if (advance && sm->ground_pos != 0.)
-        sm->advancing = ADVANCING;
-    else if (!advance && sm->ground_pos != 1.)
-        sm->advancing = RETREATING;
+    if (advance && sm->prev.ground_pos != fwd_limit) {
+        sm->next.advancing = ADVANCING;
+        sm->next.ground_pos = fmin(fwd_limit, sm->prev.ground_pos + speed);
+    }
+    else if (!advance && sm->prev.ground_pos != -1.) {
+        sm->next.advancing = RETREATING;
+        sm->next.ground_pos = fmax(-1, sm->prev.ground_pos - speed);
+    }
     else
-        sm->advancing = STATIONARY;
+        sm->next.advancing = STATIONARY;
 }
 
 void draw_stickman(stickman_t* sm, long long frame, float alpha)
@@ -92,18 +108,15 @@ void draw_stickman(stickman_t* sm, long long frame, float alpha)
     
     glUniformMatrix3fv(sm->program.camera, 1, GL_FALSE, camera.d);
     
-    float ground_pos = sm->ground_pos;
-    if (sm->advancing == ADVANCING)
-        ground_pos -= speed*alpha;
-    if (sm->advancing == RETREATING)
-        ground_pos += speed*alpha;
-    ground_pos = fmin(1, fmax(0, ground_pos));
+    float ground_pos = sm->prev.ground_pos * (1. - alpha)
+                     + sm->next.ground_pos * alpha;
     
-    Mat3 pos = affine(0., ground_pos, 0.);
+    Mat3 pos = affine(0., ground_pos * sm->direction, 0.);
+    pos.d[0] = sm->direction;
     glUniformMatrix3fv(sm->program.transform, 1, GL_FALSE, pos.d);
     glUniform3f(sm->color_unif, 1., 1., 1.);
     
-    switch (sm->state) {
+    switch (sm->next.state) {
         case 0:
             break;
         case 1:

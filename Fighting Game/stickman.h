@@ -19,18 +19,26 @@ typedef enum advance {
     STATIONARY
 } advance_t;
 
+typedef struct stickman_state {
+    int state;
+    advance_t advancing;
+    float ground_pos;
+} stickman_state_t;
+
 typedef struct stickman {
     object_t obj;
     program_t program;
     GLint color_unif;
-    int state;
-    advance_t advancing;
+    int direction;
+    struct stickman* other;
+    
     long long anim_start;
-    float ground_pos;
+    stickman_state_t prev, next;
 } stickman_t;
 
-void make_stickman(stickman_t*);
-void update_stickman(stickman_t*, long long frame, int advance, int attack);
+void make_stickman(stickman_t*, stickman_t* other, int direction);
+void update_stickman(stickman_t*, stickman_t* enemy,
+                     long long frame, int advance, int attack);
 void draw_stickman(stickman_t*, long long frame, float alpha);
 void free_stickman(stickman_t*);
 

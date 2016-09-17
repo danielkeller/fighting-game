@@ -51,15 +51,17 @@ int main (int argc, char* argv[]) {
     make_anim_obj(&box, test_verts, sizeof(test_verts), test_stride);
     anim_obj_keys(&box, test_Basis, test_Key_1);
     
-    stickman_t stickman;
-    make_stickman(&stickman);
+    stickman_t left, right;
+    make_stickman(&left, &right, 1);
+    make_stickman(&right, &left, -1);
     
     program_t simple;
     load_shader_program(&simple, "assets/anim.vert", "assets/waves.frag");
+    /*
     GLint origin_unif = glGetUniformLocation(simple.program, "origin");
     GLint color_unif = glGetUniformLocation(simple.program, "main_color");
     GLint lead_color_unif = glGetUniformLocation(simple.program, "lead_color");
-    
+    */
     glUseProgram(simple.program);
     glUniformMatrix3fv(simple.camera, 1, GL_FALSE, camera.d);
     glUniformMatrix3fv(simple.transform, 1, GL_FALSE, eye3.d);
@@ -71,10 +73,14 @@ int main (int argc, char* argv[]) {
     {
         float alpha = render_tick(&game_time);
         
-        while (phys_tick(&game_time))
-            update_stickman(&stickman, game_time.frame,
+        while (phys_tick(&game_time)) {
+            update_stickman(&left, &right, game_time.frame,
                             glfwGetKey(window, GLFW_KEY_Z),
                             glfwGetKey(window, GLFW_KEY_X));
+            update_stickman(&right, &left, game_time.frame,
+                            glfwGetKey(window, GLFW_KEY_COMMA),
+                            glfwGetKey(window, GLFW_KEY_PERIOD));
+        }
         
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
@@ -85,7 +91,10 @@ int main (int argc, char* argv[]) {
         /* Render here */
         prepare_fbo(&fbo);
         
-        draw_stickman(&stickman, game_time.frame, alpha);
+        draw_stickman(&left, game_time.frame, alpha);
+        draw_stickman(&right, game_time.frame, alpha);
+        
+        /*
         flip_fbo(&fbo);
         
         glUseProgram(simple.program);
@@ -110,7 +119,7 @@ int main (int argc, char* argv[]) {
         glUniform2fv(origin_unif, 1, bot);
         
         glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
-        
+        */
         /* Swap front and back buffers */
         blit_fbo(&fbo);
         glfwSwapBuffers(window);
@@ -119,7 +128,8 @@ int main (int argc, char* argv[]) {
         glfwPollEvents();
     }
     
-    free_stickman(&stickman);
+    free_stickman(&left);
+    free_stickman(&right);
     free_object(&box);
     free_program(&simple);
     
