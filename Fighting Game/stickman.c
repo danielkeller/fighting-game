@@ -19,7 +19,7 @@ idle =     {0,  stickman_Basis,  stickman_Basis,  1},
 base_mid = {1,  stickman_Basis,  stickman_DS_Mid, 2},
 mid_bot =  {2,  stickman_DS_Mid, stickman_DS_Bot, 3};
 
-static const float speed = .05;
+static const float speed = .03;
 static const float hitbox_width = .1;
 
 #define START_ANIM(anim) \
@@ -101,6 +101,7 @@ void update_stickman(stickman_t* sm, stickman_t* enemy,
         sm->next.advancing = STATIONARY;
 }
 
+//'frame' is also the number of the previous frame here.
 void draw_stickman(stickman_t* sm, long long frame, float alpha)
 {
     glUseProgram(sm->program.program);

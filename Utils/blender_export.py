@@ -44,9 +44,9 @@ def write_some_data(context, c_path):
                     if bm.verts.layers.shape:
                         for sk_n in bm.verts.layers.shape.keys():
                             sk = bm.verts.layers.shape[sk_n]
-                            f.write('{}, {},\n'.format(float.hex(v[sk].x), float.hex(v[sk].y)))
+                            f.write('{}, {},\n'.format(v[sk].x, v[sk].y))
                     else:
-                        f.write('{}, {},\n'.format(float.hex(v.co.x), float.hex(v.co.y)))
+                        f.write('{}, {},\n'.format(v.co.x, v.co.y))
             f.write('};\n\n')
             bm.free()
     return {'FINISHED'}
