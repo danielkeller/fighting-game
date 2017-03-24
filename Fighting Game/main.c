@@ -71,7 +71,13 @@ int main (int argc, char* argv[]) {
     
     while (!glfwWindowShouldClose(window))
     {
+        //render_tick must be called immediately after the frame appears
+        //onscreen for the algorithm to work.
+        glfwSwapBuffers(window);
         float alpha = render_tick(&game_time);
+        
+        /* Poll for and process events */
+        glfwPollEvents();
         
         while (phys_tick(&game_time)) {
             update_stickman(&left, &right, game_time.frame,
@@ -81,6 +87,9 @@ int main (int argc, char* argv[]) {
                             glfwGetKey(window, GLFW_KEY_COMMA),
                             glfwGetKey(window, GLFW_KEY_PERIOD));
         }
+        
+        if (game_time.last_frame_length > 20000ll)
+            printf("%llu\n", game_time.last_frame_length / 1000ll);
         
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
@@ -122,10 +131,6 @@ int main (int argc, char* argv[]) {
         */
         /* Swap front and back buffers */
         blit_fbo(&fbo);
-        glfwSwapBuffers(window);
-        
-        /* Poll for and process events */
-        glfwPollEvents();
     }
     
     free_stickman(&left);
