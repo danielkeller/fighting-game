@@ -68,13 +68,23 @@ int main (int argc, char* argv[]) {
     //glUniform1f(alpha_unif, 0.f);
     
     init_game_time(&game_time);
+    uint64_t load_total = 0, load_count = 0;
     
     while (!glfwWindowShouldClose(window))
     {
+        usec_t frame_work_time = get_time() - game_time.last_render;
+        
         //render_tick must be called immediately after the frame appears
         //onscreen for the algorithm to work.
         glfwSwapBuffers(window);
         float alpha = render_tick(&game_time);
+        
+        load_total += (frame_work_time * 100ull) / game_time.last_frame_length;
+        ++load_count;
+        if (load_count > 240) {
+            printf("%llu%%\n", load_total / load_count);
+            load_total = load_count = 0;
+        }
         
         /* Poll for and process events */
         glfwPollEvents();
