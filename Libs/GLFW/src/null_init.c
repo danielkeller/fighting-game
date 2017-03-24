@@ -1,7 +1,8 @@
 //========================================================================
-// GLFW 3.1 WinMM - www.glfw.org
+// GLFW 3.3 - www.glfw.org
 //------------------------------------------------------------------------
-// Copyright (c) 2006-2014 Camilla Berglund <elmindreda@elmindreda.org>
+// Copyright (c) 2016 Google Inc.
+// Copyright (c) 2006-2016 Camilla Löwy <elmindreda@glfw.org>
 //
 // This software is provided 'as-is', without any express or implied
 // warranty. In no event will the authors be held liable for any damages
@@ -24,24 +25,26 @@
 //
 //========================================================================
 
-#ifndef _glfw3_winmm_joystick_h_
-#define _glfw3_winmm_joystick_h_
-
-#define _GLFW_PLATFORM_LIBRARY_JOYSTICK_STATE \
-    _GLFWjoystickWinMM winmm_js[GLFW_JOYSTICK_LAST + 1]
+#include "internal.h"
 
 
-// WinMM-specific per-joystick data
-//
-typedef struct _GLFWjoystickWinMM
+//////////////////////////////////////////////////////////////////////////
+//////                       GLFW platform API                      //////
+//////////////////////////////////////////////////////////////////////////
+
+int _glfwPlatformInit(void)
 {
-    float           axes[6];
-    unsigned char   buttons[36]; // 32 buttons plus one hat
-    char*           name;
-} _GLFWjoystickWinMM;
+    _glfwInitTimerPOSIX();
+    return GLFW_TRUE;
+}
 
+void _glfwPlatformTerminate(void)
+{
+    _glfwTerminateOSMesa();
+}
 
-void _glfwInitJoysticks(void);
-void _glfwTerminateJoysticks(void);
+const char* _glfwPlatformGetVersionString(void)
+{
+    return _GLFW_VERSION_NUMBER " null OSMesa";
+}
 
-#endif // _glfw3_winmm_joystick_h_

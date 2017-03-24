@@ -1,7 +1,7 @@
 //========================================================================
-// GLFW 3.1 IOKit - www.glfw.org
+// GLFW 3.3 macOS - www.glfw.org
 //------------------------------------------------------------------------
-// Copyright (c) 2006-2014 Camilla Berglund <elmindreda@elmindreda.org>
+// Copyright (c) 2009-2016 Camilla Löwy <elmindreda@glfw.org>
 //
 // This software is provided 'as-is', without any express or implied
 // warranty. In no event will the authors be held liable for any damages
@@ -24,45 +24,37 @@
 //
 //========================================================================
 
-#ifndef _glfw3_iokit_joystick_h_
-#define _glfw3_iokit_joystick_h_
+#include "internal.h"
 
-#include <IOKit/IOKitLib.h>
-#include <IOKit/IOCFPlugIn.h>
-#include <IOKit/hid/IOHIDLib.h>
-#include <IOKit/hid/IOHIDKeys.h>
-
-#define _GLFW_PLATFORM_LIBRARY_JOYSTICK_STATE \
-    _GLFWjoystickIOKit iokit_js
+#include <mach/mach_time.h>
 
 
-// IOKit-specific per-joystick data
+//////////////////////////////////////////////////////////////////////////
+//////                       GLFW internal API                      //////
+//////////////////////////////////////////////////////////////////////////
+
+// Initialise timer
 //
-typedef struct _GLFWjoydevice
+void _glfwInitTimerNS(void)
 {
-    int             present;
-    char            name[256];
+    mach_timebase_info_data_t info;
+    mach_timebase_info(&info);
 
-    IOHIDDeviceRef deviceRef;
+    _glfw.timer.ns.frequency = (info.denom * 1e9) / info.numer;
+}
 
-    CFMutableArrayRef axisElements;
-    CFMutableArrayRef buttonElements;
-    CFMutableArrayRef hatElements;
 
-    float*          axes;
-    unsigned char*  buttons;
-} _GLFWjoydevice;
+//////////////////////////////////////////////////////////////////////////
+//////                       GLFW platform API                      //////
+//////////////////////////////////////////////////////////////////////////
 
-// IOKit-specific joystick API data
-//
-typedef struct _GLFWjoystickIOKit
+uint64_t _glfwPlatformGetTimerValue(void)
 {
-    _GLFWjoydevice devices[GLFW_JOYSTICK_LAST + 1];
+    return mach_absolute_time();
+}
 
-    IOHIDManagerRef managerRef;
-} _GLFWjoystickIOKit;
+uint64_t _glfwPlatformGetTimerFrequency(void)
+{
+    return _glfw.timer.ns.frequency;
+}
 
-void _glfwInitJoysticks(void);
-void _glfwTerminateJoysticks(void);
-
-#endif // _glfw3_iokit_joystick_h_

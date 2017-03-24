@@ -20,7 +20,7 @@ base_mid = {1,  stickman_Basis,  stickman_DS_Mid, 2},
 mid_bot =  {2,  stickman_DS_Mid, stickman_DS_Bot, 3};
 
 static const float speed = .03;
-static const float hitbox_width = .1;
+static const float hitbox_width = .2;
 
 #define START_ANIM(anim) \
     do { \

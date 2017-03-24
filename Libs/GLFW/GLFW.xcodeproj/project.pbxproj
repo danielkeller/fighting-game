@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		379207FF1E8569E0001BEAAB /* cocoa_joystick.m in Sources */ = {isa = PBXBuildFile; fileRef = 379207FE1E8569E0001BEAAB /* cocoa_joystick.m */; };
+		379208021E856A1D001BEAAB /* cocoa_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 379208001E856A1D001BEAAB /* cocoa_time.c */; };
+		379208031E856A1D001BEAAB /* vulkan.c in Sources */ = {isa = PBXBuildFile; fileRef = 379208011E856A1D001BEAAB /* vulkan.c */; };
+		379208081E8570FC001BEAAB /* egl_context.c in Sources */ = {isa = PBXBuildFile; fileRef = 379208061E8570FC001BEAAB /* egl_context.c */; };
+		379208091E8570FC001BEAAB /* osmesa_context.c in Sources */ = {isa = PBXBuildFile; fileRef = 379208071E8570FC001BEAAB /* osmesa_context.c */; };
 		37A6C1A21B3AFDA300AD5A8B /* cocoa_init.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A6C16F1B3AFDA300AD5A8B /* cocoa_init.m */; };
 		37A6C1A31B3AFDA300AD5A8B /* cocoa_monitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A6C1701B3AFDA300AD5A8B /* cocoa_monitor.m */; };
 		37A6C1A41B3AFDA300AD5A8B /* cocoa_platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A6C1711B3AFDA300AD5A8B /* cocoa_platform.h */; };
@@ -16,9 +21,6 @@
 		37A6C1AC1B3AFDA300AD5A8B /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 37A6C1791B3AFDA300AD5A8B /* init.c */; };
 		37A6C1AD1B3AFDA300AD5A8B /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = 37A6C17A1B3AFDA300AD5A8B /* input.c */; };
 		37A6C1AE1B3AFDA300AD5A8B /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A6C17B1B3AFDA300AD5A8B /* internal.h */; };
-		37A6C1AF1B3AFDA300AD5A8B /* iokit_joystick.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A6C17C1B3AFDA300AD5A8B /* iokit_joystick.h */; };
-		37A6C1B01B3AFDA300AD5A8B /* iokit_joystick.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A6C17D1B3AFDA300AD5A8B /* iokit_joystick.m */; };
-		37A6C1B31B3AFDA300AD5A8B /* mach_time.c in Sources */ = {isa = PBXBuildFile; fileRef = 37A6C1801B3AFDA300AD5A8B /* mach_time.c */; };
 		37A6C1B81B3AFDA300AD5A8B /* monitor.c in Sources */ = {isa = PBXBuildFile; fileRef = 37A6C1851B3AFDA300AD5A8B /* monitor.c */; };
 		37A6C1B91B3AFDA300AD5A8B /* nsgl_context.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A6C1861B3AFDA300AD5A8B /* nsgl_context.h */; };
 		37A6C1BA1B3AFDA300AD5A8B /* nsgl_context.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A6C1871B3AFDA300AD5A8B /* nsgl_context.m */; };
@@ -29,6 +31,11 @@
 
 /* Begin PBXFileReference section */
 		373FC7BC1B3AFBFD00AEBB25 /* libGLFW.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGLFW.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		379207FE1E8569E0001BEAAB /* cocoa_joystick.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = cocoa_joystick.m; path = src/cocoa_joystick.m; sourceTree = "<group>"; };
+		379208001E856A1D001BEAAB /* cocoa_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cocoa_time.c; path = src/cocoa_time.c; sourceTree = "<group>"; };
+		379208011E856A1D001BEAAB /* vulkan.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vulkan.c; path = src/vulkan.c; sourceTree = "<group>"; };
+		379208061E8570FC001BEAAB /* egl_context.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = egl_context.c; path = src/egl_context.c; sourceTree = "<group>"; };
+		379208071E8570FC001BEAAB /* osmesa_context.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = osmesa_context.c; path = src/osmesa_context.c; sourceTree = "<group>"; };
 		37A6C16F1B3AFDA300AD5A8B /* cocoa_init.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = cocoa_init.m; path = src/cocoa_init.m; sourceTree = "<group>"; };
 		37A6C1701B3AFDA300AD5A8B /* cocoa_monitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = cocoa_monitor.m; path = src/cocoa_monitor.m; sourceTree = "<group>"; };
 		37A6C1711B3AFDA300AD5A8B /* cocoa_platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cocoa_platform.h; path = src/cocoa_platform.h; sourceTree = "<group>"; };
@@ -38,9 +45,6 @@
 		37A6C1791B3AFDA300AD5A8B /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = init.c; path = src/init.c; sourceTree = "<group>"; };
 		37A6C17A1B3AFDA300AD5A8B /* input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = input.c; path = src/input.c; sourceTree = "<group>"; };
 		37A6C17B1B3AFDA300AD5A8B /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = internal.h; path = src/internal.h; sourceTree = "<group>"; };
-		37A6C17C1B3AFDA300AD5A8B /* iokit_joystick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iokit_joystick.h; path = src/iokit_joystick.h; sourceTree = "<group>"; };
-		37A6C17D1B3AFDA300AD5A8B /* iokit_joystick.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iokit_joystick.m; path = src/iokit_joystick.m; sourceTree = "<group>"; };
-		37A6C1801B3AFDA300AD5A8B /* mach_time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mach_time.c; path = src/mach_time.c; sourceTree = "<group>"; };
 		37A6C1851B3AFDA300AD5A8B /* monitor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = monitor.c; path = src/monitor.c; sourceTree = "<group>"; };
 		37A6C1861B3AFDA300AD5A8B /* nsgl_context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nsgl_context.h; path = src/nsgl_context.h; sourceTree = "<group>"; };
 		37A6C1871B3AFDA300AD5A8B /* nsgl_context.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = nsgl_context.m; path = src/nsgl_context.m; sourceTree = "<group>"; };
@@ -83,23 +87,25 @@
 		37A6C16D1B3AFD6700AD5A8B /* src */ = {
 			isa = PBXGroup;
 			children = (
-				37D376D31B3B46E2001EAA62 /* posix_tls.c */,
-				37D376D41B3B46E2001EAA62 /* posix_tls.h */,
+				379208061E8570FC001BEAAB /* egl_context.c */,
+				379208071E8570FC001BEAAB /* osmesa_context.c */,
 				37A6C16F1B3AFDA300AD5A8B /* cocoa_init.m */,
+				379207FE1E8569E0001BEAAB /* cocoa_joystick.m */,
 				37A6C1701B3AFDA300AD5A8B /* cocoa_monitor.m */,
 				37A6C1711B3AFDA300AD5A8B /* cocoa_platform.h */,
+				379208001E856A1D001BEAAB /* cocoa_time.c */,
 				37A6C1721B3AFDA300AD5A8B /* cocoa_window.m */,
 				37A6C1731B3AFDA300AD5A8B /* context.c */,
 				37A6C1761B3AFDA300AD5A8B /* glfw_config.h */,
 				37A6C1791B3AFDA300AD5A8B /* init.c */,
 				37A6C17A1B3AFDA300AD5A8B /* input.c */,
 				37A6C17B1B3AFDA300AD5A8B /* internal.h */,
-				37A6C17C1B3AFDA300AD5A8B /* iokit_joystick.h */,
-				37A6C17D1B3AFDA300AD5A8B /* iokit_joystick.m */,
-				37A6C1801B3AFDA300AD5A8B /* mach_time.c */,
 				37A6C1851B3AFDA300AD5A8B /* monitor.c */,
 				37A6C1861B3AFDA300AD5A8B /* nsgl_context.h */,
 				37A6C1871B3AFDA300AD5A8B /* nsgl_context.m */,
+				37D376D31B3B46E2001EAA62 /* posix_tls.c */,
+				37D376D41B3B46E2001EAA62 /* posix_tls.h */,
+				379208011E856A1D001BEAAB /* vulkan.c */,
 				37A6C1951B3AFDA300AD5A8B /* window.c */,
 			);
 			name = src;
@@ -124,7 +130,6 @@
 				37D376D61B3B46E2001EAA62 /* posix_tls.h in Headers */,
 				37A6C1A41B3AFDA300AD5A8B /* cocoa_platform.h in Headers */,
 				37A6C1AE1B3AFDA300AD5A8B /* internal.h in Headers */,
-				37A6C1AF1B3AFDA300AD5A8B /* iokit_joystick.h in Headers */,
 				37A6C1B91B3AFDA300AD5A8B /* nsgl_context.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -186,16 +191,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				37A6C1BA1B3AFDA300AD5A8B /* nsgl_context.m in Sources */,
-				37A6C1B01B3AFDA300AD5A8B /* iokit_joystick.m in Sources */,
+				379208021E856A1D001BEAAB /* cocoa_time.c in Sources */,
 				37A6C1AD1B3AFDA300AD5A8B /* input.c in Sources */,
 				37A6C1A31B3AFDA300AD5A8B /* cocoa_monitor.m in Sources */,
 				37A6C1A51B3AFDA300AD5A8B /* cocoa_window.m in Sources */,
 				37A6C1A21B3AFDA300AD5A8B /* cocoa_init.m in Sources */,
+				379208081E8570FC001BEAAB /* egl_context.c in Sources */,
+				379208031E856A1D001BEAAB /* vulkan.c in Sources */,
 				37A6C1C81B3AFDA300AD5A8B /* window.c in Sources */,
+				379207FF1E8569E0001BEAAB /* cocoa_joystick.m in Sources */,
 				37A6C1AC1B3AFDA300AD5A8B /* init.c in Sources */,
 				37A6C1A61B3AFDA300AD5A8B /* context.c in Sources */,
+				379208091E8570FC001BEAAB /* osmesa_context.c in Sources */,
 				37D376D51B3B46E2001EAA62 /* posix_tls.c in Sources */,
-				37A6C1B31B3AFDA300AD5A8B /* mach_time.c in Sources */,
 				37A6C1B81B3AFDA300AD5A8B /* monitor.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -8,39 +8,23 @@
 
 #include "time.h"
 
+#include "window.h"
 //todo: utils.h for die
 #include "error.h"
 
-#ifdef __APPLE__
-#include <mach/clock.h>
-#include <mach/mach.h>
-
 usec_t get_time()
 {
-    //http://stackoverflow.com/a/11681069/603688
-    static clock_serv_t cclock;
-    mach_timespec_t mts;
-    
-    static int run = 1;
-    for (; run; run = 0)
-        if (host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cclock))
-            die("host_get_clock_service");
-    
-    if (clock_get_time(cclock, &mts))
-        die("clock_get_time");
-    //if (mach_port_deallocate(mach_task_self(), cclock))
-    //    die("mach_port_deallocate");
-    
-    return (usec_t)mts.tv_sec * 1000000ll + (usec_t)mts.tv_nsec / 1000ll;
+    //Overflows after 214 days
+    uint64_t time_mCount = glfwGetTimerValue() * 1000;
+    uint64_t freq_kHz = glfwGetTimerFrequency() / 1000;
+    return time_mCount / freq_kHz;
 }
-#else
-//...
-#endif
 
 void init_game_time(game_time_t* gt)
 {
     gt->frame = 0;
     gt->current_time = gt->unsimulated_time = 0;
+    gt->last_frame_length = 0;
     gt->last_render = get_time();
 }
 
@@ -65,6 +49,7 @@ float render_tick(game_time_t *gt)
     gt->last_render = now;
     gt->unsimulated_time += frame_time;
     gt->current_time += frame_time;
+    gt->last_frame_length = frame_time;
     
     //The amount of unsimulated time after the next physics step(s)
     usec_t next_ut = gt->unsimulated_time % tick_length;
