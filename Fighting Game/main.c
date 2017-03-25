@@ -18,6 +18,7 @@
 #include "gl_core_3_3.h"
 #include "objects/test.h"
 #include "stickman.h"
+#include "shaders.h"
 #include <math.h>
 
 float camera_[] = {
@@ -56,7 +57,7 @@ int main (int argc, char* argv[]) {
     make_stickman(&right, &left, -1);
     
     program_t simple;
-    load_shader_program(&simple, "assets/anim.vert", "assets/waves.frag");
+    load_shader_program(&simple, anim_vert, waves_frag);
     /*
     GLint origin_unif = glGetUniformLocation(simple.program, "origin");
     GLint color_unif = glGetUniformLocation(simple.program, "main_color");
@@ -65,7 +66,6 @@ int main (int argc, char* argv[]) {
     glUseProgram(simple.program);
     glUniformMatrix3fv(simple.camera, 1, GL_FALSE, camera.d);
     glUniformMatrix3fv(simple.transform, 1, GL_FALSE, eye3.d);
-    //glUniform1f(alpha_unif, 0.f);
     
     init_game_time(&game_time);
     uint64_t load_total = 0, load_count = 0;

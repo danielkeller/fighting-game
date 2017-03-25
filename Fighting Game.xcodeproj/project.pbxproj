@@ -16,12 +16,10 @@
 		37421ACE1CB306220027B7D4 /* gl_core_3_3.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421ACC1CB306220027B7D4 /* gl_core_3_3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		37421AD41CB3066D0027B7D4 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421AD21CB3066D0027B7D4 /* window.c */; };
 		37421AD71CB3CF070027B7D4 /* time.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421AD51CB3CF070027B7D4 /* time.c */; };
-		374EF43C1D722F55001E8C8E /* Utils in Resources */ = {isa = PBXBuildFile; fileRef = 374EF43B1D722F55001E8C8E /* Utils */; };
 		37853D5D1D6622680052A8C8 /* shader.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D5B1D6622680052A8C8 /* shader.c */; };
-		37853D621D6627890052A8C8 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D601D6627890052A8C8 /* file.c */; };
 		37853D681D662D520052A8C8 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D661D662D520052A8C8 /* error.c */; };
 		37853D6B1D68AA720052A8C8 /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D691D68AA720052A8C8 /* object.c */; };
-		37853D6D1D68B16D0052A8C8 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 37853D6C1D68B16D0052A8C8 /* assets */; };
+		379126751E86786100613418 /* shaders.c in Sources */ = {isa = PBXBuildFile; fileRef = 379126731E86786100613418 /* shaders.c */; };
 		37B6950C1D737A0D009A40B1 /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B6950A1D737A0D009A40B1 /* test.c */; };
 		37B7BC501D6F311400EF0A7E /* fbo.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B7BC4E1D6F311400EF0A7E /* fbo.c */; };
 		37CFC0E91D7B2584000A795E /* world.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0E71D7B2584000A795E /* world.c */; };
@@ -61,13 +59,16 @@
 		37853D5B1D6622680052A8C8 /* shader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shader.c; sourceTree = "<group>"; };
 		37853D5C1D6622680052A8C8 /* shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shader.h; sourceTree = "<group>"; };
 		37853D5F1D6624BC0052A8C8 /* gl_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gl_types.h; path = Libs/GL/gl_types.h; sourceTree = "<group>"; };
-		37853D601D6627890052A8C8 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = file.c; sourceTree = "<group>"; };
-		37853D611D6627890052A8C8 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
 		37853D661D662D520052A8C8 /* error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = error.c; sourceTree = "<group>"; };
 		37853D671D662D520052A8C8 /* error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 		37853D691D68AA720052A8C8 /* object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = object.c; sourceTree = "<group>"; };
 		37853D6A1D68AA720052A8C8 /* object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = object.h; sourceTree = "<group>"; };
-		37853D6C1D68B16D0052A8C8 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
+		3791266B1E866E8F00613418 /* color.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = color.frag; path = shaders/color.frag; sourceTree = "<group>"; };
+		3791266C1E866E8F00613418 /* waves.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = waves.frag; path = shaders/waves.frag; sourceTree = "<group>"; };
+		3791266D1E866E8F00613418 /* anim.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = anim.vert; path = shaders/anim.vert; sourceTree = "<group>"; };
+		3791266E1E866E8F00613418 /* simple.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = simple.vert; path = shaders/simple.vert; sourceTree = "<group>"; };
+		379126731E86786100613418 /* shaders.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shaders.c; sourceTree = "<group>"; };
+		379126741E86786100613418 /* shaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shaders.h; sourceTree = "<group>"; };
 		37B6950A1D737A0D009A40B1 /* test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test.c; path = objects/test.c; sourceTree = "<group>"; };
 		37B6950B1D737A0D009A40B1 /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test.h; path = objects/test.h; sourceTree = "<group>"; };
 		37B7BC4E1D6F311400EF0A7E /* fbo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fbo.c; sourceTree = "<group>"; };
@@ -95,7 +96,6 @@
 		37421A981CB2FDCB0027B7D4 = {
 			isa = PBXGroup;
 			children = (
-				37853D6C1D68B16D0052A8C8 /* assets */,
 				374EF43B1D722F55001E8C8E /* Utils */,
 				37421AC91CB305FF0027B7D4 /* Libs */,
 				37421AC11CB301AE0027B7D4 /* GLFW.xcodeproj */,
@@ -116,14 +116,11 @@
 		37421AA31CB2FDCB0027B7D4 /* Fighting Game */ = {
 			isa = PBXGroup;
 			children = (
-				37B695091D737A04009A40B1 /* objects */,
 				37421ABF1CB2FFE50027B7D4 /* main.c */,
 				37853D661D662D520052A8C8 /* error.c */,
 				37853D671D662D520052A8C8 /* error.h */,
 				37B7BC4E1D6F311400EF0A7E /* fbo.c */,
 				37B7BC4F1D6F311400EF0A7E /* fbo.h */,
-				37853D601D6627890052A8C8 /* file.c */,
-				37853D611D6627890052A8C8 /* file.h */,
 				37CFC0EA1D7B2671000A795E /* math.c */,
 				37CFC0EB1D7B2671000A795E /* math.h */,
 				37853D691D68AA720052A8C8 /* object.c */,
@@ -138,6 +135,10 @@
 				37421AD31CB3066D0027B7D4 /* window.h */,
 				37CFC0E71D7B2584000A795E /* world.c */,
 				37CFC0E81D7B2584000A795E /* world.h */,
+				3791266A1E866E8600613418 /* shaders */,
+				37B695091D737A04009A40B1 /* objects */,
+				379126731E86786100613418 /* shaders.c */,
+				379126741E86786100613418 /* shaders.h */,
 				37421AA41CB2FDCC0027B7D4 /* AppDelegate.h */,
 				37421AA51CB2FDCC0027B7D4 /* AppDelegate.m */,
 				37421AAF1CB2FDCC0027B7D4 /* Info.plist */,
@@ -181,6 +182,17 @@
 			name = GL;
 			sourceTree = "<group>";
 		};
+		3791266A1E866E8600613418 /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+				3791266B1E866E8F00613418 /* color.frag */,
+				3791266C1E866E8F00613418 /* waves.frag */,
+				3791266D1E866E8F00613418 /* anim.vert */,
+				3791266E1E866E8F00613418 /* simple.vert */,
+			);
+			name = shaders;
+			sourceTree = "<group>";
+		};
 		37B695091D737A04009A40B1 /* objects */ = {
 			isa = PBXGroup;
 			children = (
@@ -199,6 +211,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 37421AB21CB2FDCC0027B7D4 /* Build configuration list for PBXNativeTarget "Fighting Game" */;
 			buildPhases = (
+				379126691E866DFC00613418 /* Prepare Shaders  */,
 				37421A9D1CB2FDCB0027B7D4 /* Sources */,
 				37421A9E1CB2FDCB0027B7D4 /* Frameworks */,
 				37421A9F1CB2FDCB0027B7D4 /* Resources */,
@@ -265,14 +278,29 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37853D6D1D68B16D0052A8C8 /* assets in Resources */,
 				37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */,
-				374EF43C1D722F55001E8C8E /* Utils in Resources */,
 				37421AAE1CB2FDCC0027B7D4 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		379126691E866DFC00613418 /* Prepare Shaders  */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Prepare Shaders ";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "python Utils/build_shaders.py";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		37421A9D1CB2FDCB0027B7D4 /* Sources */ = {
@@ -283,10 +311,10 @@
 				37B6950C1D737A0D009A40B1 /* test.c in Sources */,
 				37421AC01CB2FFE50027B7D4 /* main.c in Sources */,
 				37853D681D662D520052A8C8 /* error.c in Sources */,
+				379126751E86786100613418 /* shaders.c in Sources */,
 				37CFC0E91D7B2584000A795E /* world.c in Sources */,
 				37B7BC501D6F311400EF0A7E /* fbo.c in Sources */,
 				37853D6B1D68AA720052A8C8 /* object.c in Sources */,
-				37853D621D6627890052A8C8 /* file.c in Sources */,
 				37421AD41CB3066D0027B7D4 /* window.c in Sources */,
 				37421ACE1CB306220027B7D4 /* gl_core_3_3.c in Sources */,
 				37CFC0EC1D7B2671000A795E /* math.c in Sources */,

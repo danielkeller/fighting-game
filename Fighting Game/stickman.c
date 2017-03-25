@@ -11,6 +11,7 @@
 #include "gl_core_3_3.h"
 #include "world.h"
 #include "math.h"
+#include "shaders.h"
 #include <math.h>
 
 static animation_t
@@ -49,7 +50,7 @@ void make_stickman(stickman_t *sm, stickman_t* other, int direction)
 {
     make_anim_obj(&sm->obj, stickman_verts, sizeof(stickman_verts), stickman_stride);
     anim_obj_keys(&sm->obj, stickman_Basis, stickman_Basis);
-    load_shader_program(&sm->program, "assets/anim.vert", "assets/color.frag");
+    load_shader_program(&sm->program, anim_vert, color_frag);
     sm->color_unif = glGetUniformLocation(sm->program.program, "main_color");
     
     sm->prev = sm->next = (stickman_state_t){

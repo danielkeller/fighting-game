@@ -7,20 +7,19 @@
 //
 
 #include "shader.h"
-#include "file.h"
 #include "error.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "gl_core_3_3.h"
 
-GLuint load_shader(GLenum eShaderType, const char* name)
+GLuint load_shader(shader_t shader)
 {
-    size_t file_len;
-    char* file_text = read_file(name, &file_len);
+    if (shader->shader)
+        return shader->shader;
     
     //create the shader object
-    GLuint shader = glCreateShader(eShaderType);
+    shader->shader = glCreateShader(shader->type);
     
     //attach and compile the source
     
@@ -34,37 +33,35 @@ GLuint load_shader(GLenum eShaderType, const char* name)
     "#line 0\n";
 #endif
     
-    GLint lens[2] = {sizeof(versionString) - 1, (GLint)file_len};
-    const GLchar* srcs[2] = { versionString, file_text };
+    const GLchar* srcs[2] = { versionString, shader->source };
     
-    glShaderSource(shader, 2, srcs, lens);
-    glCompileShader(shader);
+    glShaderSource(shader->shader, 2, srcs, NULL);
+    glCompileShader(shader->shader);
     
     GLint status;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    glGetShaderiv(shader->shader, GL_COMPILE_STATUS, &status);
     if (!status) //compile failed
     {
         GLint infoLogLength;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
+        glGetShaderiv(shader->shader, GL_INFO_LOG_LENGTH, &infoLogLength);
         GLchar* infoLog = malloc_or_die(infoLogLength);
         
         //print error message
-        glGetShaderInfoLog(shader, infoLogLength, NULL, infoLog);
-        printf("For %s:\n", name);
+        glGetShaderInfoLog(shader->shader, infoLogLength, NULL, infoLog);
+        printf("For %s:\n", shader->name);
         die(infoLog);
     }
     
-    free(file_text);
-    return shader;
+    return shader->shader;
 }
 
-void load_shader_program(program_t* prog, const char* vert_name, const char* frag_name)
+void load_shader_program(program_t* prog, shader_t vert, shader_t frag)
 {
     //create our empty program Render
     GLuint program = glCreateProgram();
     
-    GLuint vertShdr = load_shader(GL_VERTEX_SHADER, vert_name);
-    GLuint fragShdr = load_shader(GL_FRAGMENT_SHADER, frag_name);
+    GLuint vertShdr = load_shader(vert);
+    GLuint fragShdr = load_shader(frag);
     
     //attach vertex and fragment shaders
     glAttachShader(program, vertShdr);
@@ -90,17 +87,12 @@ void load_shader_program(program_t* prog, const char* vert_name, const char* fra
         
         //print error message
         glGetProgramInfoLog(program, infoLogLength, NULL, infoLog);
-        printf("For %s, %s:\n", vert_name, frag_name);
+        printf("For %s, %s:\n", vert->name, frag->name);
         die(infoLog);
     }
     
-    //shaders are no longer used now that the program is linked
-//#ifdef NDEBUG
     glDetachShader(program, vertShdr);
-    glDeleteShader(vertShdr);
     glDetachShader(program, fragShdr);
-    glDeleteShader(fragShdr);
-//#endif
     
     prog->program = program;
     prog->camera = glGetUniformLocation(program, "camera");
