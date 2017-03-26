@@ -1,12 +1,11 @@
 #include "shaders.h"
 #include "gl_core_3_3.h"
-struct shader anim_vert_struct = {
+static struct shader anim_vert_struct = {
 .shader = 0,
 .name = "anim_vert",
 .type = GL_VERTEX_SHADER,
 .source =
-"in vec2 pos_from;\n"
-"in vec2 pos_to;\n"
+"in vec2 pos_from, pos_to, deriv_from, deriv_to;\n"
 "uniform float pos_alpha;\n"
 "uniform mat3 camera;\n"
 "uniform mat3 transform;\n"
@@ -14,7 +13,12 @@ struct shader anim_vert_struct = {
 "out vec2 framebuffer_coord;\n"
 "void main()\n"
 "{\n"
-"vec2 position = pos_from*(1. - pos_alpha) + pos_to*pos_alpha;\n"
+"//Spline calculation\n"
+"vec2 a = deriv_from - (pos_to - pos_from),\n"
+"b = -deriv_to + (pos_to - pos_from);\n"
+"float inv_alpha = 1. - pos_alpha;\n"
+"vec2 position = pos_from*inv_alpha + pos_to*pos_alpha\n"
+"+ inv_alpha*pos_alpha*(a*inv_alpha + b*pos_alpha);\n"
 "gl_Position = vec4((camera * transform * vec3(position, 1)).xy, 0, 1);\n"
 "posFrag = (transform * vec3(position, 1)).xy;\n"
 "framebuffer_coord = gl_Position.xy / 2. + 0.5;\n"
@@ -22,7 +26,7 @@ struct shader anim_vert_struct = {
 };
 shader_t anim_vert = &anim_vert_struct;
 
-struct shader color_frag_struct = {
+static struct shader color_frag_struct = {
 .shader = 0,
 .name = "color_frag",
 .type = GL_FRAGMENT_SHADER,
@@ -39,7 +43,7 @@ struct shader color_frag_struct = {
 };
 shader_t color_frag = &color_frag_struct;
 
-struct shader simple_vert_struct = {
+static struct shader simple_vert_struct = {
 .shader = 0,
 .name = "simple_vert",
 .type = GL_VERTEX_SHADER,
@@ -59,7 +63,7 @@ struct shader simple_vert_struct = {
 };
 shader_t simple_vert = &simple_vert_struct;
 
-struct shader waves_frag_struct = {
+static struct shader waves_frag_struct = {
 .shader = 0,
 .name = "waves_frag",
 .type = GL_FRAGMENT_SHADER,

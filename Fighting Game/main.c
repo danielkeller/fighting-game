@@ -50,7 +50,7 @@ int main (int argc, char* argv[]) {
     
     object_t box;
     make_anim_obj(&box, test_verts, sizeof(test_verts), test_stride);
-    anim_obj_keys(&box, test_Basis, test_Key_1);
+    anim_obj_keys(&box, &test_test_Basis_Key_1);
     
     stickman_t left, right;
     make_stickman(&left, &right, 1);
@@ -58,11 +58,13 @@ int main (int argc, char* argv[]) {
     
     program_t simple;
     load_shader_program(&simple, anim_vert, waves_frag);
+    
     /*
     GLint origin_unif = glGetUniformLocation(simple.program, "origin");
     GLint color_unif = glGetUniformLocation(simple.program, "main_color");
     GLint lead_color_unif = glGetUniformLocation(simple.program, "lead_color");
     */
+     
     glUseProgram(simple.program);
     glUniformMatrix3fv(simple.camera, 1, GL_FALSE, camera.d);
     glUniformMatrix3fv(simple.transform, 1, GL_FALSE, eye3.d);

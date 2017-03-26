@@ -8,17 +8,17 @@
 
 #include "stickman.h"
 #include "objects/stickman.h"
+#include "shaders.h"
 #include "gl_core_3_3.h"
 #include "world.h"
 #include "math.h"
-#include "shaders.h"
 #include <math.h>
 
-static animation_t
+static const animation_t
 //Name      id  from             to               frames
-idle =     {0,  stickman_Basis,  stickman_Basis,  1},
-base_mid = {1,  stickman_Basis,  stickman_DS_Mid, 2},
-mid_bot =  {2,  stickman_DS_Mid, stickman_DS_Bot, 3};
+idle =     {0,  &stickman_Basis_Basis_Basis,  1},
+base_mid = {1,  &stickman_swing_Basis_DS_Mid, 2},
+mid_bot =  {2,  &stickman_swing_DS_Mid_DS_Bot, 3};
 
 static const float speed = .03;
 static const float hitbox_width = .2;
@@ -27,7 +27,7 @@ static const float hitbox_width = .2;
     do { \
     sm->next.state = anim.id; \
     sm->anim_start = frame; \
-    anim_obj_keys(&sm->obj, anim.from, anim.to); \
+    anim_obj_keys(&sm->obj, anim.step); \
     } while (0)
 
 #define NEXT_ANIM(cur, anim) \
@@ -35,7 +35,7 @@ static const float hitbox_width = .2;
     if (frame - sm->anim_start >= cur.frames) { \
         sm->next.state = anim.id; \
         sm->anim_start = frame; \
-        anim_obj_keys(&sm->obj, anim.from, anim.to); \
+        anim_obj_keys(&sm->obj, anim.step); \
     } \
     } while (0)
 
@@ -49,7 +49,7 @@ static const float hitbox_width = .2;
 void make_stickman(stickman_t *sm, stickman_t* other, int direction)
 {
     make_anim_obj(&sm->obj, stickman_verts, sizeof(stickman_verts), stickman_stride);
-    anim_obj_keys(&sm->obj, stickman_Basis, stickman_Basis);
+    anim_obj_keys(&sm->obj, &stickman_Basis_Basis_Basis);
     load_shader_program(&sm->program, anim_vert, color_frag);
     sm->color_unif = glGetUniformLocation(sm->program.program, "main_color");
     

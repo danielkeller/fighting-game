@@ -20,6 +20,8 @@
 		37853D681D662D520052A8C8 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D661D662D520052A8C8 /* error.c */; };
 		37853D6B1D68AA720052A8C8 /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D691D68AA720052A8C8 /* object.c */; };
 		379126751E86786100613418 /* shaders.c in Sources */ = {isa = PBXBuildFile; fileRef = 379126731E86786100613418 /* shaders.c */; };
+		3791267C1E86A90200613418 /* stickman.json in Resources */ = {isa = PBXBuildFile; fileRef = 3791267B1E86A90200613418 /* stickman.json */; };
+		3791267E1E87F98C00613418 /* test.json in Resources */ = {isa = PBXBuildFile; fileRef = 3791267D1E87F98C00613418 /* test.json */; };
 		37B6950C1D737A0D009A40B1 /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B6950A1D737A0D009A40B1 /* test.c */; };
 		37B7BC501D6F311400EF0A7E /* fbo.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B7BC4E1D6F311400EF0A7E /* fbo.c */; };
 		37CFC0E91D7B2584000A795E /* world.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0E71D7B2584000A795E /* world.c */; };
@@ -69,6 +71,8 @@
 		3791266E1E866E8F00613418 /* simple.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = simple.vert; path = shaders/simple.vert; sourceTree = "<group>"; };
 		379126731E86786100613418 /* shaders.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shaders.c; sourceTree = "<group>"; };
 		379126741E86786100613418 /* shaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shaders.h; sourceTree = "<group>"; };
+		3791267B1E86A90200613418 /* stickman.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = stickman.json; path = objects/stickman.json; sourceTree = "<group>"; };
+		3791267D1E87F98C00613418 /* test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = test.json; path = objects/test.json; sourceTree = "<group>"; };
 		37B6950A1D737A0D009A40B1 /* test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test.c; path = objects/test.c; sourceTree = "<group>"; };
 		37B6950B1D737A0D009A40B1 /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test.h; path = objects/test.h; sourceTree = "<group>"; };
 		37B7BC4E1D6F311400EF0A7E /* fbo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fbo.c; sourceTree = "<group>"; };
@@ -200,6 +204,8 @@
 				37E1D7F31D77633E005C7198 /* stickman.h */,
 				37B6950A1D737A0D009A40B1 /* test.c */,
 				37B6950B1D737A0D009A40B1 /* test.h */,
+				3791267B1E86A90200613418 /* stickman.json */,
+				3791267D1E87F98C00613418 /* test.json */,
 			);
 			name = objects;
 			sourceTree = "<group>";
@@ -211,7 +217,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 37421AB21CB2FDCC0027B7D4 /* Build configuration list for PBXNativeTarget "Fighting Game" */;
 			buildPhases = (
-				379126691E866DFC00613418 /* Prepare Shaders  */,
+				379126691E866DFC00613418 /* Prepare Assets  */,
 				37421A9D1CB2FDCB0027B7D4 /* Sources */,
 				37421A9E1CB2FDCB0027B7D4 /* Frameworks */,
 				37421A9F1CB2FDCB0027B7D4 /* Resources */,
@@ -279,6 +285,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */,
+				3791267E1E87F98C00613418 /* test.json in Resources */,
+				3791267C1E86A90200613418 /* stickman.json in Resources */,
 				37421AAE1CB2FDCC0027B7D4 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -286,19 +294,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		379126691E866DFC00613418 /* Prepare Shaders  */ = {
+		379126691E866DFC00613418 /* Prepare Assets  */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Prepare Shaders ";
+			name = "Prepare Assets ";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "python Utils/build_shaders.py";
+			shellScript = "python Utils/build_shaders.py\npython Utils/build_objects.py";
 		};
 /* End PBXShellScriptBuildPhase section */
 

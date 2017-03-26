@@ -4,52 +4,45 @@ bl_info = {
     "version": (1, 0),
     "blender": (2, 75, 0),
     "location": "File > Export",
-    "description": "Export .c file for fighting game",
+    "description": "Export .mesh file for fighting game",
     "warning": "",
     "wiki_url": "",  
     "tracker_url": "",  
     "category": "Import-Export"}
 
-import bpy, bmesh, re, os
+import bpy, bmesh, re, os, pickle
 
-def id(*args):
-    return re.sub('[^a-zA-Z0-9]', '_', '_'.join(args))
-
-def write_some_data(context, c_path):
-    h_path = os.path.splitext(c_path)[0] + '.h'
+def write_mesh(context, path):
+    result = {}
     
-    with open(c_path, 'w', encoding='utf-8') as f, open(h_path, 'w', encoding='utf-8') as h_f:
+    for obj in bpy.data.objects:
+        if obj.type != 'MESH':
+            continue
+        bm = bmesh.new()
+        bm.from_mesh(obj.data)
+        bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
+
+        result[obj.name] = {}
         
-        for obj in bpy.data.objects:
-            if obj.type != 'MESH':
-                continue
-            bm = bmesh.new()
-            bm.from_mesh(obj.data)
-            bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
-            
-            n_verts = len(bm.faces) * 3
-            n_keys = max(1, len(bm.verts.layers.shape))
-            n_floats = n_verts * n_keys * 2
-            el_sz = 2 * 4 # 2d floats
-            
-            h_f.write('static const GLsizei {}_stride = {};\n'.format(id(obj.name), n_keys * el_sz))
-            
-            for sk_n, num in zip(bm.verts.layers.shape.keys(), range(n_keys)):
-                h_f.write('static const GLsizei {} = {};\n'.format(id(obj.name, sk_n), num * el_sz))
-                          
-            h_f.write('extern float {}_verts[{}];\n'.format(id(obj.name), n_floats))
-            f.write('float {}_verts[{}] = {{\n'.format(id(obj.name), n_floats))
-            for fa in bm.faces:
-                for v in fa.verts:
-                    if bm.verts.layers.shape:
-                        for sk_n in bm.verts.layers.shape.keys():
-                            sk = bm.verts.layers.shape[sk_n]
-                            f.write('{}, {},\n'.format(v[sk].x, v[sk].y))
-                    else:
-                        f.write('{}, {},\n'.format(v.co.x, v.co.y))
-            f.write('};\n\n')
-            bm.free()
-    return {'FINISHED'}
+        if bm.verts.layers.shape:
+            for sk_name in bm.verts.layers.shape.keys():
+                sk = bm.verts.layers.shape[sk_name]
+                result[obj.name][sk_name] = [
+                    (v[sk].x, v[sk].y)
+                    for fa in bm.faces
+                    for v in fa.verts
+                ]
+        else:
+            result[obj.name]['Basis'] = [
+                (v.co.x, v.co.y)
+                for fa in bm.faces
+                for v in fa.verts
+            ]
+
+        bm.free()
+
+    with open(path, 'wb') as f:
+        pickle.dump(result, f, protocol=2)
 
 
 # ExportHelper is a helper class, defines filename and
@@ -59,19 +52,20 @@ from bpy_extras.io_utils import ExportHelper
 
 class ExportFgm(bpy.types.Operator, ExportHelper):
     """Export a model for Fighting Game"""
-    bl_idname = "export.c"
+    bl_idname = "export.mesh"
     bl_label = "Export Fighting Game model"
 
     # ExportHelper mixin class uses this
-    filename_ext = ".c"
+    filename_ext = ".mesh"
 
     filter_glob = bpy.props.StringProperty(
-            default="*.c",
+            default="*.mesh",
             options={'HIDDEN'},
             )
 
     def execute(self, context):
-        return write_some_data(context, self.filepath)
+        write_mesh(context, self.filepath)
+        return {'FINISHED'}
 
 
 # Only needed if you want to add into a dynamic menu

@@ -1,5 +1,7 @@
-static const GLsizei test_stride = 24;
-static const GLsizei test_Basis = 0;
-static const GLsizei test_Key_1 = 8;
-static const GLsizei test_Key_2 = 16;
-extern float test_verts[36];
+#include "object.h"
+static const GLsizei test_stride = 40;
+static const GLsizei test_Key_1 = 0;
+static const GLsizei test_Key_2 = 8;
+static const GLsizei test_Basis = 16;
+extern const anim_step_t test_test_Basis_Key_1;
+extern float test_verts[60];

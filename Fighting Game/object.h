@@ -22,14 +22,20 @@ void free_object(object_t*);
 
 void make_box(object_t*);
 
+typedef struct anim_step {
+    GLsizei p_from, p_to; //position
+    GLsizei d_from, d_to; //derivative
+} anim_step_t;
+
+//This belongs in a state machine header
 typedef struct animation
 {
     int id;
-    GLsizei from, to;
+    const anim_step_t* step;
     int frames;
 } animation_t;
 
 void make_anim_obj(object_t*, float* verts, GLsizei verts_sz, GLsizei stride);
-void anim_obj_keys(object_t*, GLsizei from_offset, GLsizei to_offset);
+void anim_obj_keys(object_t*, const anim_step_t* step);
 
 #endif /* object_h */

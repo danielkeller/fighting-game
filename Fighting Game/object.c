@@ -48,22 +48,29 @@ void make_anim_obj(object_t* obj, float* verts, GLsizei verts_sz, GLsizei stride
     
     glEnableVertexAttribArray(POS_FROM_ATTRIB);
     glEnableVertexAttribArray(POS_TO_ATTRIB);
+    glEnableVertexAttribArray(DERIV_FROM_ATTRIB);
+    glEnableVertexAttribArray(DERIV_TO_ATTRIB);
     
     obj->numVertecies = verts_sz / stride;
     obj->stride = stride;
 }
 
-void anim_obj_keys(object_t* obj, GLsizei from_offset, GLsizei to_offset)
+void anim_obj_keys(object_t* obj, const anim_step_t* step)
 {
-    assert(obj->stride > from_offset && obj->stride > to_offset
-           && "Not enough shape keys");
+    assert(obj->stride > step->d_from && obj->stride > step->d_to
+           && obj->stride > step->p_from && obj->stride > step->p_to
+           && "Not enough attributes");
     
     glBindVertexArray(obj->vertexArrayObject);
     glBindBuffer(GL_ARRAY_BUFFER, obj->vertexBufferObject);
     glVertexAttribPointer(POS_FROM_ATTRIB, 2, GL_FLOAT, GL_FALSE,
-                          obj->stride, (char*)NULL + from_offset);
+                          obj->stride, (char*)NULL + step->p_from);
     glVertexAttribPointer(POS_TO_ATTRIB, 2, GL_FLOAT, GL_FALSE,
-                          obj->stride, (char*)NULL + to_offset);
+                          obj->stride, (char*)NULL + step->p_to);
+    glVertexAttribPointer(DERIV_FROM_ATTRIB, 2, GL_FLOAT, GL_FALSE,
+                          obj->stride, (char*)NULL + step->d_from);
+    glVertexAttribPointer(DERIV_TO_ATTRIB, 2, GL_FLOAT, GL_FALSE,
+                          obj->stride, (char*)NULL + step->d_to);
 }
 
 void free_object(object_t* obj)

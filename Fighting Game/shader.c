@@ -70,6 +70,8 @@ void load_shader_program(program_t* prog, shader_t vert, shader_t frag)
     glBindAttribLocation(program, POSITION_ATTRIB, "position");
     glBindAttribLocation(program, POS_FROM_ATTRIB, "pos_from");
     glBindAttribLocation(program, POS_TO_ATTRIB, "pos_to");
+    glBindAttribLocation(program, DERIV_FROM_ATTRIB, "deriv_from");
+    glBindAttribLocation(program, DERIV_TO_ATTRIB, "deriv_to");
     
     glBindFragDataLocation(program, DRAW_BUFFER, "color");
     

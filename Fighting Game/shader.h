@@ -13,6 +13,8 @@
 #define POSITION_ATTRIB 0
 #define POS_FROM_ATTRIB 0
 #define POS_TO_ATTRIB 1
+#define DERIV_FROM_ATTRIB 3
+#define DERIV_TO_ATTRIB 4
 #define DRAW_BUFFER 0
 #define FB_TEX_UNIT 0
 
