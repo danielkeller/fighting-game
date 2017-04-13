@@ -13,6 +13,7 @@
 #include "world.h"
 #include "math.h"
 #include <math.h>
+#include <stdlib.h>
 
 static const animation_t
 //Name      id  from             to               frames
@@ -46,8 +47,36 @@ static const float hitbox_width = .2;
     glUniform1f(sm->program.pos_alpha, anim_alpha); \
     } while (0)
 
-void make_stickman(stickman_t *sm, stickman_t* other, int direction)
+void make_heath_bar(health_bar_t* hb, direction_t direction)
 {
+    make_box(&hb->obj);
+    load_shader_program(&hb->program, health_bar_vert, color_frag);
+    hb->health_unif = glGetUniformLocation(hb->program.program, "health");
+    
+    glUseProgram(hb->program.program);
+    GLint color_unif = glGetUniformLocation(hb->program.program, "main_color");
+    glUniform3f(color_unif, 1., 0., 0.);
+    GLint direction_unif = glGetUniformLocation(hb->program.program, "direction");
+    glUniform1f(direction_unif, (float)direction);
+}
+
+void draw_health_bar(health_bar_t* hb, int health)
+{
+    glUseProgram(hb->program.program);
+    glUniform1f(hb->health_unif, (float)health);
+    glBindVertexArray(hb->obj.vertexArrayObject);
+    glDrawArrays(GL_TRIANGLES, 0, hb->obj.numVertecies);
+}
+
+void free_health_bar(health_bar_t* hb)
+{
+    free_object(&hb->obj);
+    free_program(&hb->program);
+}
+
+void make_stickman(stickman_t *sm, stickman_t* other, direction_t direction)
+{
+    make_heath_bar(&sm->health_bar, direction);
     make_anim_obj(&sm->obj, stickman_verts, sizeof(stickman_verts), stickman_stride);
     anim_obj_keys(&sm->obj, &stickman_Basis_Basis_Basis);
     load_shader_program(&sm->program, anim_vert, color_frag);
@@ -59,6 +88,7 @@ void make_stickman(stickman_t *sm, stickman_t* other, int direction)
         .ground_pos = -1.f,
     };
     
+    sm->health = 100;
     sm->direction = direction;
     sm->other = other;
 }
@@ -132,9 +162,13 @@ void draw_stickman(stickman_t* sm, long long frame, float alpha)
     }
     
     glDrawArrays(GL_TRIANGLES, 0, sm->obj.numVertecies);
+    
+    draw_health_bar(&sm->health_bar, sm->health);
 }
 
 void free_stickman(stickman_t* sm)
 {
+    free_health_bar(&sm->health_bar);
     free_object(&sm->obj);
+    free_program(&sm->program);
 }

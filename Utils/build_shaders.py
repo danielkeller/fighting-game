@@ -1,4 +1,4 @@
-import os
+import os, re
 
 proj = os.environ['PROJECT_DIR']
 
@@ -18,7 +18,7 @@ with open(output_path_c, 'w') as output_c, open(output_path_h, 'w') as output_h:
     output_c.write('#include "shaders.h"\n#include "gl_core_3_3.h"\n')
     
     for in_path in files():
-        name = os.path.basename(in_path).replace('.', '_')
+        name = re.sub('[^a-zA-Z0-9]', '_', os.path.basename(in_path))
         type = types[os.path.splitext(in_path)[1]]
         output_h.write('extern shader_t %s;\n' % name)
         output_c.write('static struct shader %s_struct = {\n.shader = 0,\n' % name)

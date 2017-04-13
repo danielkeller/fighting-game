@@ -13,6 +13,11 @@
 #include "shader.h"
 #include "time.h"
 
+typedef enum direction {
+    LEFT = 1,
+    RIGHT = -1
+} direction_t;
+
 typedef enum advance {
     ADVANCING,
     RETREATING,
@@ -25,18 +30,26 @@ typedef struct stickman_state {
     float ground_pos;
 } stickman_state_t;
 
+typedef struct health_bar {
+    object_t obj;
+    program_t program;
+    GLint health_unif;
+} health_bar_t;
+
 typedef struct stickman {
     object_t obj;
     program_t program;
     GLint color_unif;
-    int direction;
+    direction_t direction;
     struct stickman* other;
+    int health;
+    health_bar_t health_bar;
     
     long long anim_start;
     stickman_state_t prev, next;
 } stickman_t;
 
-void make_stickman(stickman_t*, stickman_t* other, int direction);
+void make_stickman(stickman_t*, stickman_t* other, direction_t direction);
 void update_stickman(stickman_t*, stickman_t* enemy,
                      long long frame, int advance, int attack);
 void draw_stickman(stickman_t*, long long frame, float alpha);

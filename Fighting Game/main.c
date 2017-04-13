@@ -53,8 +53,8 @@ int main (int argc, char* argv[]) {
     anim_obj_keys(&box, &test_test_Basis_Key_1);
     
     stickman_t left, right;
-    make_stickman(&left, &right, 1);
-    make_stickman(&right, &left, -1);
+    make_stickman(&left, &right, RIGHT);
+    make_stickman(&right, &left, LEFT);
     
     program_t simple;
     load_shader_program(&simple, anim_vert, waves_frag);
@@ -88,10 +88,10 @@ int main (int argc, char* argv[]) {
             load_total = load_count = 0;
         }
         
-        /* Poll for and process events */
-        glfwPollEvents();
-        
         while (phys_tick(&game_time)) {
+            /* Poll for and process events */
+            glfwPollEvents();
+            
             update_stickman(&left, &right, game_time.frame,
                             glfwGetKey(window, GLFW_KEY_Z),
                             glfwGetKey(window, GLFW_KEY_X));
@@ -100,8 +100,8 @@ int main (int argc, char* argv[]) {
                             glfwGetKey(window, GLFW_KEY_PERIOD));
         }
         
-        if (game_time.last_frame_length > 20000ll)
-            printf("%llu\n", game_time.last_frame_length / 1000ll);
+        //if (game_time.last_frame_length > 20000ll)
+        //    printf("%llu\n", game_time.last_frame_length / 1000ll);
         
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);

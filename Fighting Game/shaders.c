@@ -43,6 +43,30 @@ static struct shader color_frag_struct = {
 };
 shader_t color_frag = &color_frag_struct;
 
+static struct shader health_bar_vert_struct = {
+.shader = 0,
+.name = "health_bar_vert",
+.type = GL_VERTEX_SHADER,
+.source =
+"in vec2 position;\n"
+"uniform float direction;\n"
+"uniform float health;\n"
+"out vec2 posFrag;\n"
+"out vec2 framebuffer_coord;\n"
+"void main()\n"
+"{\n"
+"mat3 transform = mat3(\n"
+".8*direction*(health / 100.),\n"
+"0, 0,\n"
+"0, .1, 0,\n"
+".1*direction, .8, 1);\n"
+"gl_Position = vec4((transform * vec3(position, 1)).xy, 0, 1);\n"
+"posFrag = (transform * vec3(position, 1)).xy;\n"
+"framebuffer_coord = gl_Position.xy / 2. + 0.5;\n"
+"}\n"
+};
+shader_t health_bar_vert = &health_bar_vert_struct;
+
 static struct shader simple_vert_struct = {
 .shader = 0,
 .name = "simple_vert",
