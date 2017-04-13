@@ -22,6 +22,12 @@ with open(output_path_c, 'w') as output_c, open(output_path_h, 'w') as output_h:
         type = types[os.path.splitext(in_path)[1]]
         output_h.write('extern shader_t %s;\n' % name)
         output_c.write('static struct shader %s_struct = {\n.shader = 0,\n' % name)
+        
+        output_c.write('#ifdef DEBUG')
+        output_c.write('\n.used_in = {0},\n')
+        output_c.write('.fname = "%s",\n' % in_path)
+        output_c.write('#endif\n')
+        
         output_c.write('.name = "%s",\n' % name)
         output_c.write('.type = %s,\n' % type)
         output_c.write('.source =\n')

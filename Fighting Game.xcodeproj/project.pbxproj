@@ -28,6 +28,7 @@
 		37E1D7F41D77633E005C7198 /* stickman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37E1D7F21D77633E005C7198 /* stickman.c */; };
 		37EA38291E9F65E300848254 /* libGLFW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37421AC61CB301AE0027B7D4 /* libGLFW.a */; };
 		37EA382B1E9F726E00848254 /* health bar.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37EA382A1E9F726E00848254 /* health bar.vert */; };
+		37EA382E1E9F986900848254 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 37EA382D1E9F986900848254 /* file.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +85,8 @@
 		37E1D7F21D77633E005C7198 /* stickman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stickman.c; path = objects/stickman.c; sourceTree = "<group>"; };
 		37E1D7F31D77633E005C7198 /* stickman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stickman.h; path = objects/stickman.h; sourceTree = "<group>"; };
 		37EA382A1E9F726E00848254 /* health bar.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = "health bar.vert"; path = "shaders/health bar.vert"; sourceTree = "<group>"; };
+		37EA382C1E9F986900848254 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
+		37EA382D1E9F986900848254 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = file.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +123,8 @@
 		37421AA31CB2FDCB0027B7D4 /* Fighting Game */ = {
 			isa = PBXGroup;
 			children = (
+				37EA382C1E9F986900848254 /* file.h */,
+				37EA382D1E9F986900848254 /* file.c */,
 				37421ABF1CB2FFE50027B7D4 /* main.c */,
 				37853D661D662D520052A8C8 /* error.c */,
 				37853D671D662D520052A8C8 /* error.h */,
@@ -324,6 +329,7 @@
 				379126751E86786100613418 /* shaders.c in Sources */,
 				37CFC0E91D7B2584000A795E /* world.c in Sources */,
 				37B7BC501D6F311400EF0A7E /* fbo.c in Sources */,
+				37EA382E1E9F986900848254 /* file.c in Sources */,
 				37853D6B1D68AA720052A8C8 /* object.c in Sources */,
 				37421AD41CB3066D0027B7D4 /* window.c in Sources */,
 				37421ACE1CB306220027B7D4 /* gl_core_3_3.c in Sources */,

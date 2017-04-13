@@ -100,6 +100,8 @@ int main (int argc, char* argv[]) {
                             glfwGetKey(window, GLFW_KEY_PERIOD));
         }
         
+        poll_shader_changes();
+        
         //if (game_time.last_frame_length > 20000ll)
         //    printf("%llu\n", game_time.last_frame_length / 1000ll);
         

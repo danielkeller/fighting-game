@@ -12,11 +12,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "gl_core_3_3.h"
+#include "file.h"
+
+#ifdef DEBUG
+static watch_t shader_watch = -1;
+void poll_shader_changes()
+{
+    shader_t changed = poll_watch(shader_watch);
+    if (changed)
+        printf("%s\n", changed->name);
+}
+#endif
 
 GLuint load_shader(shader_t shader)
 {
     if (shader->shader)
         return shader->shader;
+    
+#ifdef DEBUG
+    if (shader_watch == -1)
+        shader_watch = make_watch();
+    
+    watch_file(shader_watch, shader->fname, shader);
+#endif
     
     //create the shader object
     shader->shader = glCreateShader(shader->type);

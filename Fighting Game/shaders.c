@@ -2,6 +2,10 @@
 #include "gl_core_3_3.h"
 static struct shader anim_vert_struct = {
 .shader = 0,
+#ifdef DEBUG
+.used_in = {0},
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/anim.vert",
+#endif
 .name = "anim_vert",
 .type = GL_VERTEX_SHADER,
 .source =
@@ -28,6 +32,10 @@ shader_t anim_vert = &anim_vert_struct;
 
 static struct shader color_frag_struct = {
 .shader = 0,
+#ifdef DEBUG
+.used_in = {0},
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/color.frag",
+#endif
 .name = "color_frag",
 .type = GL_FRAGMENT_SHADER,
 .source =
@@ -45,6 +53,10 @@ shader_t color_frag = &color_frag_struct;
 
 static struct shader health_bar_vert_struct = {
 .shader = 0,
+#ifdef DEBUG
+.used_in = {0},
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/health bar.vert",
+#endif
 .name = "health_bar_vert",
 .type = GL_VERTEX_SHADER,
 .source =
@@ -69,6 +81,10 @@ shader_t health_bar_vert = &health_bar_vert_struct;
 
 static struct shader simple_vert_struct = {
 .shader = 0,
+#ifdef DEBUG
+.used_in = {0},
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/simple.vert",
+#endif
 .name = "simple_vert",
 .type = GL_VERTEX_SHADER,
 .source =
@@ -89,6 +105,10 @@ shader_t simple_vert = &simple_vert_struct;
 
 static struct shader waves_frag_struct = {
 .shader = 0,
+#ifdef DEBUG
+.used_in = {0},
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/waves.frag",
+#endif
 .name = "waves_frag",
 .type = GL_FRAGMENT_SHADER,
 .source =
