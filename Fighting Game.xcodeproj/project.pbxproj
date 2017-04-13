@@ -11,7 +11,6 @@
 		37421AA61CB2FDCC0027B7D4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 37421AA51CB2FDCC0027B7D4 /* AppDelegate.m */; };
 		37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37421AAA1CB2FDCC0027B7D4 /* Assets.xcassets */; };
 		37421AAE1CB2FDCC0027B7D4 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37421AAC1CB2FDCC0027B7D4 /* MainMenu.xib */; };
-		37421ABE1CB2FF930027B7D4 /* libGLFW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37421ABD1CB2FF930027B7D4 /* libGLFW.a */; };
 		37421AC01CB2FFE50027B7D4 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421ABF1CB2FFE50027B7D4 /* main.c */; };
 		37421ACE1CB306220027B7D4 /* gl_core_3_3.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421ACC1CB306220027B7D4 /* gl_core_3_3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		37421AD41CB3066D0027B7D4 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421AD21CB3066D0027B7D4 /* window.c */; };
@@ -27,6 +26,7 @@
 		37CFC0E91D7B2584000A795E /* world.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0E71D7B2584000A795E /* world.c */; };
 		37CFC0EC1D7B2671000A795E /* math.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0EA1D7B2671000A795E /* math.c */; };
 		37E1D7F41D77633E005C7198 /* stickman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37E1D7F21D77633E005C7198 /* stickman.c */; };
+		37EA38291E9F65E300848254 /* libGLFW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37421AC61CB301AE0027B7D4 /* libGLFW.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,7 +48,6 @@
 		37421AAA1CB2FDCC0027B7D4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		37421AAD1CB2FDCC0027B7D4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		37421AAF1CB2FDCC0027B7D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		37421ABD1CB2FF930027B7D4 /* libGLFW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLFW.a; path = "../../Library/Developer/Xcode/DerivedData/Fighting_Game-fyrllnffzlvwycdxlwdddrrkvrre/Build/Products/Debug/libGLFW.a"; sourceTree = "<group>"; };
 		37421ABF1CB2FFE50027B7D4 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		37421AC11CB301AE0027B7D4 /* GLFW.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GLFW.xcodeproj; path = Libs/GLFW/GLFW.xcodeproj; sourceTree = "<group>"; };
 		37421ACC1CB306220027B7D4 /* gl_core_3_3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gl_core_3_3.c; path = Libs/GL/gl_core_3_3.c; sourceTree = "<group>"; };
@@ -90,7 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37421ABE1CB2FF930027B7D4 /* libGLFW.a in Frameworks */,
+				37EA38291E9F65E300848254 /* libGLFW.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,7 +102,6 @@
 				374EF43B1D722F55001E8C8E /* Utils */,
 				37421AC91CB305FF0027B7D4 /* Libs */,
 				37421AC11CB301AE0027B7D4 /* GLFW.xcodeproj */,
-				37421ABD1CB2FF930027B7D4 /* libGLFW.a */,
 				37421AA31CB2FDCB0027B7D4 /* Fighting Game */,
 				37421AA21CB2FDCB0027B7D4 /* Products */,
 			);
