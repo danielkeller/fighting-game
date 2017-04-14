@@ -18,11 +18,15 @@
 #define DRAW_BUFFER 0
 #define FB_TEX_UNIT 0
 
+struct shader;
+typedef struct shader* shader_t;
 
 typedef struct program
 {
     GLuint program;
     GLint transform, camera, time, pos_alpha;
+    
+    shader_t vert, frag;
 } program_t;
 
 struct shader {
@@ -30,17 +34,17 @@ struct shader {
     const char* name;
     GLenum type;
     const char* source;
+    
 #ifdef DEBUG
     const char* fname;
-    program_t *used_in[128];
 #endif
 };
-typedef struct shader* shader_t;
 
 void load_shader_program(program_t*, shader_t vert, shader_t frag);
 void free_program(program_t*);
 
 #ifdef DEBUG
+//This assumes the program objects don't move around in memory
 void poll_shader_changes();
 #else
 inline void poll_shader_changes() {}

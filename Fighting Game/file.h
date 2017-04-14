@@ -19,6 +19,7 @@ void free_watch(watch_t);
 void watch_file(watch_t watch, const char* name, void* udata);
 void* poll_watch(watch_t);
 
-char* read_file(const char* name, size_t* length);
+//Read the text file into a null terminated string
+char* read_file(const char* name);
 
 #endif /* file_h */

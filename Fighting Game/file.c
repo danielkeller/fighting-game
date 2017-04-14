@@ -82,13 +82,13 @@ void rewatch_deleted(watch_t kq, int fd, void* udata)
     watch_file(kq, name, udata);
 }
 
-char* read_file(const char* name, size_t* length)
+char* read_file(const char* name)
 {
     struct stat sb;
     if (stat(name, &sb))
         die(strerror(errno));
     
-    char* ret = malloc_or_die(sb.st_size);
+    char* ret = malloc_or_die(sb.st_size + 1);
     
     int fd = open(name, O_RDONLY);
     if (fd == -1)
@@ -99,7 +99,7 @@ char* read_file(const char* name, size_t* length)
     
     close(fd);
     
-    *length = sb.st_size;
+    ret[sb.st_size] = 0;
     return ret;
 }
 #endif
