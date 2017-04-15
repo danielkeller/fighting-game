@@ -72,19 +72,21 @@ int main (int argc, char* argv[]) {
     glUniformMatrix3fv(simple.transform, 1, GL_FALSE, eye3.d);
     
     init_game_time(&game_time);
+    /*
     uint64_t load_total = 0;
     int64_t frame_count = 0;
     usec_t last_fps = get_time();
+    */
     
     while (!glfwWindowShouldClose(window))
     {
-        usec_t frame_work_time = get_time() - game_time.last_render;
+        //usec_t frame_work_time = get_time() - game_time.last_render;
         
         //render_tick must be called immediately after the frame appears
         //onscreen for the algorithm to work.
         glfwSwapBuffers(window);
         float alpha = render_tick(&game_time);
-        
+        /*
         ++frame_count;
         load_total += (frame_work_time * 100ull) / game_time.last_frame_length;
         usec_t elapsed = get_time() - last_fps;
@@ -96,17 +98,20 @@ int main (int argc, char* argv[]) {
             frame_count = 0;
             last_fps += elapsed;
         }
+        */
         
         while (phys_tick(&game_time)) {
-            /* Poll for and process events */
             glfwPollEvents();
             
-            update_stickman(&left, &right, game_time.frame,
+            stickman_actions(&left, game_time.frame,
                             glfwGetKey(window, GLFW_KEY_Z),
                             glfwGetKey(window, GLFW_KEY_X));
-            update_stickman(&right, &left, game_time.frame,
+            stickman_actions(&right, game_time.frame,
                             glfwGetKey(window, GLFW_KEY_COMMA),
                             glfwGetKey(window, GLFW_KEY_PERIOD));
+            
+            stickman_consequences(&left, game_time.frame);
+            stickman_consequences(&right, game_time.frame);
         }
         
         int width, height;

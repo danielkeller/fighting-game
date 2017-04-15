@@ -24,15 +24,13 @@ mid_bot =  {2,  &stickman_swing_DS_Mid_DS_Bot, 3};
 static const float speed = .03;
 static const float hitbox_width = .2;
 
-#define START_ANIM(anim) \
-    do { \
+#define START_ANIM(anim) do { \
     sm->next.state = anim.id; \
     sm->anim_start = frame; \
     anim_obj_keys(&sm->obj, anim.step); \
     } while (0)
 
-#define NEXT_ANIM(cur, anim) \
-    do { \
+#define NEXT_ANIM(cur, anim) do { \
     if (frame - sm->anim_start >= cur.frames) { \
         sm->next.state = anim.id; \
         sm->anim_start = frame; \
@@ -40,8 +38,7 @@ static const float hitbox_width = .2;
     } \
     } while (0)
 
-#define RUN_ANIM(anim) \
-    do { \
+#define RUN_ANIM(anim) do { \
     float anim_alpha = ((float)(frame - sm->anim_start) + alpha) \
         / (float)anim.frames; \
     glUniform1f(sm->program.pos_alpha, anim_alpha); \
@@ -81,24 +78,28 @@ void make_stickman(stickman_t *sm, stickman_t* other, direction_t direction)
     anim_obj_keys(&sm->obj, &stickman_Basis_Basis_Basis);
     load_shader_program(&sm->program, anim_vert, color_frag);
     sm->color_unif = glGetUniformLocation(sm->program.program, "main_color");
+    glUniform3f(sm->color_unif, 1., 1., 1.);
     
     sm->prev = sm->next = (stickman_state_t){
         .state = 0,
         .advancing = STATIONARY,
         .ground_pos = -1.f,
+        .health = 100,
+        .fight_state = {
+            .balance = 10
+        }
     };
     
-    sm->health = 100;
     sm->direction = direction;
     sm->other = other;
 }
 
+//State change forcing
 
 //Note that new actions are considered to start epsilon after the previous frame,
-//as opposed to on the start of the next frame.
+//as opposed to on the start of the next frame. (the previous frame is stored in anim_start)
 //Also, 'frame' is the number of the previous frame.
-void update_stickman(stickman_t* sm, stickman_t* enemy,
-                     long long frame, int advance, int attack)
+void stickman_actions(stickman_t* sm, long long frame, int advance, int attack)
 {
     sm->prev = sm->next;
     
@@ -117,8 +118,26 @@ void update_stickman(stickman_t* sm, stickman_t* enemy,
             break;
     }
     
+    switch (sm->next.state) {
+        case 0:
+            sm->next.fight_state = (fight_state_t) {
+                .balance = 10, .hi = {8, 10}, .mid = {2, 3}
+            };
+            break;
+        case 1:
+            sm->next.fight_state = (fight_state_t) {
+                .balance = 6, .hi = {10, 16}, .mid = {1, 1}
+            };
+            break;
+        case 2:
+            sm->next.fight_state = (fight_state_t) {
+                .balance = 2, .hi = {1, 2}, .mid = {1, 1}
+            };
+            break;
+    }
+    
     float other_pos = -sm->other->next.ground_pos;
-    float fwd_limit = fmin(1, other_pos) - hitbox_width;
+    float fwd_limit = fmin(1, other_pos) - hitbox_width*2.;
     
     if (advance && sm->prev.ground_pos != fwd_limit) {
         sm->next.advancing = ADVANCING;
@@ -130,6 +149,44 @@ void update_stickman(stickman_t* sm, stickman_t* enemy,
     }
     else
         sm->next.advancing = STATIONARY;
+}
+
+//The attack is resolved against the previous state. This
+//is so the character which is updated first doesn't have
+//an advantage.
+//Calculate buffs
+void resolve_attack(stickman_t* victim, strike_point_t* target, attack_t* attack)
+{
+    int effective_momentum = attack->momentum - target->momentum;
+    if (effective_momentum >= attack->momentum / 2) //Attack lands
+    {
+        int damage = attack->damage - target->defense;
+        victim->next.health -= damage;
+        if (victim->next.health < 0)
+            victim->next.health = 0;
+    }
+    int knockback = effective_momentum - victim->prev.fight_state.balance;
+    if (knockback > 0)
+    {
+        victim->next.advancing = RETREATING;
+        victim->next.ground_pos -= .02*knockback;
+    }
+}
+
+void attack(stickman_t* sm, long long frame, attack_t attack)
+{
+    if (sm->prev.state == attack.state
+        && frame - sm->anim_start == attack.frame
+        && -sm->other->prev.ground_pos - sm->prev.ground_pos < attack.range)
+        resolve_attack(sm->other, &sm->other->prev.fight_state.hi + attack.target, &attack);
+}
+
+#define T(target) (&((fight_state_t*)NULL)->target - &((fight_state_t*)NULL)->hi)
+
+void stickman_consequences(stickman_t* sm, long long frame)
+{
+    //state, frame, target, range, damage, momentum
+    attack(sm, frame, (attack_t){1, 1, T(hi), .6, 20, 20});
 }
 
 //'frame' is also the number of the previous frame here.
@@ -146,8 +203,8 @@ void draw_stickman(stickman_t* sm, long long frame, float alpha)
     Mat3 pos = affine(0., ground_pos * sm->direction, 0.);
     pos.d[0] = sm->direction;
     glUniformMatrix3fv(sm->program.transform, 1, GL_FALSE, pos.d);
-    glUniform3f(sm->color_unif, 1., 1., 1.);
     
+    //next state determines which animation is drawn; see above
     switch (sm->next.state) {
         case 0:
             break;
@@ -163,7 +220,7 @@ void draw_stickman(stickman_t* sm, long long frame, float alpha)
     
     glDrawArrays(GL_TRIANGLES, 0, sm->obj.numVertecies);
     
-    draw_health_bar(&sm->health_bar, sm->health);
+    draw_health_bar(&sm->health_bar, sm->prev.health);
 }
 
 void free_stickman(stickman_t* sm)

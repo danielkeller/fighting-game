@@ -14,8 +14,8 @@
 #include "time.h"
 
 typedef enum direction {
-    LEFT = 1,
-    RIGHT = -1
+    LEFT = -1,
+    RIGHT = 1
 } direction_t;
 
 typedef enum advance {
@@ -24,10 +24,28 @@ typedef enum advance {
     STATIONARY
 } advance_t;
 
+typedef struct attack {
+    int state, frame;
+    ptrdiff_t target;
+    float range;
+    int damage, momentum;
+} attack_t;
+
+typedef struct strike_point {
+    int defense, momentum;
+} strike_point_t;
+
+typedef struct fight_state {
+    strike_point_t hi, mid, lo;
+    int balance;
+} fight_state_t;
+
 typedef struct stickman_state {
     int state;
     advance_t advancing;
     float ground_pos;
+    fight_state_t fight_state;
+    int health;
 } stickman_state_t;
 
 typedef struct health_bar {
@@ -42,7 +60,6 @@ typedef struct stickman {
     GLint color_unif;
     direction_t direction;
     struct stickman* other;
-    int health;
     health_bar_t health_bar;
     
     long long anim_start;
@@ -50,8 +67,8 @@ typedef struct stickman {
 } stickman_t;
 
 void make_stickman(stickman_t*, stickman_t* other, direction_t direction);
-void update_stickman(stickman_t*, stickman_t* enemy,
-                     long long frame, int advance, int attack);
+void stickman_actions(stickman_t*, long long frame, int advance, int attack);
+void stickman_consequences(stickman_t*, long long frame);
 void draw_stickman(stickman_t*, long long frame, float alpha);
 void free_stickman(stickman_t*);
 

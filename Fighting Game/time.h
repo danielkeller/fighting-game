@@ -29,8 +29,6 @@ usec_t get_time();
 int phys_tick(game_time_t*);
 //Update the game_time for one render tick, and return the leftover time as a fraction
 //of the tick length; [0,1).
-//Note that the just-simulated tick is considered to be in the past, and the rendering
-//should be extrapolated from it.
 float render_tick(game_time_t*);
 
 #endif /* time_h */
