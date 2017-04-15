@@ -4,10 +4,9 @@ uniform vec2 origin;
 uniform vec3 main_color;
 uniform vec3 lead_color;
 
-uniform sampler2D framebuffer;
+uniform sampler2DRect framebuffer;
 
 in vec2 posFrag;
-in vec2 framebuffer_coord;
 
 void main()
 {
@@ -17,7 +16,7 @@ void main()
     
     float val1 = 0.;//pow(1 - mod(wave, 1.), 16);
     
-    vec4 dest = texture(framebuffer, framebuffer_coord);
+    vec4 dest = texture(framebuffer, gl_FragCoord.xy);
     float src_a = val + val1;
     vec3 src = (main_color*val + lead_color*val1)/src_a;
     float extra_a = max(dest.a - src_a, 0.);

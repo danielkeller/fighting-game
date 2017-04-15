@@ -4,7 +4,6 @@ uniform vec3 main_color;
 uniform sampler2D framebuffer;
 
 in vec2 posFrag;
-in vec2 framebuffer_coord;
 
 void main()
 {

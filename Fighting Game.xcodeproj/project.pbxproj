@@ -29,6 +29,8 @@
 		37EA38291E9F65E300848254 /* libGLFW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37421AC61CB301AE0027B7D4 /* libGLFW.a */; };
 		37EA382B1E9F726E00848254 /* health bar.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37EA382A1E9F726E00848254 /* health bar.vert */; };
 		37EA382E1E9F986900848254 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 37EA382D1E9F986900848254 /* file.c */; };
+		37EA38301EA24B0B00848254 /* screenspace.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37EA382F1EA24B0B00848254 /* screenspace.vert */; };
+		37EA38321EA24B4400848254 /* blit.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37EA38311EA24B4400848254 /* blit.frag */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +89,8 @@
 		37EA382A1E9F726E00848254 /* health bar.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = "health bar.vert"; path = "shaders/health bar.vert"; sourceTree = "<group>"; };
 		37EA382C1E9F986900848254 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
 		37EA382D1E9F986900848254 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = file.c; sourceTree = "<group>"; };
+		37EA382F1EA24B0B00848254 /* screenspace.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = screenspace.vert; path = shaders/screenspace.vert; sourceTree = "<group>"; };
+		37EA38311EA24B4400848254 /* blit.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = blit.frag; path = shaders/blit.frag; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,9 +127,9 @@
 		37421AA31CB2FDCB0027B7D4 /* Fighting Game */ = {
 			isa = PBXGroup;
 			children = (
+				37421ABF1CB2FFE50027B7D4 /* main.c */,
 				37EA382C1E9F986900848254 /* file.h */,
 				37EA382D1E9F986900848254 /* file.c */,
-				37421ABF1CB2FFE50027B7D4 /* main.c */,
 				37853D661D662D520052A8C8 /* error.c */,
 				37853D671D662D520052A8C8 /* error.h */,
 				37B7BC4E1D6F311400EF0A7E /* fbo.c */,
@@ -199,6 +203,8 @@
 				3791266D1E866E8F00613418 /* anim.vert */,
 				3791266E1E866E8F00613418 /* simple.vert */,
 				37EA382A1E9F726E00848254 /* health bar.vert */,
+				37EA382F1EA24B0B00848254 /* screenspace.vert */,
+				37EA38311EA24B4400848254 /* blit.frag */,
 			);
 			name = shaders;
 			sourceTree = "<group>";
@@ -291,6 +297,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */,
+				37EA38321EA24B4400848254 /* blit.frag in Resources */,
+				37EA38301EA24B0B00848254 /* screenspace.vert in Resources */,
 				3791267E1E87F98C00613418 /* test.json in Resources */,
 				3791267C1E86A90200613418 /* stickman.json in Resources */,
 				37EA382B1E9F726E00848254 /* health bar.vert in Resources */,

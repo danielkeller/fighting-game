@@ -9,6 +9,8 @@
 #ifndef fbo_h
 #define fbo_h
 #include "gl_types.h"
+#include "object.h"
+#include "shader.h"
 
 typedef struct fbo
 {
@@ -16,6 +18,8 @@ typedef struct fbo
     GLuint fbos[2], default_fb;
     GLuint texes[2];
     size_t cur;
+    object_t quad;
+    program_t quad_shader;
 } fbo_t;
 
 //Note: fbo_window_size must be called before the fbo can be used
@@ -23,9 +27,6 @@ void make_fbo(fbo_t* fbo);
 
 //Note: prepare_fbo must be called before the fbo can be used
 void fbo_window_size(fbo_t* fbo, GLsizei width, GLsizei height);
-
-//Note: FBO must be bound
-void check_fbo_status(fbo_t* fbo);
 
 //Clears buffers. Note: changes read and draw fb bindings
 void prepare_fbo(fbo_t* fbo);

@@ -10,6 +10,7 @@
 #include "gl_core_3_3.h"
 #include "error.h"
 #include "shader.h"
+#include "shaders.h"
 
 //Pixelation level
 static const int pixel = 1;
@@ -29,12 +30,33 @@ void make_fbo(fbo_t* fbo)
         glReadBuffer(GL_COLOR_ATTACHMENT0);
     }
     glBindFramebuffer(GL_FRAMEBUFFER, fbo->default_fb);
+    
+    make_box(&fbo->quad);
+    load_shader_program(&fbo->quad_shader, screenspace_vert, blit_frag);
 }
 
 void free_fbo(fbo_t* fbo)
 {
     glDeleteFramebuffers(2, fbo->fbos);
     glDeleteTextures(2, fbo->texes);
+}
+
+#define FBO_ERROR_CASE(err) case err: die(#err);
+
+void check_fbo_status(void)
+{
+    switch (glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER))
+    {
+        FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT)
+        FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT)
+        FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER)
+        FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER)
+        FBO_ERROR_CASE(GL_FRAMEBUFFER_UNSUPPORTED)
+        FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE)
+        FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS)
+        default: die("Unknown framebuffer error");
+        case GL_FRAMEBUFFER_COMPLETE: ; //OK
+    }
 }
 
 void fbo_window_size(fbo_t* fbo, GLsizei width, GLsizei height)
@@ -47,47 +69,34 @@ void fbo_window_size(fbo_t* fbo, GLsizei width, GLsizei height)
     glGenTextures(2, fbo->texes);
     for (size_t i = 0; i < 2; ++i)
     {
-        glBindTexture(GL_TEXTURE_2D, fbo->texes[i]);
+        glBindTexture(GL_TEXTURE_RECTANGLE, fbo->texes[i]);
         //https://www.opengl.org/wiki/Common_Mistakes#Creating_a_complete_texture
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width/pixel, height/pixel, 0,
-                     GL_RGBA, GL_FLOAT, NULL);
+        glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA8, width/pixel, height/pixel, 0,
+                     GL_BGRA, GL_UNSIGNED_BYTE, NULL);
         
         glBindFramebuffer(GL_FRAMEBUFFER, fbo->fbos[i]);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                               GL_TEXTURE_2D, fbo->texes[i], 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                             fbo->texes[i], 0);
+        
+        check_fbo_status();
     }
     glViewport(0, 0, width/pixel, height/pixel);
 }
 
-#define FBO_ERROR_CASE(err) case err: die(#err);
-
-void check_fbo_status(fbo_t* fbo)
-{
-    switch (glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER))
-    {
-        FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT)
-        FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT)
-        FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER)
-        FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER)
-        FBO_ERROR_CASE(GL_FRAMEBUFFER_UNSUPPORTED)
-        FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE)
-        FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS)
-        case 0: die("Unknown framebuffer error");
-        default: ;
-    }
-}
-
 void prepare_fbo(fbo_t* fbo)
 {
-    flip_fbo(fbo);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo->fbos[fbo->cur]);
     glClear(GL_COLOR_BUFFER_BIT);
-    flip_fbo(fbo);
-    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void do_blit(fbo_t* fbo)
+{
+    glUseProgram(fbo->quad_shader.program);
+    glBindVertexArray(fbo->quad.vertexArrayObject);
+    glDrawArrays(GL_TRIANGLES, 0, fbo->quad.numVertecies);
 }
 
 void flip_fbo(fbo_t* fbo)
@@ -95,22 +104,18 @@ void flip_fbo(fbo_t* fbo)
     fbo->cur = 1 - fbo->cur;
     //Bind this to write in the framebuffer
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo->fbos[fbo->cur]);
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo->fbos[1 - fbo->cur]);
-    glBlitFramebuffer(0, 0, fbo->width/pixel, fbo->height/pixel,
-                      0, 0, fbo->width, fbo->height,
-                      GL_COLOR_BUFFER_BIT, GL_NEAREST);
     
     //Bind this to read in the shader
     glActiveTexture(GL_TEXTURE0 + FB_TEX_UNIT);
-    glBindTexture(GL_TEXTURE_2D, fbo->texes[1 - fbo->cur]);
+    glBindTexture(GL_TEXTURE_RECTANGLE, fbo->texes[1 - fbo->cur]);
+    
+    do_blit(fbo);
 }
 
 void blit_fbo(fbo_t* fbo)
 {
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo->fbos[fbo->cur]);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo->default_fb);
-    glBlitFramebuffer(0, 0, fbo->width/pixel, fbo->height/pixel,
-                      0, 0, fbo->width, fbo->height,
-                      GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo->default_fb);
+    glActiveTexture(GL_TEXTURE0 + FB_TEX_UNIT);
+    glBindTexture(GL_TEXTURE_RECTANGLE, fbo->texes[fbo->cur]);
+    do_blit(fbo);
 }

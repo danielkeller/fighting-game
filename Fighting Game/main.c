@@ -21,6 +21,8 @@
 #include "shaders.h"
 #include <math.h>
 
+const GLubyte* gluErrorString(GLenum errorCode);
+
 float camera_[] = {
     2., 0., 0.,
     0., 2., 0.,
@@ -70,7 +72,9 @@ int main (int argc, char* argv[]) {
     glUniformMatrix3fv(simple.transform, 1, GL_FALSE, eye3.d);
     
     init_game_time(&game_time);
-    uint64_t load_total = 0, load_count = 0;
+    uint64_t load_total = 0;
+    int64_t frame_count = 0;
+    usec_t last_fps = get_time();
     
     while (!glfwWindowShouldClose(window))
     {
@@ -81,11 +85,16 @@ int main (int argc, char* argv[]) {
         glfwSwapBuffers(window);
         float alpha = render_tick(&game_time);
         
+        ++frame_count;
         load_total += (frame_work_time * 100ull) / game_time.last_frame_length;
-        ++load_count;
-        if (load_count > 240) {
-            printf("%llu%%\n", load_total / load_count);
-            load_total = load_count = 0;
+        usec_t elapsed = get_time() - last_fps;
+        if (elapsed > 4000000ll)
+        {
+            printf("%llu%% ", load_total / frame_count);
+            printf("%lld fps %lld uspf\n", (frame_count * 1000) / (elapsed / 1000), elapsed / frame_count);
+            load_total = 0;
+            frame_count = 0;
+            last_fps += elapsed;
         }
         
         while (phys_tick(&game_time)) {
@@ -100,18 +109,12 @@ int main (int argc, char* argv[]) {
                             glfwGetKey(window, GLFW_KEY_PERIOD));
         }
         
-        poll_shader_changes();
-        
-        //if (game_time.last_frame_length > 20000ll)
-        //    printf("%llu\n", game_time.last_frame_length / 1000ll);
-        
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
         fbo_window_size(&fbo, width, height);
         
-        //check_fbo_status(&fbo);
+        poll_shader_changes();
         
-        /* Render here */
         prepare_fbo(&fbo);
         
         draw_stickman(&left, game_time.frame, alpha);
@@ -121,6 +124,7 @@ int main (int argc, char* argv[]) {
         flip_fbo(&fbo);
         
         glUseProgram(simple.program);
+        glBindVertexArray(box.vertexArrayObject);
         
         float time = (float)game_time.current_time / 1000000.f;
         glUniform1f(simple.time, time);
@@ -130,12 +134,12 @@ int main (int argc, char* argv[]) {
         glUniform3fv(lead_color_unif, 1, black);
         glUniform2fv(origin_unif, 1, tl);
         
-        glBindVertexArray(box.vertexArrayObject);
-        
         glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
-        
+
         flip_fbo(&fbo);
         
+        glUseProgram(simple.program);
+        glBindVertexArray(box.vertexArrayObject);
         glUniform1f(simple.pos_alpha, 1.f - sawf(time));
         glUniform3fv(color_unif, 1, red);
         glUniform3fv(lead_color_unif, 1, white);
@@ -143,8 +147,14 @@ int main (int argc, char* argv[]) {
         
         glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
         */
-        /* Swap front and back buffers */
+        
         blit_fbo(&fbo);
+        
+        GLenum err;
+        while((err = glGetError()) != GL_NO_ERROR)
+        {
+            printf("%s\n", gluErrorString(err));
+        }
     }
     
     free_stickman(&left);

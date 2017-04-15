@@ -140,7 +140,7 @@ void load_shader(shader_t shader)
     
     compile_shader(shader);
     if (!shader->shader)
-        exit(1);
+        die("Could not load shader");
 }
 
 void load_shader_program(program_t* prog, shader_t vert, shader_t frag)
@@ -156,7 +156,7 @@ void load_shader_program(program_t* prog, shader_t vert, shader_t frag)
     
     link_shader_program(prog);
     if (!prog->program)
-        exit(1);
+        die("Could not link shader program");
 }
 
 void free_program(program_t* prog)
@@ -261,6 +261,9 @@ void update_program(program_t* program)
         COPY_UNIF_MAT(GL_FLOAT_MAT2, GLfloat, 2, f)
         COPY_UNIF_MAT(GL_FLOAT_MAT3, GLfloat, 3, f)
         COPY_UNIF_MAT(GL_FLOAT_MAT4, GLfloat, 4, f)
+        
+        #undef COPY_UNIF
+        #undef COPY_UNIF_MAT
     }
     //Could potentially copy attribute locations as well
     

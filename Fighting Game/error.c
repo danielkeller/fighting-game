@@ -14,6 +14,7 @@
 void die(const char* reason)
 {
     printf("%s\n", reason);
+    printStackTrace();
     exit(1);
 }
 
@@ -32,7 +33,7 @@ void printStackTrace(void)
     
     // retrieve current stack addresses
     unsigned int addrlen = backtrace(addrlist, (int)sizeof( addrlist ) / sizeof( void* ));
-    char** symbollist = backtrace_symbols( addrlist, addrlen );
+    char** symbollist = backtrace_symbols(addrlist, addrlen);
     backtrace_symbols_fd(addrlist, addrlen, 2);
     
     free(symbollist);

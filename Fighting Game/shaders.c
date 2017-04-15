@@ -13,7 +13,6 @@ static struct shader anim_vert_struct = {
 "uniform mat3 camera;\n"
 "uniform mat3 transform;\n"
 "out vec2 posFrag;\n"
-"out vec2 framebuffer_coord;\n"
 "void main()\n"
 "{\n"
 "//Spline calculation\n"
@@ -24,10 +23,27 @@ static struct shader anim_vert_struct = {
 "+ inv_alpha*pos_alpha*(a*inv_alpha + b*pos_alpha);\n"
 "gl_Position = vec4((camera * transform * vec3(position, 1)).xy, 0, 1);\n"
 "posFrag = (transform * vec3(position, 1)).xy;\n"
-"framebuffer_coord = gl_Position.xy / 2. + 0.5;\n"
 "}\n"
 };
 shader_t anim_vert = &anim_vert_struct;
+
+static struct shader blit_frag_struct = {
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/blit.frag",
+#endif
+.name = "blit_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"uniform sampler2DRect framebuffer;\n"
+"in vec2 posFrag;\n"
+"void main()\n"
+"{\n"
+"color = texture(framebuffer, gl_FragCoord.xy);\n"
+"}\n"
+};
+shader_t blit_frag = &blit_frag_struct;
 
 static struct shader color_frag_struct = {
 .shader = 0,
@@ -41,7 +57,6 @@ static struct shader color_frag_struct = {
 "uniform vec3 main_color;\n"
 "uniform sampler2D framebuffer;\n"
 "in vec2 posFrag;\n"
-"in vec2 framebuffer_coord;\n"
 "void main()\n"
 "{\n"
 "color = vec4(main_color, 1);\n"
@@ -61,7 +76,6 @@ static struct shader health_bar_vert_struct = {
 "uniform float direction;\n"
 "uniform float health;\n"
 "out vec2 posFrag;\n"
-"out vec2 framebuffer_coord;\n"
 "void main()\n"
 "{\n"
 "mat3 transform = mat3(\n"
@@ -71,10 +85,27 @@ static struct shader health_bar_vert_struct = {
 ".1*direction, .8, 1);\n"
 "gl_Position = vec4((transform * vec3(position, 1)).xy, 0, 1);\n"
 "posFrag = (transform * vec3(position, 1)).xy;\n"
-"framebuffer_coord = gl_Position.xy / 2. + 0.5;\n"
 "}\n"
 };
 shader_t health_bar_vert = &health_bar_vert_struct;
+
+static struct shader screenspace_vert_struct = {
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/screenspace.vert",
+#endif
+.name = "screenspace_vert",
+.type = GL_VERTEX_SHADER,
+.source =
+"in vec2 position;\n"
+"out vec2 posFrag;\n"
+"void main()\n"
+"{\n"
+"gl_Position = vec4(position*2-1, 1, 1);\n"
+"posFrag = position*2-1;\n"
+"}\n"
+};
+shader_t screenspace_vert = &screenspace_vert_struct;
 
 static struct shader simple_vert_struct = {
 .shader = 0,
@@ -88,13 +119,11 @@ static struct shader simple_vert_struct = {
 "uniform mat3 camera;\n"
 "uniform mat3 transform;\n"
 "out vec2 posFrag;\n"
-"out vec2 framebuffer_coord;\n"
 "void main()\n"
 "{\n"
 "gl_Position = vec4(\n"
 "(camera * transform * vec3(position, 1)).xy, 0, 1);\n"
 "posFrag = (transform * vec3(position, 1)).xy;\n"
-"framebuffer_coord = gl_Position.xy / 2. + 0.5;\n"
 "}\n"
 };
 shader_t simple_vert = &simple_vert_struct;
@@ -112,16 +141,15 @@ static struct shader waves_frag_struct = {
 "uniform vec2 origin;\n"
 "uniform vec3 main_color;\n"
 "uniform vec3 lead_color;\n"
-"uniform sampler2D framebuffer;\n"
+"uniform sampler2DRect framebuffer;\n"
 "in vec2 posFrag;\n"
-"in vec2 framebuffer_coord;\n"
 "void main()\n"
 "{\n"
 "float wave = distance(posFrag, origin)*5 - time*.6;\n"
 "float pulse = 1;// - abs(cos(time*16)) * .2;\n"
 "float val = pow(mod(wave, 1.), 2 * pulse) + .02;// - .3*rand(posFrag + time);\n"
 "float val1 = 0.;//pow(1 - mod(wave, 1.), 16);\n"
-"vec4 dest = texture(framebuffer, framebuffer_coord);\n"
+"vec4 dest = texture(framebuffer, gl_FragCoord.xy);\n"
 "float src_a = val + val1;\n"
 "vec3 src = (main_color*val + lead_color*val1)/src_a;\n"
 "float extra_a = max(dest.a - src_a, 0.);\n"
