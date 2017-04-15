@@ -14,25 +14,13 @@
 #include "gl_core_3_3.h"
 #include "file.h"
 
-static program_t* all_programs[1024] = {0};
+#ifdef DEBUG
 static watch_t shader_watch = -1;
 
 //Does no bounds checking
-void add_program(program_t* program)
-{
-    size_t i = 0;
-    while (all_programs[i]) ++i;
-    all_programs[i] = program;
-}
-
-void remove_program(program_t* program)
-{
-    size_t i = 0;
-    while (all_programs[i] != program) ++i;
-    
-    for (; all_programs[i+1]; ++i)
-        all_programs[i] = all_programs[i+1];
-}
+void add_program(program_t* program);
+void remove_program(program_t* program);
+#endif
 
 void compile_shader(shader_t shader_data)
 {
@@ -112,9 +100,6 @@ void link_shader_program(program_t* prog)
         return;
     }
     
-    //glDetachShader(program, vertShdr);
-    //glDetachShader(program, fragShdr);
-    
     prog->program = program;
     prog->camera = glGetUniformLocation(program, "camera");
     prog->transform = glGetUniformLocation(program, "transform");
@@ -168,6 +153,24 @@ void free_program(program_t* prog)
 }
 
 #ifdef DEBUG
+static program_t* all_programs[1024] = {0};
+
+void add_program(program_t* program)
+{
+    size_t i = 0;
+    while (all_programs[i]) ++i;
+    all_programs[i] = program;
+}
+
+void remove_program(program_t* program)
+{
+    size_t i = 0;
+    while (all_programs[i] != program) ++i;
+    
+    for (; all_programs[i+1]; ++i)
+        all_programs[i] = all_programs[i+1];
+}
+
 void update_program(program_t* program);
 
 void poll_shader_changes()
@@ -193,18 +196,16 @@ void poll_shader_changes()
     //Now find programs using this shader
     int updated = 0;
     
-    for (size_t i = 0; all_programs[i]; ++i) {
-        if (all_programs[i]->vert == changed)
+    for (size_t i = 0; all_programs[i]; ++i)
+        if (all_programs[i]->vert == changed || all_programs[i]->frag == changed)
             update_program(all_programs[i]), ++updated;
-        else if (all_programs[i]->frag == changed)
-            update_program(all_programs[i]), ++updated;
-    }
     
     printf("Updated %d programs.\n", updated);
 }
 
 void update_program(program_t* program)
 {
+    //Try re-linking the program with the new shaders
     program_t new_program = *program;
     link_shader_program(&new_program);
     
