@@ -27,13 +27,6 @@ typedef struct anim_step {
     GLsizei d_from, d_to; //derivative
 } anim_step_t;
 
-//This belongs in a state machine header
-typedef struct animation
-{
-    int id;
-    const anim_step_t* step;
-    int frames;
-} animation_t;
 
 void make_anim_obj(object_t*, float* verts, GLsizei verts_sz, GLsizei stride);
 void anim_obj_keys(object_t*, const anim_step_t* step);

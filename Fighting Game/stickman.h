@@ -18,12 +18,6 @@ typedef enum direction {
     RIGHT = 1
 } direction_t;
 
-typedef enum advance {
-    ADVANCING,
-    RETREATING,
-    STATIONARY
-} advance_t;
-
 typedef struct attack {
     int state, frame;
     ptrdiff_t target;
@@ -40,19 +34,26 @@ typedef struct fight_state {
     int balance;
 } fight_state_t;
 
-typedef struct stickman_state {
-    int state;
-    advance_t advancing;
-    float ground_pos;
+typedef struct state
+{
+    int frames;
+    const anim_step_t* anim;
     fight_state_t fight_state;
-    int health;
-} stickman_state_t;
+} state_t;
 
 typedef struct health_bar {
     object_t obj;
     program_t program;
     GLint health_unif;
 } health_bar_t;
+
+typedef struct stickman_state {
+    int state;
+    int advancing;
+    float ground_pos;
+    fight_state_t fight_state;
+    int health;
+} stickman_state_t;
 
 typedef struct stickman {
     object_t obj;
