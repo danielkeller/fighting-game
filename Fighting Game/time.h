@@ -18,17 +18,18 @@ static const usec_t frame_limit = 250000ll;
 
 typedef struct game_time {
     unsigned long long frame;
+    float alpha;
     usec_t last_render, last_frame_length, current_time, unsimulated_time;
 } game_time_t;
 
 void init_game_time(game_time_t*);
 
-usec_t get_time();
+usec_t get_time(void);
 
 //Update the game_time for one physics tick, and return 1 if we should simulate
 int phys_tick(game_time_t*);
 //Update the game_time for one render tick, and return the leftover time as a fraction
 //of the tick length; [0,1).
-float render_tick(game_time_t*);
+void render_tick(game_time_t*);
 
 #endif /* time_h */

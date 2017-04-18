@@ -40,7 +40,7 @@ int phys_tick(game_time_t *gt)
     return 1;
 }
 
-float render_tick(game_time_t *gt)
+void render_tick(game_time_t *gt)
 {
     usec_t now = get_time();
     usec_t frame_time = now - gt->last_render;
@@ -53,5 +53,5 @@ float render_tick(game_time_t *gt)
     
     //The amount of unsimulated time after the next physics step(s)
     usec_t next_ut = gt->unsimulated_time % tick_length;
-    return (float)next_ut / (float)tick_length;
+    gt->alpha = (float)next_ut / (float)tick_length;
 }

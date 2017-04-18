@@ -27,6 +27,29 @@ static struct shader anim_vert_struct = {
 };
 shader_t anim_vert = &anim_vert_struct;
 
+static struct shader blast_frag_struct = {
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/blast.frag",
+#endif
+.name = "blast_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"uniform float time;\n"
+"uniform vec2 origin;\n"
+"uniform sampler2DRect framebuffer;\n"
+"in vec2 posFrag;\n"
+"void main()\n"
+"{\n"
+"vec2 dir = posFrag - origin;\n"
+"float amount = mod(sqrt(length(dir))*10 - time*4, 1);\n"
+"vec2 displacement = amount*normalize(dir)*100;\n"
+"color = texture(framebuffer, gl_FragCoord.xy + displacement);\n"
+"}\n"
+};
+shader_t blast_frag = &blast_frag_struct;
+
 static struct shader blit_frag_struct = {
 .shader = 0,
 #ifdef DEBUG
@@ -89,6 +112,41 @@ static struct shader health_bar_vert_struct = {
 };
 shader_t health_bar_vert = &health_bar_vert_struct;
 
+static struct shader particles_vert_struct = {
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/particles.vert",
+#endif
+.name = "particles_vert",
+.type = GL_VERTEX_SHADER,
+.source =
+"in vec2 position;\n"
+"uniform float time;\n"
+"uniform mat3 camera;\n"
+"uniform mat3 transform;\n"
+"out vec2 posFrag;\n"
+"int rand(int x) {\n"
+"x ^= x << 13; x ^= x >> 17; x ^= x << 5;\n"
+"return x;\n"
+"}\n"
+"void main()\n"
+"{\n"
+"vec2 pos = position*.01;\n"
+"int seed = rand(gl_InstanceID) ^ int(1/fract(transform[0,2] + transform[1,2]));\n"
+"int angle = rand(seed);\n"
+"int vel = rand(angle);\n"
+"float theta = float(angle) / pow(2., 20);\n"
+"vec2 dir = vec2(cos(theta), sin(theta));\n"
+"pos += dir * time * (float(vel) / pow(2., 32));\n"
+"float gravity = time * time;\n"
+"pos.y -= gravity;\n"
+"gl_Position = vec4(\n"
+"(camera * transform * vec3(pos, 1)).xy, 0, 1);\n"
+"posFrag = (transform * vec3(pos, 1)).xy;\n"
+"}\n"
+};
+shader_t particles_vert = &particles_vert_struct;
+
 static struct shader screenspace_vert_struct = {
 .shader = 0,
 #ifdef DEBUG
@@ -102,6 +160,7 @@ static struct shader screenspace_vert_struct = {
 "void main()\n"
 "{\n"
 "gl_Position = vec4(position*2-1, 1, 1);\n"
+"//posFrag is supposed to be in world space\n"
 "posFrag = position*2-1;\n"
 "}\n"
 };

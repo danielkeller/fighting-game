@@ -99,7 +99,7 @@ void do_blit(fbo_t* fbo)
     glDrawArrays(GL_TRIANGLES, 0, fbo->quad.numVertecies);
 }
 
-void flip_fbo(fbo_t* fbo)
+void swap_fbo(fbo_t* fbo)
 {
     fbo->cur = 1 - fbo->cur;
     //Bind this to write in the framebuffer
@@ -108,7 +108,11 @@ void flip_fbo(fbo_t* fbo)
     //Bind this to read in the shader
     glActiveTexture(GL_TEXTURE0 + FB_TEX_UNIT);
     glBindTexture(GL_TEXTURE_RECTANGLE, fbo->texes[1 - fbo->cur]);
-    
+}
+
+void flip_fbo(fbo_t* fbo)
+{
+    swap_fbo(fbo);
     do_blit(fbo);
 }
 

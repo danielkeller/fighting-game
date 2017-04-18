@@ -13,7 +13,7 @@
 #include "object.h"
 #include "shader.h"
 #include "time.h"
-#include "world.h"
+#include "globals.h"
 #include "math.h"
 #include "gl_core_3_3.h"
 #include "objects/test.h"
@@ -45,33 +45,34 @@ float sawf(float v)
 int main (int argc, char* argv[]) {
     GLFWwindow* window = init_window();
     
-    fbo_t fbo;
+    
+    //make_anim_obj(&box, test_verts, sizeof(test_verts), test_stride);
+    //anim_obj_keys(&box, &test_test_Basis_Key_1);
+    /*
+    program_t simple;
+    load_shader_program(&simple, anim_vert, waves_frag);
+    
+
+    GLint origin_unif = glGetUniformLocation(simple.program, "origin");
+    GLint color_unif = glGetUniformLocation(simple.program, "main_color");
+    GLint lead_color_unif = glGetUniformLocation(simple.program, "lead_color");
+
+     
+    glUseProgram(simple.program);
+    glUniformMatrix3fv(simple.camera, 1, GL_FALSE, camera.d);
+    glUniformMatrix3fv(simple.transform, 1, GL_FALSE, eye3.d);
+        */
+    
+    
+    make_box(&box);
     make_fbo(&fbo);
-    
-    game_time_t game_time;
-    
-    object_t box;
-    make_anim_obj(&box, test_verts, sizeof(test_verts), test_stride);
-    anim_obj_keys(&box, &test_test_Basis_Key_1);
+    make_effects(&effects);
+    init_game_time(&game_time);
     
     stickman_t left, right;
     make_stickman(&left, &right, RIGHT);
     make_stickman(&right, &left, LEFT);
     
-    program_t simple;
-    load_shader_program(&simple, anim_vert, waves_frag);
-    
-    /*
-    GLint origin_unif = glGetUniformLocation(simple.program, "origin");
-    GLint color_unif = glGetUniformLocation(simple.program, "main_color");
-    GLint lead_color_unif = glGetUniformLocation(simple.program, "lead_color");
-    */
-     
-    glUseProgram(simple.program);
-    glUniformMatrix3fv(simple.camera, 1, GL_FALSE, camera.d);
-    glUniformMatrix3fv(simple.transform, 1, GL_FALSE, eye3.d);
-    
-    init_game_time(&game_time);
     /*
     uint64_t load_total = 0;
     int64_t frame_count = 0;
@@ -85,7 +86,7 @@ int main (int argc, char* argv[]) {
         //render_tick must be called immediately after the frame appears
         //onscreen for the algorithm to work.
         glfwSwapBuffers(window);
-        float alpha = render_tick(&game_time);
+        render_tick(&game_time);
         /*
         ++frame_count;
         load_total += (frame_work_time * 100ull) / game_time.last_frame_length;
@@ -103,15 +104,15 @@ int main (int argc, char* argv[]) {
         while (phys_tick(&game_time)) {
             glfwPollEvents();
             
-            stickman_actions(&left, game_time.frame,
+            stickman_actions(&left,
                             glfwGetKey(window, GLFW_KEY_Z),
                             glfwGetKey(window, GLFW_KEY_X));
-            stickman_actions(&right, game_time.frame,
+            stickman_actions(&right,
                             glfwGetKey(window, GLFW_KEY_COMMA),
                             glfwGetKey(window, GLFW_KEY_PERIOD));
             
-            stickman_consequences(&left, game_time.frame);
-            stickman_consequences(&right, game_time.frame);
+            stickman_consequences(&left);
+            stickman_consequences(&right);
         }
         
         int width, height;
@@ -122,8 +123,9 @@ int main (int argc, char* argv[]) {
         
         prepare_fbo(&fbo);
         
-        draw_stickman(&left, game_time.frame, alpha);
-        draw_stickman(&right, game_time.frame, alpha);
+        draw_stickman(&left);
+        draw_stickman(&right);
+        draw_effects(&effects);
         
         /*
         flip_fbo(&fbo);
@@ -131,7 +133,7 @@ int main (int argc, char* argv[]) {
         glUseProgram(simple.program);
         glBindVertexArray(box.vertexArrayObject);
         
-        float time = (float)game_time.current_time / 1000000.f;
+        float time = secondsf(game_time.current_time);
         glUniform1f(simple.time, time);
         
         glUniform1f(simple.pos_alpha, sawf(time));
@@ -165,8 +167,9 @@ int main (int argc, char* argv[]) {
     free_stickman(&left);
     free_stickman(&right);
     free_object(&box);
-    free_program(&simple);
+    //free_program(&simple);
     
+    free_effects(&effects);
     free_fbo(&fbo);
     glfwTerminate();
     

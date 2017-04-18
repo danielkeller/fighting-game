@@ -9,6 +9,7 @@
 #ifndef gl_types_h
 #define gl_types_h
 #include <stdint.h>
+#include <stddef.h>
 
 typedef unsigned int GLenum;
 typedef unsigned char GLboolean;

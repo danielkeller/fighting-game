@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		371FF0AC1EA528A0003274FE /* function.c in Sources */ = {isa = PBXBuildFile; fileRef = 371FF0AA1EA528A0003274FE /* function.c */; };
+		371FF0B01EA5FE81003274FE /* effects.c in Sources */ = {isa = PBXBuildFile; fileRef = 371FF0AE1EA5FE81003274FE /* effects.c */; };
 		372F337E1D78A9020076D98E /* stickman.c in Sources */ = {isa = PBXBuildFile; fileRef = 372F337C1D78A9020076D98E /* stickman.c */; };
 		37421AA61CB2FDCC0027B7D4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 37421AA51CB2FDCC0027B7D4 /* AppDelegate.m */; };
 		37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37421AAA1CB2FDCC0027B7D4 /* Assets.xcassets */; };
@@ -23,7 +25,7 @@
 		3791267E1E87F98C00613418 /* test.json in Resources */ = {isa = PBXBuildFile; fileRef = 3791267D1E87F98C00613418 /* test.json */; };
 		37B6950C1D737A0D009A40B1 /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B6950A1D737A0D009A40B1 /* test.c */; };
 		37B7BC501D6F311400EF0A7E /* fbo.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B7BC4E1D6F311400EF0A7E /* fbo.c */; };
-		37CFC0E91D7B2584000A795E /* world.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0E71D7B2584000A795E /* world.c */; };
+		37CFC0E91D7B2584000A795E /* globals.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0E71D7B2584000A795E /* globals.c */; };
 		37CFC0EC1D7B2671000A795E /* math.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0EA1D7B2671000A795E /* math.c */; };
 		37E1D7F41D77633E005C7198 /* stickman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37E1D7F21D77633E005C7198 /* stickman.c */; };
 		37EA38291E9F65E300848254 /* libGLFW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37421AC61CB301AE0027B7D4 /* libGLFW.a */; };
@@ -31,6 +33,12 @@
 		37EA382E1E9F986900848254 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 37EA382D1E9F986900848254 /* file.c */; };
 		37EA38301EA24B0B00848254 /* screenspace.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37EA382F1EA24B0B00848254 /* screenspace.vert */; };
 		37EA38321EA24B4400848254 /* blit.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37EA38311EA24B4400848254 /* blit.frag */; };
+		37EA38341EA2C18400848254 /* blast.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37EA38331EA2C18400848254 /* blast.frag */; };
+		37EA38361EA4F0F700848254 /* particles.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37EA38351EA4F0F700848254 /* particles.vert */; };
+		37EA38401EA5139900848254 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA383F1EA5139900848254 /* AppKit.framework */; };
+		37EA38441EA513F400848254 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA38431EA513F400848254 /* IOKit.framework */; };
+		37EA38481EA5141E00848254 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA38471EA5141E00848254 /* OpenGL.framework */; };
+		37EA384A1EA5147000848254 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA38491EA5147000848254 /* CoreVideo.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +52,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		371FF0AA1EA528A0003274FE /* function.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = function.c; sourceTree = "<group>"; };
+		371FF0AB1EA528A0003274FE /* function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = function.h; sourceTree = "<group>"; };
+		371FF0AE1EA5FE81003274FE /* effects.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = effects.c; sourceTree = "<group>"; };
+		371FF0AF1EA5FE81003274FE /* effects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = effects.h; sourceTree = "<group>"; };
 		372F337C1D78A9020076D98E /* stickman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stickman.c; sourceTree = "<group>"; };
 		372F337D1D78A9020076D98E /* stickman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stickman.h; sourceTree = "<group>"; };
 		37421AA11CB2FDCB0027B7D4 /* Fighting Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Fighting Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -80,8 +92,8 @@
 		37B6950B1D737A0D009A40B1 /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test.h; path = objects/test.h; sourceTree = "<group>"; };
 		37B7BC4E1D6F311400EF0A7E /* fbo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fbo.c; sourceTree = "<group>"; };
 		37B7BC4F1D6F311400EF0A7E /* fbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fbo.h; sourceTree = "<group>"; };
-		37CFC0E71D7B2584000A795E /* world.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = world.c; sourceTree = "<group>"; };
-		37CFC0E81D7B2584000A795E /* world.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = world.h; sourceTree = "<group>"; };
+		37CFC0E71D7B2584000A795E /* globals.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = globals.c; sourceTree = "<group>"; };
+		37CFC0E81D7B2584000A795E /* globals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = globals.h; sourceTree = "<group>"; };
 		37CFC0EA1D7B2671000A795E /* math.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = math.c; sourceTree = "<group>"; };
 		37CFC0EB1D7B2671000A795E /* math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = math.h; sourceTree = "<group>"; };
 		37E1D7F21D77633E005C7198 /* stickman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stickman.c; path = objects/stickman.c; sourceTree = "<group>"; };
@@ -91,6 +103,12 @@
 		37EA382D1E9F986900848254 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = file.c; sourceTree = "<group>"; };
 		37EA382F1EA24B0B00848254 /* screenspace.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = screenspace.vert; path = shaders/screenspace.vert; sourceTree = "<group>"; };
 		37EA38311EA24B4400848254 /* blit.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = blit.frag; path = shaders/blit.frag; sourceTree = "<group>"; };
+		37EA38331EA2C18400848254 /* blast.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = blast.frag; path = shaders/blast.frag; sourceTree = "<group>"; };
+		37EA38351EA4F0F700848254 /* particles.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = particles.vert; path = shaders/particles.vert; sourceTree = "<group>"; };
+		37EA383F1EA5139900848254 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		37EA38431EA513F400848254 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		37EA38471EA5141E00848254 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		37EA38491EA5147000848254 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +116,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37EA384A1EA5147000848254 /* CoreVideo.framework in Frameworks */,
+				37EA38481EA5141E00848254 /* OpenGL.framework in Frameworks */,
+				37EA38441EA513F400848254 /* IOKit.framework in Frameworks */,
+				37EA38401EA5139900848254 /* AppKit.framework in Frameworks */,
 				37EA38291E9F65E300848254 /* libGLFW.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -113,6 +135,7 @@
 				37421AC11CB301AE0027B7D4 /* GLFW.xcodeproj */,
 				37421AA31CB2FDCB0027B7D4 /* Fighting Game */,
 				37421AA21CB2FDCB0027B7D4 /* Products */,
+				37EA383E1EA5139900848254 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -146,8 +169,12 @@
 				37421AD61CB3CF070027B7D4 /* time.h */,
 				37421AD21CB3066D0027B7D4 /* window.c */,
 				37421AD31CB3066D0027B7D4 /* window.h */,
-				37CFC0E71D7B2584000A795E /* world.c */,
-				37CFC0E81D7B2584000A795E /* world.h */,
+				371FF0AE1EA5FE81003274FE /* effects.c */,
+				371FF0AF1EA5FE81003274FE /* effects.h */,
+				37CFC0E71D7B2584000A795E /* globals.c */,
+				37CFC0E81D7B2584000A795E /* globals.h */,
+				371FF0AA1EA528A0003274FE /* function.c */,
+				371FF0AB1EA528A0003274FE /* function.h */,
 				3791266A1E866E8600613418 /* shaders */,
 				37B695091D737A04009A40B1 /* objects */,
 				379126731E86786100613418 /* shaders.c */,
@@ -205,6 +232,8 @@
 				37EA382A1E9F726E00848254 /* health bar.vert */,
 				37EA382F1EA24B0B00848254 /* screenspace.vert */,
 				37EA38311EA24B4400848254 /* blit.frag */,
+				37EA38331EA2C18400848254 /* blast.frag */,
+				37EA38351EA4F0F700848254 /* particles.vert */,
 			);
 			name = shaders;
 			sourceTree = "<group>";
@@ -220,6 +249,17 @@
 				3791267D1E87F98C00613418 /* test.json */,
 			);
 			name = objects;
+			sourceTree = "<group>";
+		};
+		37EA383E1EA5139900848254 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				37EA38491EA5147000848254 /* CoreVideo.framework */,
+				37EA38471EA5141E00848254 /* OpenGL.framework */,
+				37EA38431EA513F400848254 /* IOKit.framework */,
+				37EA383F1EA5139900848254 /* AppKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -296,12 +336,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37EA38361EA4F0F700848254 /* particles.vert in Resources */,
 				37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */,
 				37EA38321EA24B4400848254 /* blit.frag in Resources */,
 				37EA38301EA24B0B00848254 /* screenspace.vert in Resources */,
 				3791267E1E87F98C00613418 /* test.json in Resources */,
 				3791267C1E86A90200613418 /* stickman.json in Resources */,
 				37EA382B1E9F726E00848254 /* health bar.vert in Resources */,
+				37EA38341EA2C18400848254 /* blast.frag in Resources */,
 				37421AAE1CB2FDCC0027B7D4 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -333,9 +375,10 @@
 				37421AD71CB3CF070027B7D4 /* time.c in Sources */,
 				37B6950C1D737A0D009A40B1 /* test.c in Sources */,
 				37421AC01CB2FFE50027B7D4 /* main.c in Sources */,
+				371FF0AC1EA528A0003274FE /* function.c in Sources */,
 				37853D681D662D520052A8C8 /* error.c in Sources */,
 				379126751E86786100613418 /* shaders.c in Sources */,
-				37CFC0E91D7B2584000A795E /* world.c in Sources */,
+				37CFC0E91D7B2584000A795E /* globals.c in Sources */,
 				37B7BC501D6F311400EF0A7E /* fbo.c in Sources */,
 				37EA382E1E9F986900848254 /* file.c in Sources */,
 				37853D6B1D68AA720052A8C8 /* object.c in Sources */,
@@ -343,6 +386,7 @@
 				37421ACE1CB306220027B7D4 /* gl_core_3_3.c in Sources */,
 				37CFC0EC1D7B2671000A795E /* math.c in Sources */,
 				37E1D7F41D77633E005C7198 /* stickman.c in Sources */,
+				371FF0B01EA5FE81003274FE /* effects.c in Sources */,
 				37853D5D1D6622680052A8C8 /* shader.c in Sources */,
 				372F337E1D78A9020076D98E /* stickman.c in Sources */,
 				37421AA61CB2FDCC0027B7D4 /* AppDelegate.m in Sources */,
@@ -452,6 +496,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_WARN_PEDANTIC = YES;
@@ -468,6 +513,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_WARN_PEDANTIC = YES;

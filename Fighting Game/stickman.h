@@ -11,7 +11,8 @@
 
 #include "object.h"
 #include "shader.h"
-#include "time.h"
+typedef struct fbo fbo_t;
+typedef struct game_time game_time_t;
 
 typedef enum direction {
     LEFT = -1,
@@ -47,9 +48,16 @@ typedef struct health_bar {
     GLint health_unif;
 } health_bar_t;
 
+typedef struct hit_effect {
+    object_t obj;
+    program_t program;
+    GLint origin_unif;
+} hit_effect_t;
+
 typedef struct stickman_state {
     int state;
     int advancing;
+    int attack_landed;
     float ground_pos;
     fight_state_t fight_state;
     int health;
@@ -62,15 +70,17 @@ typedef struct stickman {
     direction_t direction;
     struct stickman* other;
     health_bar_t health_bar;
+    hit_effect_t hit_effect;
+    program_t parry_effect;
     
     long long anim_start;
     stickman_state_t prev, next;
 } stickman_t;
 
 void make_stickman(stickman_t*, stickman_t* other, direction_t direction);
-void stickman_actions(stickman_t*, long long frame, int advance, int attack);
-void stickman_consequences(stickman_t*, long long frame);
-void draw_stickman(stickman_t*, long long frame, float alpha);
+void stickman_actions(stickman_t*, int advance, int attack);
+void stickman_consequences(stickman_t*);
+void draw_stickman(stickman_t*);
 void free_stickman(stickman_t*);
 
 #endif /* stickman_h */

@@ -34,6 +34,9 @@ void prepare_fbo(fbo_t* fbo);
 //Note: changes read and draw fb bindings
 void flip_fbo(fbo_t* fbo);
 
+//same as flip_fbo, but doesn't copy pixels
+void swap_fbo(fbo_t* fbo);
+
 //Note: changes read and draw fb bindings
 void blit_fbo(fbo_t* fbo);
 
