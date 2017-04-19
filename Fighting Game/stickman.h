@@ -48,16 +48,9 @@ typedef struct health_bar {
     GLint health_unif;
 } health_bar_t;
 
-typedef struct hit_effect {
-    object_t obj;
-    program_t program;
-    GLint origin_unif;
-} hit_effect_t;
-
 typedef struct stickman_state {
     int state;
     int advancing;
-    int attack_landed;
     float ground_pos;
     fight_state_t fight_state;
     int health;
@@ -70,8 +63,7 @@ typedef struct stickman {
     direction_t direction;
     struct stickman* other;
     health_bar_t health_bar;
-    hit_effect_t hit_effect;
-    program_t parry_effect;
+    program_t hit_effect, parry_effect;
     
     long long anim_start;
     stickman_state_t prev, next;
