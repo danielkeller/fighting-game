@@ -6,7 +6,7 @@
 //  Copyright © 2017 Daniel Keller. All rights reserved.
 //
 
-#include "effects.h"
+#include "engine.h"
 
 void make_effects(effects_t* ef)
 {

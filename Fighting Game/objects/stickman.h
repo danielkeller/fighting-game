@@ -1,4 +1,5 @@
-#include "object.h"
+#include "gl_types.h"
+typedef struct anim_step anim_step_t;
 static const GLsizei stickman_stride = 64;
 static const GLsizei stickman_DS_Bot = 0;
 static const GLsizei stickman_Basis = 8;

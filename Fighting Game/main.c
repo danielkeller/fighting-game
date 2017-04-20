@@ -9,16 +9,9 @@
 #include <stdio.h>
 
 #include "window.h"
-#include "fbo.h"
-#include "object.h"
-#include "shader.h"
-#include "time.h"
-#include "globals.h"
-#include "math.h"
-#include "gl_core_3_3.h"
+#include "engine.h"
 #include "objects/test.h"
 #include "stickman.h"
-#include "shaders.h"
 #include <math.h>
 
 const GLubyte* gluErrorString(GLenum errorCode);
@@ -70,8 +63,8 @@ int main (int argc, char* argv[]) {
     init_game_time(&game_time);
     
     stickman_t left, right;
-    make_stickman(&left, &right, RIGHT);
-    make_stickman(&right, &left, LEFT);
+    make_stickman(&left, &right.character, RIGHT);
+    make_stickman(&right, &left.character, LEFT);
     
     /*
     uint64_t load_total = 0;

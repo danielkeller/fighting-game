@@ -14,8 +14,8 @@ def files():
 types = {'.vert': 'GL_VERTEX_SHADER', '.frag': 'GL_FRAGMENT_SHADER'}
 
 with open(output_path_c, 'w') as output_c, open(output_path_h, 'w') as output_h:
-    output_h.write('#include "shader.h"\n')
-    output_c.write('#include "shaders.h"\n#include "gl_core_3_3.h"\n')
+    output_h.write('typedef struct shader* shader_t;\n')
+    output_c.write('#include "engine.h"\n')
     
     for in_path in files():
         name = re.sub('[^a-zA-Z0-9]', '_', os.path.basename(in_path))

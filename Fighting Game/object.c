@@ -6,10 +6,7 @@
 //  Copyright © 2016 Daniel Keller. All rights reserved.
 //
 
-#include "object.h"
-#include "shader.h"
-
-#include "gl_core_3_3.h"
+#include "engine.h"
 #include <assert.h>
 
 static const GLfloat box_verts[] = {
@@ -33,7 +30,7 @@ void make_box(object_t* obj)
     glEnableVertexAttribArray(POSITION_ATTRIB);
     glVertexAttribPointer(POSITION_ATTRIB, 2, GL_FLOAT, GL_FALSE, 0, NULL);
     
-    obj->numVertecies = sizeof(box_verts)/sizeof(float);
+    obj->numVertecies = sizeof(box_verts)/(sizeof(float) * 2);
     obj->stride = 0;
 }
 

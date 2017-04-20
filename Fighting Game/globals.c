@@ -6,7 +6,7 @@
 //  Copyright © 2016 Daniel Keller. All rights reserved.
 //
 
-#include "globals.h"
+#include "engine.h"
 
 Mat3 camera = {{
     1, 0, 0,

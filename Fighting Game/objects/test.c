@@ -1,4 +1,5 @@
 #include "test.h"
+#include "engine.h"
 const anim_step_t test_test_Basis_Key_1 = 
 {.p_from = 16, .p_to = 0, .d_from = 24, .d_to = 32};
 float test_verts[60] = {

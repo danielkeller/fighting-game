@@ -1,4 +1,5 @@
-#include "object.h"
+#include "gl_types.h"
+typedef struct anim_step anim_step_t;
 static const GLsizei test_stride = 40;
 static const GLsizei test_Key_1 = 0;
 static const GLsizei test_Key_2 = 8;

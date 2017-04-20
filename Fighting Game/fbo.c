@@ -6,10 +6,8 @@
 //  Copyright © 2016 Daniel Keller. All rights reserved.
 //
 
-#include "fbo.h"
-#include "gl_core_3_3.h"
+#include "engine.h"
 #include "error.h"
-#include "shader.h"
 #include "shaders.h"
 
 //Pixelation level

@@ -26,6 +26,9 @@ typedef struct bound {
         argty* data = malloc(sizeof(argty)); \
         *data = *arg; \
         return (bound_t) {func##_bindhelper, data}; \
+    } \
+    bound_t ref_bind_##func(argty* arg) { \
+        return (bound_t) {func##_bindhelper, arg}; \
     }
 
 #define CALL_BOUND(bound) (bound).fun((bound).arg)

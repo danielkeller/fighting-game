@@ -6,15 +6,14 @@
 //  Copyright © 2016 Daniel Keller. All rights reserved.
 //
 
-#include "shader.h"
+#include "engine.h"
 #include "error.h"
 
+#ifdef DEBUG
 #include <stdio.h>
 #include <stdlib.h>
-#include "gl_core_3_3.h"
 #include "file.h"
 
-#ifdef DEBUG
 static watch_t shader_watch = -1;
 
 //Does no bounds checking
@@ -128,6 +127,9 @@ void load_shader(shader_t shader)
         die("Could not load shader");
 }
 
+//Right now the way shader types are specified is redundant, both in the file extention
+//and the positions of the arguments. The extra info in the file extension could be
+//useful in the future, if geometry shaders (for instance) are needed.
 void load_shader_program(program_t* prog, shader_t vert, shader_t frag)
 {
     prog->vert = vert, prog->frag = frag;

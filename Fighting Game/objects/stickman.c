@@ -1,4 +1,5 @@
 #include "stickman.h"
+#include "engine.h"
 const anim_step_t stickman_swing_Basis_DS_Mid = 
 {.p_from = 8, .p_to = 16, .d_from = 24, .d_to = 32};
 const anim_step_t stickman_swing_DS_Mid_DS_Bot = 

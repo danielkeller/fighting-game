@@ -1,5 +1,4 @@
-#include "shaders.h"
-#include "gl_core_3_3.h"
+#include "engine.h"
 static struct shader anim_vert_struct = {
 .shader = 0,
 #ifdef DEBUG

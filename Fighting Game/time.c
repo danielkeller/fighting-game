@@ -6,10 +6,8 @@
 //  Copyright © 2016 Daniel Keller. All rights reserved.
 //
 
-#include "time.h"
-
+#include "engine.h"
 #include "window.h"
-//todo: utils.h for die
 #include "error.h"
 
 usec_t get_time()

@@ -6,7 +6,7 @@
 //  Copyright © 2016 Daniel Keller. All rights reserved.
 //
 
-#include "math.h"
+#include "engine.h"
 #include <math.h>
 
 Mat3 eye3 = {{

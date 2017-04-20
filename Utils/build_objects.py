@@ -69,8 +69,10 @@ for path in files():
         #this is better
 
         with open(path + '.c', 'w') as c_f, open(path + '.h', 'w') as h_f:
-            h_f.write('#include "object.h"\n')
+            h_f.write('#include "gl_types.h"\n')
+            h_f.write('typedef struct anim_step anim_step_t;\n')
             c_f.write('#include "{}"\n'.format(os.path.basename(path) + '.h'))
+            c_f.write('#include "engine.h"\n')
             h_f.write('static const GLsizei %s_stride = %d;\n' % (id(mesh_name), stride))
             
             p_offsets, d_offsets = {}, {}
