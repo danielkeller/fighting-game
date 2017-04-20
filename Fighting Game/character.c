@@ -31,21 +31,29 @@ void run_anim(character_t *c)
     glUniform1f(c->program.pos_alpha, anim_alpha);
 }
 
+void step_character(character_t* c, int advance_button, int attack_button)
+{
+    c->prev = c->next;
+    c->next.attack_result = 0;
+    c->attack_button |= attack_button;
+    c->advance_button = advance_button;
+}
+
 //The attack is resolved against the previous state. This
 //is so the character which is updated first doesn't have
 //an advantage.
-attack_result_t attack(character_t* attacker, attack_t attack)
+void attack(character_t* attacker, attack_t attack)
 {
     character_t* victim = attacker->other;
     
-    if (attacker->prev.state != attack.state
-        || game_time.frame - attacker->anim_start != attack.frame)
-        return 0;
+    if (game_time.frame - attacker->anim_start != attack.frame)
+        return;
     
-    if (-victim->prev.ground_pos - attacker->prev.ground_pos > attack.range)
-        return WHIFFED;
+    if (-victim->prev.ground_pos - attacker->prev.ground_pos > attack.range) {
+        attacker->next.attack_result |= WHIFFED;
+        return;
+    }
     
-    attack_result_t result = 0;
     strike_point_t* target = &victim->prev.fight_state.hi + attack.target;
     
     int effective_momentum = attack.momentum - target->momentum;
@@ -56,21 +64,17 @@ attack_result_t attack(character_t* attacker, attack_t attack)
         if (victim->next.health < 0)
             victim->next.health = 0;
         
-        result |= LANDED;
+        attacker->next.attack_result |= LANDED;
     }
     else
-        result |= PARRIED;
+        attacker->next.attack_result |= PARRIED;
     
     int knockback = effective_momentum - victim->prev.fight_state.balance;
     if (knockback > 0)
     {
-        victim->next.advancing = 0;
         victim->next.ground_pos -= .02*knockback;
-        
-        result |= KNOCKED;
+        attacker->next.attack_result |= KNOCKED;
     }
-    
-    return result;
 }
 
 void draw_character(character_t* c)

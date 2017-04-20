@@ -1,6 +1,8 @@
 {
 "stickman": {
-    "Basis": ["Basis", "Basis"],
-    "swing": ["Basis", "DS Mid", "DS Bot"]
+    "top": ["Basis", "Basis"],
+    "swing": ["Basis", "DS Mid", "DS Bot"],
+    "bottom": ["DS Bot", "DS Bot"],
+    "swingup": ["DS Bot", "DS Mid", "Basis"]
 }
 }

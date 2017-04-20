@@ -33,4 +33,6 @@ typedef struct program
     shader_t vert, frag;
 } program_t;
 
-#endif /* draw_h */
+#define SHIFT_FLAG(f) ((f) ? (f)--, 1 : 0)
+
+#endif /* types_h */

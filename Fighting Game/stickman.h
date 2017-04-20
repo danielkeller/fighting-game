@@ -18,8 +18,7 @@ typedef struct stickman {
 
 void make_stickman(stickman_t*, character_t* other, direction_t direction);
 //These might be bindable
-void stickman_actions(stickman_t*, int advance, int attack);
-void stickman_consequences(stickman_t*);
+void stickman_actions(stickman_t*);
 void draw_stickman(stickman_t*);
 void free_stickman(stickman_t*);
 

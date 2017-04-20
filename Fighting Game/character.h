@@ -16,7 +16,7 @@ typedef enum direction {
 } direction_t;
 
 typedef struct attack {
-    int state, frame;
+    int frame;
     ptrdiff_t target;
     float range;
     int damage, momentum;
@@ -55,9 +55,9 @@ typedef struct health_bar {
 
 typedef struct character_state {
     int state;
-    int advancing;
     float ground_pos;
     fight_state_t fight_state;
+    attack_result_t attack_result;
     int health;
 } character_state_t;
 
@@ -69,15 +69,16 @@ typedef struct character {
     struct character* other;
     health_bar_t health_bar;
     
+    int attack_button, advance_button;
     long long anim_start;
     character_state_t prev, next;
 } character_t;
 
-
 void goto_state(character_t *c, int state);
 void next_state(character_t *c, int state);
 void run_anim(character_t *c);
-attack_result_t attack(character_t* attacker, attack_t attack);
+void step_character(character_t* c, int advance_button, int attack_button);
+void attack(character_t* attacker, attack_t attack);
 void draw_character(character_t* c);
 
 void make_heath_bar(health_bar_t* hb, direction_t direction);

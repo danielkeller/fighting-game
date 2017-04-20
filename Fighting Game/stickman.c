@@ -13,16 +13,23 @@
 #include <stdlib.h>
 
 enum state_names {
-    idle, base_mid, mid_bot
+    top, top_mid, mid_bot,
+    bottom, bot_mid, mid_top,
 };
 
 static const state_t states[] = {
-    [idle] = {1, &stickman_Basis_Basis_Basis,
+    [top] = {1, &stickman_top_Basis_Basis,
         {.balance = 10, .hi = {8, 10}, .mid = {2, 3}}},
-    [base_mid] = {2, &stickman_swing_Basis_DS_Mid,
+    [top_mid] = {2, &stickman_swing_Basis_DS_Mid,
         {.balance = 6, .hi = {10, 16}, .mid = {1, 1}}},
     [mid_bot] = {3, &stickman_swing_DS_Mid_DS_Bot,
         {.balance = 2, .hi = {1, 2}, .mid = {1, 1}}},
+    [bottom] = {1, &stickman_bottom_DS_Bot_DS_Bot,
+        {.balance = 8, .hi = {0, 1}, .mid = {8, 10}}},
+    [bot_mid] = {4, &stickman_swingup_DS_Bot_DS_Mid,
+        {.balance = 12, .hi = {0, 1}, .mid = {10, 16}}},
+    [mid_top] = {3, &stickman_swingup_DS_Mid_Basis,
+        {.balance = 10, .hi = {10, 16}, .mid = {2, 3}}},
 };
 
 static const float speed = .03;
@@ -47,7 +54,7 @@ int draw_hit_effect(hit_effect_t* he)
     glBindVertexArray(box.vertexArrayObject);
     glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
     
-    return elapsed < 100000ll;
+    return elapsed < 150000ll;
 }
 
 BINDABLE(draw_hit_effect, hit_effect_t)
@@ -91,7 +98,7 @@ int draw_parry_effect(parry_effect_t* pe)
 
 BINDABLE(draw_parry_effect, parry_effect_t)
 
-bound_t make_parry_effect(stickman_t* sm)
+bound_t make_parry_effect(stickman_t* sm, float y)
 {
     parry_effect_t pe;
     pe.attacker = sm;
@@ -100,7 +107,7 @@ bound_t make_parry_effect(stickman_t* sm)
     pe.direction_unif = glGetUniformLocation(sm->parry_effect.program, "direction");
     pe.init_vel_unif = glGetUniformLocation(sm->parry_effect.program, "init_vel");
     
-    pe.position = affine(0., (sm->character.next.ground_pos + .4)*sm->character.direction, 1);
+    pe.position = affine(0., (sm->character.next.ground_pos + .4)*sm->character.direction, y);
     pe.position.d[0] = sm->character.direction;
     
     return bind_draw_parry_effect(&pe);
@@ -109,47 +116,51 @@ bound_t make_parry_effect(stickman_t* sm)
 //Note that new actions are considered to start epsilon after the previous frame,
 //as opposed to on the start of the next frame. (the previous frame is stored in anim_start)
 //Also, 'frame' is the number of the previous frame.
-void stickman_actions(stickman_t* sm, int advance, int attack)
+void stickman_actions(stickman_t* sm)
 {
     character_t* c = &sm->character;
-    c->prev = c->next;
     
     switch (c->prev.state) {
-        case idle:
-            if (attack)
-                goto_state(c, base_mid);
+        case top:
+            if (SHIFT_FLAG(c->attack_button))
+                goto_state(c, top_mid);
             break;
-        case base_mid:
+        case top_mid:
             next_state(c, mid_bot);
+            attack(c, (attack_t){1, T(hi), .6, 20, 20});
+            if (c->next.attack_result & LANDED)  push_effect(&effects, make_hit_effect(sm));
+            if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, 1.));
             break;
         case mid_bot:
-            next_state(c, idle);
+            next_state(c, bottom);
+            break;
+            
+        case bottom:
+            if (SHIFT_FLAG(c->attack_button))
+                goto_state(c, bot_mid);
+            break;
+        case bot_mid:
+            next_state(c, mid_top);
+            attack(c, (attack_t){3, T(mid), .6, 10, 30});
+            if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .5));
+            break;
+        case mid_top:
+            next_state(c, top);
             break;
         default:
             break;
     }
     
+    if (c->other->prev.attack_result & KNOCKED)
+        goto_state(c, bottom);
+    
     float other_pos = -c->other->next.ground_pos;
     float fwd_limit = fmin(1, other_pos) - hitbox_width*2.;
     
-    if (advance && c->prev.ground_pos != fwd_limit)
-        c->next.ground_pos = fmin(fwd_limit, c->prev.ground_pos + speed);
-    else if (!advance && c->prev.ground_pos != -1.)
-        c->next.ground_pos = fmax(-1, c->prev.ground_pos - speed);
-
-    c->next.advancing = advance;
-}
-
-void stickman_consequences(stickman_t* sm)
-{
-    character_t* c = &sm->character;
-    
-    //              state, frame, target, range, damage, momentum
-    attack_result_t res = attack(c, (attack_t){base_mid, 1, T(hi), .6, 20, 20});
-    if (res & LANDED)  push_effect(&effects, make_hit_effect(sm));
-    if (res & PARRIED) push_effect(&effects, make_parry_effect(sm));
-    //???
-    if (res & KNOCKED) goto_state(sm->character.other, idle);
+    if (c->advance_button)
+        c->next.ground_pos = fmin(fwd_limit, c->next.ground_pos + speed);
+    else
+        c->next.ground_pos = fmax(-1, c->next.ground_pos - speed);
 }
 
 //'frame' is also the number of the previous frame here.
@@ -158,7 +169,6 @@ void draw_stickman(stickman_t* sm)
     draw_character(&sm->character);
     draw_health_bar(&sm->character);
 }
-
 
 void make_stickman(stickman_t *sm, character_t* other, direction_t direction)
 {
@@ -175,15 +185,15 @@ void make_stickman(stickman_t *sm, character_t* other, direction_t direction)
     
     c->states = states;
     c->prev = c->next = (character_state_t){
-        .advancing = 0,
         .ground_pos = -1.f,
         .health = 100,
     };
     
     c->direction = direction;
     c->other = other;
+    c->advance_button = c->attack_button = 0;
     
-    goto_state(c, idle);
+    goto_state(c, top);
 }
 
 void free_stickman(stickman_t* sm)
