@@ -42,24 +42,24 @@ void step_character(character_t* c, int advance_button, int attack_button)
 //The attack is resolved against the previous state. This
 //is so the character which is updated first doesn't have
 //an advantage.
-void attack(character_t* attacker, attack_t attack)
+void attack(character_t* attacker, attack_t* attack)
 {
     character_t* victim = attacker->other;
     
-    if (game_time.frame - attacker->anim_start != attack.frame)
+    if (game_time.frame - attacker->anim_start != attack->frame)
         return;
     
-    if (-victim->prev.ground_pos - attacker->prev.ground_pos > attack.range) {
+    if (-victim->prev.ground_pos - attacker->prev.ground_pos > attack->range) {
         attacker->next.attack_result |= WHIFFED;
         return;
     }
     
-    strike_point_t* target = &victim->prev.fight_state.hi + attack.target;
+    strike_point_t* target = &victim->prev.fight_state.hi + attack->target;
     
-    int effective_momentum = attack.momentum - target->momentum;
-    if (effective_momentum >= attack.momentum / 2) //Attack lands
+    int effective_momentum = attack->momentum - target->momentum;
+    if (effective_momentum >= attack->momentum / 2) //Attack lands
     {
-        int damage = attack.damage - target->defense;
+        int damage = attack->damage - target->defense;
         victim->next.health -= damage;
         if (victim->next.health < 0)
             victim->next.health = 0;

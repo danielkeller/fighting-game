@@ -34,15 +34,13 @@ GLFWwindow* init_window() {
     if (!window)
         die("Could not create window");
     
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, 1);
-    
     glfwMakeContextCurrent(window);
     //set vsync
     glfwSwapInterval(1);
     
     //glClearColor(1.f, 0.f, 1.f, 1.f);
-    glCullFace(GL_BACK);
-    glDepthFunc(GL_LESS);
+    //glCullFace(GL_BACK);
+    //glDepthFunc(GL_LESS);
     
     return window;
 }

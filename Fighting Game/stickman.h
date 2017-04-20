@@ -22,4 +22,11 @@ void stickman_actions(stickman_t*);
 void draw_stickman(stickman_t*);
 void free_stickman(stickman_t*);
 
+//Internal
+static const float hitbox_width = .25;
+
+typedef struct bound bound_t;
+bound_t make_hit_effect(stickman_t* sm);
+bound_t make_parry_effect(stickman_t* sm, float y);
+
 #endif /* stickman_h */

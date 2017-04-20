@@ -9,6 +9,8 @@
 #ifndef function_h
 #define function_h
 
+void* malloc(unsigned long);
+
 typedef struct bound {
     int (*fun)(void*);
     void* arg;

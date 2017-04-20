@@ -11,6 +11,7 @@
 		371FF0B01EA5FE81003274FE /* effects.c in Sources */ = {isa = PBXBuildFile; fileRef = 371FF0AE1EA5FE81003274FE /* effects.c */; };
 		372F30AF1EA89F6200F9AE22 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 372F30AD1EA89F6200F9AE22 /* AppDelegate.m */; };
 		372F30B41EA8AA3200F9AE22 /* character.c in Sources */ = {isa = PBXBuildFile; fileRef = 372F30B21EA8AA3200F9AE22 /* character.c */; };
+		372F30B61EA910AD00F9AE22 /* stickman_effects.c in Sources */ = {isa = PBXBuildFile; fileRef = 372F30B51EA910AD00F9AE22 /* stickman_effects.c */; };
 		372F337E1D78A9020076D98E /* stickman.c in Sources */ = {isa = PBXBuildFile; fileRef = 372F337C1D78A9020076D98E /* stickman.c */; };
 		37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37421AAA1CB2FDCC0027B7D4 /* Assets.xcassets */; };
 		37421AAE1CB2FDCC0027B7D4 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37421AAC1CB2FDCC0027B7D4 /* MainMenu.xib */; };
@@ -62,6 +63,7 @@
 		372F30B11EA8A13200F9AE22 /* engine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = engine.h; sourceTree = "<group>"; };
 		372F30B21EA8AA3200F9AE22 /* character.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = character.c; sourceTree = "<group>"; };
 		372F30B31EA8AA3200F9AE22 /* character.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = character.h; sourceTree = "<group>"; };
+		372F30B51EA910AD00F9AE22 /* stickman_effects.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stickman_effects.c; sourceTree = "<group>"; };
 		372F337C1D78A9020076D98E /* stickman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stickman.c; sourceTree = "<group>"; };
 		372F337D1D78A9020076D98E /* stickman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stickman.h; sourceTree = "<group>"; };
 		37421AA11CB2FDCB0027B7D4 /* Fighting Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Fighting Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -151,6 +153,7 @@
 				372F30B21EA8AA3200F9AE22 /* character.c */,
 				372F337D1D78A9020076D98E /* stickman.h */,
 				372F337C1D78A9020076D98E /* stickman.c */,
+				372F30B51EA910AD00F9AE22 /* stickman_effects.c */,
 			);
 			name = game;
 			sourceTree = "<group>";
@@ -391,6 +394,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				372F30B61EA910AD00F9AE22 /* stickman_effects.c in Sources */,
 				37421AD71CB3CF070027B7D4 /* time.c in Sources */,
 				37B6950C1D737A0D009A40B1 /* test.c in Sources */,
 				372F30AF1EA89F6200F9AE22 /* AppDelegate.m in Sources */,

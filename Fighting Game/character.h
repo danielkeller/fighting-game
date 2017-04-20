@@ -78,7 +78,7 @@ void goto_state(character_t *c, int state);
 void next_state(character_t *c, int state);
 void run_anim(character_t *c);
 void step_character(character_t* c, int advance_button, int attack_button);
-void attack(character_t* attacker, attack_t attack);
+void attack(character_t* attacker, attack_t* attack);
 void draw_character(character_t* c);
 
 void make_heath_bar(health_bar_t* hb, direction_t direction);
