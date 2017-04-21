@@ -7,7 +7,6 @@
 //
 
 #include "function.h"
-#include <stdlib.h>
 
 void free_bound(bound_t* bound)
 {

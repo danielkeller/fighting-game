@@ -31,7 +31,7 @@
 		37CFC0EC1D7B2671000A795E /* math.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0EA1D7B2671000A795E /* math.c */; };
 		37E1D7F41D77633E005C7198 /* stickman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37E1D7F21D77633E005C7198 /* stickman.c */; };
 		37EA38291E9F65E300848254 /* libGLFW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37421AC61CB301AE0027B7D4 /* libGLFW.a */; };
-		37EA382B1E9F726E00848254 /* health bar.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37EA382A1E9F726E00848254 /* health bar.vert */; };
+		37EA382B1E9F726E00848254 /* health bar.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37EA382A1E9F726E00848254 /* health bar.frag */; };
 		37EA382E1E9F986900848254 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 37EA382D1E9F986900848254 /* file.c */; };
 		37EA38301EA24B0B00848254 /* screenspace.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37EA382F1EA24B0B00848254 /* screenspace.vert */; };
 		37EA38321EA24B4400848254 /* blit.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37EA38311EA24B4400848254 /* blit.frag */; };
@@ -98,7 +98,7 @@
 		37CFC0EA1D7B2671000A795E /* math.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = math.c; sourceTree = "<group>"; };
 		37E1D7F21D77633E005C7198 /* stickman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stickman.c; path = objects/stickman.c; sourceTree = "<group>"; };
 		37E1D7F31D77633E005C7198 /* stickman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stickman.h; path = objects/stickman.h; sourceTree = "<group>"; };
-		37EA382A1E9F726E00848254 /* health bar.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = "health bar.vert"; path = "shaders/health bar.vert"; sourceTree = "<group>"; };
+		37EA382A1E9F726E00848254 /* health bar.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = "health bar.frag"; path = "shaders/health bar.frag"; sourceTree = "<group>"; };
 		37EA382C1E9F986900848254 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
 		37EA382D1E9F986900848254 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = file.c; sourceTree = "<group>"; };
 		37EA382F1EA24B0B00848254 /* screenspace.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = screenspace.vert; path = shaders/screenspace.vert; sourceTree = "<group>"; };
@@ -251,7 +251,7 @@
 				3791266C1E866E8F00613418 /* waves.frag */,
 				3791266D1E866E8F00613418 /* anim.vert */,
 				3791266E1E866E8F00613418 /* simple.vert */,
-				37EA382A1E9F726E00848254 /* health bar.vert */,
+				37EA382A1E9F726E00848254 /* health bar.frag */,
 				37EA382F1EA24B0B00848254 /* screenspace.vert */,
 				37EA38311EA24B4400848254 /* blit.frag */,
 				37EA38331EA2C18400848254 /* blast.frag */,
@@ -364,7 +364,7 @@
 				37EA38301EA24B0B00848254 /* screenspace.vert in Resources */,
 				3791267E1E87F98C00613418 /* test.json in Resources */,
 				3791267C1E86A90200613418 /* stickman.json in Resources */,
-				37EA382B1E9F726E00848254 /* health bar.vert in Resources */,
+				37EA382B1E9F726E00848254 /* health bar.frag in Resources */,
 				37EA38341EA2C18400848254 /* blast.frag in Resources */,
 				37421AAE1CB2FDCC0027B7D4 /* MainMenu.xib in Resources */,
 			);

@@ -78,7 +78,6 @@ static struct shader color_frag_struct = {
 "out vec4 color;\n"
 "uniform vec3 main_color;\n"
 "uniform sampler2D framebuffer;\n"
-"in vec2 posFrag;\n"
 "void main()\n"
 "{\n"
 "color = vec4(main_color, 1);\n"
@@ -86,30 +85,30 @@ static struct shader color_frag_struct = {
 };
 shader_t color_frag = &color_frag_struct;
 
-static struct shader health_bar_vert_struct = {
+static struct shader health_bar_frag_struct = {
 .shader = 0,
 #ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/health bar.vert",
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/health bar.frag",
 #endif
-.name = "health_bar_vert",
-.type = GL_VERTEX_SHADER,
+.name = "health_bar_frag",
+.type = GL_FRAGMENT_SHADER,
 .source =
-"in vec2 position;\n"
+"out vec4 color;\n"
 "uniform float direction;\n"
-"uniform float health;\n"
-"out vec2 posFrag;\n"
+"uniform float health, last_health, time_since_last_change;\n"
+"in vec2 uv;\n"
 "void main()\n"
 "{\n"
-"mat3 transform = mat3(\n"
-"-.8*direction*(health / 100.),\n"
-"0, 0,\n"
-"0, .1, 0,\n"
-"-.1*direction, .8, 1);\n"
-"gl_Position = vec4((transform * vec3(position, 1)).xy, 0, 1);\n"
-"posFrag = (transform * vec3(position, 1)).xy;\n"
+"if (uv.x < health/100.)\n"
+"color = vec4(1, 0, 0, 1);\n"
+"else if (uv.x < last_health/100.) {\n"
+"color = vec4(1, 1, 1, 1) * exp(-3.*time_since_last_change);\n"
+"}\n"
+"else\n"
+"color = vec4(0, 0, 0, 0);\n"
 "}\n"
 };
-shader_t health_bar_vert = &health_bar_vert_struct;
+shader_t health_bar_frag = &health_bar_frag_struct;
 
 static struct shader particles_vert_struct = {
 .shader = 0,
@@ -177,11 +176,13 @@ static struct shader simple_vert_struct = {
 "uniform mat3 camera;\n"
 "uniform mat3 transform;\n"
 "out vec2 posFrag;\n"
+"out vec2 uv;\n"
 "void main()\n"
 "{\n"
 "gl_Position = vec4(\n"
 "(camera * transform * vec3(position, 1)).xy, 0, 1);\n"
 "posFrag = (transform * vec3(position, 1)).xy;\n"
+"uv = position;\n"
 "}\n"
 };
 shader_t simple_vert = &simple_vert_struct;

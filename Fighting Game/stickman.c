@@ -20,16 +20,16 @@ enum state_names {
 static const state_t states[] = {
     [top] = {1, &stickman_top_Basis_Basis,
         {.balance = 10, .hi = {8, 10}, .mid = {2, 3}}},
+    [bottom] = {1, &stickman_bottom_DS_Bot_DS_Bot,
+        {.balance = 8, .hi = {0, 1}, .mid = {8, 10}}},
     [top_mid] = {2, &stickman_swing_Basis_DS_Mid,
         {.balance = 6, .hi = {10, 16}, .mid = {1, 1}}},
     [mid_bot] = {3, &stickman_swing_DS_Mid_DS_Bot,
-        {.balance = 2, .hi = {1, 2}, .mid = {1, 1}}},
-    [bottom] = {1, &stickman_bottom_DS_Bot_DS_Bot,
-        {.balance = 8, .hi = {0, 1}, .mid = {8, 10}}},
+        {.balance = 6, .hi = {10, 16}, .mid = {1, 1}}},
     [bot_mid] = {4, &stickman_swingup_DS_Bot_DS_Mid,
         {.balance = 12, .hi = {0, 1}, .mid = {10, 16}}},
     [mid_top] = {3, &stickman_swingup_DS_Mid_Basis,
-        {.balance = 10, .hi = {10, 16}, .mid = {2, 3}}},
+        {.balance = 12, .hi = {0, 1}, .mid = {10, 16}}},
 };
 
 attack_t
@@ -40,7 +40,6 @@ static const float speed = .03;
 
 //Note that new actions are considered to start epsilon after the previous frame,
 //as opposed to on the start of the next frame. (the previous frame is stored in anim_start)
-//Also, 'frame' is the number of the previous frame.
 void stickman_actions(stickman_t* sm)
 {
     character_t* c = &sm->character;
@@ -76,11 +75,12 @@ void stickman_actions(stickman_t* sm)
             break;
     }
     
+    //This effect is annoying
     //if (c->other->prev.attack_result & KNOCKED)
     //    goto_state(c, bottom);
     
     float other_pos = -c->other->next.ground_pos;
-    float fwd_limit = fmin(1, other_pos) - hitbox_width*2.;
+    float fwd_limit = fmin(1, other_pos) - stickman_hitbox_width*2.;
     
     if (c->advance_button)
         c->next.ground_pos = fmin(fwd_limit, c->next.ground_pos + speed);

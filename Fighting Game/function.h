@@ -9,8 +9,6 @@
 #ifndef function_h
 #define function_h
 
-void* malloc(unsigned long);
-
 typedef struct bound {
     int (*fun)(void*);
     void* arg;
@@ -36,4 +34,6 @@ typedef struct bound {
 #define CALL_BOUND(bound) (bound).fun((bound).arg)
 void free_bound(bound_t* bound);
 
+void* malloc(unsigned long);
+void free(void*);
 #endif /* function_h */

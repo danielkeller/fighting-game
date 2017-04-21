@@ -50,7 +50,9 @@ typedef struct state
 typedef struct health_bar {
     object_t obj;
     program_t program;
-    GLint health_unif;
+    GLint health_unif, last_health_unif, time_since_change_unif;
+    int health, last_health;
+    usec_t last_health_change_time;
 } health_bar_t;
 
 typedef struct character_state {

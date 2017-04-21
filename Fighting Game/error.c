@@ -14,7 +14,7 @@
 void die(const char* reason)
 {
     printf("%s\n", reason);
-    printStackTrace();
+    //printStackTrace();
     exit(1);
 }
 

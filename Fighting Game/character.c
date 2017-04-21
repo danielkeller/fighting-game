@@ -98,21 +98,40 @@ void draw_character(character_t* c)
 
 void make_heath_bar(health_bar_t* hb, direction_t direction)
 {
+    hb->last_health = 100;
+    hb->last_health_change_time = 0;
     make_box(&hb->obj);
-    load_shader_program(&hb->program, health_bar_vert, color_frag);
+    load_shader_program(&hb->program, simple_vert, health_bar_frag);
     hb->health_unif = glGetUniformLocation(hb->program.program, "health");
+    hb->last_health_unif = glGetUniformLocation(hb->program.program, "last_health");
+    hb->time_since_change_unif = glGetUniformLocation(hb->program.program, "time_since_last_change");
     
     glUseProgram(hb->program.program);
     GLint color_unif = glGetUniformLocation(hb->program.program, "main_color");
     glUniform3f(color_unif, 1., 0., 0.);
-    GLint direction_unif = glGetUniformLocation(hb->program.program, "direction");
-    glUniform1f(direction_unif, (float)direction);
+    Mat3 transform = {{
+        -.8*direction, 0, 0,
+        0, .1, 0,
+        -.1*direction, .8, 1}};
+    glUniformMatrix3fv(hb->program.transform, 1, GL_FALSE, transform.d);
+    glUniformMatrix3fv(hb->program.camera, 1, GL_FALSE, eye3.d);
 }
 
 void draw_health_bar(character_t *c)
 {
-    glUseProgram(c->health_bar.program.program);
-    glUniform1f(c->health_bar.health_unif, (float)c->next.health);
+    health_bar_t* bar = &c->health_bar;
+    
+    if (c->next.health != bar->health) {
+        bar->last_health_change_time = game_time.current_time;
+        bar->last_health = bar->health;
+        bar->health = c->next.health;
+    }
+    
+    glUseProgram(bar->program.program);
+    glUniform1f(bar->health_unif, bar->health);
+    glUniform1f(bar->last_health_unif, bar->last_health);
+    glUniform1f(bar->time_since_change_unif,
+                (float)(game_time.current_time - bar->last_health_change_time) / 1000000.f);
     glBindVertexArray(box.vertexArrayObject);
     glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
 }

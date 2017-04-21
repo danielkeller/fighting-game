@@ -39,7 +39,7 @@ bound_t make_hit_effect(stickman_t* sm)
     he.attacker = sm;
     he.start_time = game_time.current_time;
     he.origin_unif = glGetUniformLocation(sm->hit_effect.program, "origin");
-    he.x = (sm->character.next.ground_pos + 2*hitbox_width)*sm->character.direction;
+    he.x = (sm->character.next.ground_pos + 2*stickman_hitbox_width)*sm->character.direction;
     return bind_draw_hit_effect(&he);
 }
 
@@ -81,7 +81,7 @@ bound_t make_parry_effect(stickman_t* sm, float y)
     pe.direction_unif = glGetUniformLocation(sm->parry_effect.program, "direction");
     pe.init_vel_unif = glGetUniformLocation(sm->parry_effect.program, "init_vel");
     
-    pe.position = affine(0., (sm->character.next.ground_pos + hitbox_width)*sm->character.direction, y);
+    pe.position = affine(0., (sm->character.next.ground_pos + stickman_hitbox_width)*sm->character.direction, y);
     pe.position.d[0] = sm->character.direction;
     
     return bind_draw_parry_effect(&pe);
