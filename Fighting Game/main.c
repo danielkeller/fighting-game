@@ -122,8 +122,6 @@ int main (int argc, char* argv[]) {
             blit_fbo(&fbo);
         }
         
-        free_stickman(&left);
-        free_stickman(&right);
         clear_effects(&effects);
         
         object_t game_over_text;
@@ -139,13 +137,22 @@ int main (int argc, char* argv[]) {
         while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ENTER))
         {
             glClear(GL_COLOR_BUFFER_BIT);
+            draw_stickman(&left);
+            draw_stickman(&right);
+            
+            glUseProgram(game_over_shader.program);
+            glBindVertexArray(game_over_text.vertexArrayObject);
             glDrawArrays(GL_TRIANGLES, 0, game_over_text.numVertecies);
+            
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
         
         free_object(&game_over_text);
         free_program(&game_over_shader);
+        
+        free_stickman(&left);
+        free_stickman(&right);
     }
     
     free_object(&box);

@@ -31,7 +31,7 @@ static const state_t states[] = {
     [lo_block_1] = {1, -block_dist/3., {10, {8, MIDDLE}, {20, HEAVY}}},
     [lo_block_2] = {1, -block_dist/3., {10, {8, MIDDLE}, {20, HEAVY}}},
     [lo_block_3] = {1, -block_dist/3., {10, {8, MIDDLE}, {20, HEAVY}}},
-    [block]     = {7, -speed, {10, {20, HEAVY}, {20, HEAVY}}},
+    [block]     = {6, -speed, {10, {20, HEAVY}, {20, HEAVY}}},
     [unblock]   = {2, 0, {10, {20, HEAVY}, {8, MIDDLE}}},
 };
 
