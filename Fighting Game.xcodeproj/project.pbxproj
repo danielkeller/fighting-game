@@ -31,6 +31,7 @@
 		37CFC0EC1D7B2671000A795E /* math.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0EA1D7B2671000A795E /* math.c */; };
 		37E1D7F41D77633E005C7198 /* stickman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37E1D7F21D77633E005C7198 /* stickman.c */; };
 		37E3B5681EAF8834004DBE36 /* game over.c in Sources */ = {isa = PBXBuildFile; fileRef = 37E3B5661EAF8834004DBE36 /* game over.c */; };
+		37E3B56D1EAFA283004DBE36 /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = 37E3B56B1EAFA283004DBE36 /* input.c */; };
 		37EA38291E9F65E300848254 /* libGLFW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37421AC61CB301AE0027B7D4 /* libGLFW.a */; };
 		37EA382B1E9F726E00848254 /* health bar.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37EA382A1E9F726E00848254 /* health bar.frag */; };
 		37EA382E1E9F986900848254 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 37EA382D1E9F986900848254 /* file.c */; };
@@ -100,6 +101,8 @@
 		37E1D7F31D77633E005C7198 /* stickman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stickman.h; path = objects/stickman.h; sourceTree = "<group>"; };
 		37E3B5661EAF8834004DBE36 /* game over.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "game over.c"; path = "objects/game over.c"; sourceTree = "<group>"; };
 		37E3B5671EAF8834004DBE36 /* game over.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "game over.h"; path = "objects/game over.h"; sourceTree = "<group>"; };
+		37E3B56B1EAFA283004DBE36 /* input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = input.c; sourceTree = "<group>"; };
+		37E3B56C1EAFA283004DBE36 /* input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = input.h; sourceTree = "<group>"; };
 		37EA382A1E9F726E00848254 /* health bar.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = "health bar.frag"; path = "shaders/health bar.frag"; sourceTree = "<group>"; };
 		37EA382C1E9F986900848254 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
 		37EA382D1E9F986900848254 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = file.c; sourceTree = "<group>"; };
@@ -133,8 +136,6 @@
 			children = (
 				372F30B01EA8A0D200F9AE22 /* types.h */,
 				372F30B11EA8A13200F9AE22 /* engine.h */,
-				37421AD31CB3066D0027B7D4 /* window.h */,
-				37421AD21CB3066D0027B7D4 /* window.c */,
 				37B7BC4E1D6F311400EF0A7E /* fbo.c */,
 				37CFC0EA1D7B2671000A795E /* math.c */,
 				37853D691D68AA720052A8C8 /* object.c */,
@@ -142,6 +143,10 @@
 				37421AD51CB3CF070027B7D4 /* time.c */,
 				371FF0AE1EA5FE81003274FE /* effects.c */,
 				37CFC0E71D7B2584000A795E /* globals.c */,
+				37421AD31CB3066D0027B7D4 /* window.h */,
+				37421AD21CB3066D0027B7D4 /* window.c */,
+				37E3B56C1EAFA283004DBE36 /* input.h */,
+				37E3B56B1EAFA283004DBE36 /* input.c */,
 			);
 			name = engine;
 			sourceTree = "<group>";
@@ -413,6 +418,7 @@
 				37421AD41CB3066D0027B7D4 /* window.c in Sources */,
 				37421ACE1CB306220027B7D4 /* gl_core_3_3.c in Sources */,
 				37CFC0EC1D7B2671000A795E /* math.c in Sources */,
+				37E3B56D1EAFA283004DBE36 /* input.c in Sources */,
 				372F30B41EA8AA3200F9AE22 /* character.c in Sources */,
 				37E1D7F41D77633E005C7198 /* stickman.c in Sources */,
 				371FF0B01EA5FE81003274FE /* effects.c in Sources */,

@@ -12,6 +12,7 @@
 #include "engine.h"
 #include "objects/game over.h"
 #include "stickman.h"
+#include "input.h"
 #include <math.h>
 
 float camera_[] = {
@@ -20,38 +21,9 @@ float camera_[] = {
     -1., -1., 1.
 };
 
-float black[] = {0., 0., 0.};
-float red[] = {1., 0., 0.};
-float blue[] = {0., 1., 1.};
-float green[] = {0., 1., 0.};
-float white[] = {1., 1., 1.};
-float bot[] = {0.5, -1.};
-float tl[] = {M_SQRT1_2, M_SQRT1_2};
-
-float sawf(float v)
-{
-    return 1.f - fabsf(fmodf(v, 2.f) - 1.f);
-}
-
-struct key_events {
-    int attack, dodge;
-} key_left, key_right;
-
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (action == GLFW_REPEAT) return;
-    
-    //Robust key-down detection
-    if (action != GLFW_PRESS) return;
-    if (key == GLFW_KEY_X) key_left.attack++;
-    if (key == GLFW_KEY_PERIOD) key_right.attack++;
-    if (key == GLFW_KEY_Z) key_left.dodge++;
-    if (key == GLFW_KEY_COMMA) key_right.dodge++;
-}
-
 int main (int argc, char* argv[]) {
     GLFWwindow* window = init_window();
-    glfwSetKeyCallback(window, key_callback);
+    init_input(window);
     
     make_box(&box);
     make_fbo(&fbo);
@@ -71,7 +43,7 @@ int main (int argc, char* argv[]) {
         make_stickman(&left, &right.character, RIGHT);
         make_stickman(&right, &left.character, LEFT);
         
-        key_right = key_left = (struct key_events){0};
+        key_right = key_left = (key_events_t){0};
         
         while (!glfwWindowShouldClose(window))
         {
@@ -96,7 +68,7 @@ int main (int argc, char* argv[]) {
             */
             
             while (phys_tick(&game_time)) {
-                glfwPollEvents();
+                poll_input();
                 
                 step_character(&left.character, SHIFT_FLAG(key_left.dodge), SHIFT_FLAG(key_left.attack));
                 step_character(&right.character, SHIFT_FLAG(key_right.dodge), SHIFT_FLAG(key_right.attack));
@@ -122,8 +94,6 @@ int main (int argc, char* argv[]) {
             blit_fbo(&fbo);
         }
         
-        clear_effects(&effects);
-        
         object_t game_over_text;
         make_object(&game_over_text, game_over_verts, sizeof(game_over_verts), 0);
         
@@ -136,17 +106,21 @@ int main (int argc, char* argv[]) {
         
         while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ENTER))
         {
-            glClear(GL_COLOR_BUFFER_BIT);
+            prepare_fbo(&fbo);
             draw_stickman(&left);
             draw_stickman(&right);
+            draw_effects(&effects);
             
             glUseProgram(game_over_shader.program);
             glBindVertexArray(game_over_text.vertexArrayObject);
             glDrawArrays(GL_TRIANGLES, 0, game_over_text.numVertecies);
             
+            blit_fbo(&fbo);
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
+        
+        clear_effects(&effects);
         
         free_object(&game_over_text);
         free_program(&game_over_shader);
