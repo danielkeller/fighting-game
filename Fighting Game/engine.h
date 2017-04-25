@@ -22,12 +22,6 @@ extern Mat3 eye3;
 Mat3 affine(float theta, float x, float y);
 
 //*** Object
-
-typedef struct anim_step {
-    GLsizei p_from, p_to; //position
-    GLsizei d_from, d_to; //derivative
-} anim_step_t;
-
 void make_box(object_t*);
 void make_anim_obj(object_t*, float* verts, GLsizei verts_sz, GLsizei stride);
 void anim_obj_keys(object_t*, const anim_step_t* step);

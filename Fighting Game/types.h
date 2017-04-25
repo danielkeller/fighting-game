@@ -21,7 +21,10 @@ typedef struct object
     GLsizei stride;
 } object_t;
 
-typedef struct anim_step anim_step_t;
+typedef struct anim_step {
+    GLsizei p_from, p_to; //position
+    GLsizei d_from, d_to; //derivative
+} anim_step_t;
 
 typedef struct shader* shader_t;
 

@@ -1,17 +1,13 @@
 #include "stickman.h"
 #include "engine.h"
-const anim_step_t stickman_top_Basis_Basis = 
-{.p_from = 8, .p_to = 8, .d_from = 32, .d_to = 32};
-const anim_step_t stickman_bottom_DS_Bot_DS_Bot = 
-{.p_from = 0, .p_to = 0, .d_from = 48, .d_to = 48};
-const anim_step_t stickman_swingup_DS_Bot_DS_Mid = 
-{.p_from = 0, .p_to = 16, .d_from = 56, .d_to = 64};
-const anim_step_t stickman_swingup_DS_Mid_Basis = 
-{.p_from = 16, .p_to = 8, .d_from = 64, .d_to = 72};
-const anim_step_t stickman_swing_Basis_DS_Mid = 
-{.p_from = 8, .p_to = 16, .d_from = 80, .d_to = 88};
-const anim_step_t stickman_swing_DS_Mid_DS_Bot = 
-{.p_from = 16, .p_to = 0, .d_from = 88, .d_to = 96};
+const anim_step_t stickman_anims[] = {
+{.p_from = 8, .p_to = 8, .d_from = 32, .d_to = 32},
+{.p_from = 0, .p_to = 0, .d_from = 48, .d_to = 48},
+{.p_from = 0, .p_to = 16, .d_from = 56, .d_to = 64},
+{.p_from = 16, .p_to = 8, .d_from = 64, .d_to = 72},
+{.p_from = 8, .p_to = 16, .d_from = 80, .d_to = 88},
+{.p_from = 16, .p_to = 0, .d_from = 88, .d_to = 96},
+};
 float stickman_verts[2106] = {
 -0.193649947643, 0.815368890762,
 -0.197932004929, 0.756360411644,

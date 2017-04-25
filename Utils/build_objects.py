@@ -69,18 +69,27 @@ for path in files():
         #this is better
 
         with open(path + '.c', 'w') as c_f, open(path + '.h', 'w') as h_f:
-            h_f.write('#include "gl_types.h"\n')
+            h_f.write('#include "types.h"\n')
             h_f.write('typedef struct anim_step anim_step_t;\n')
             c_f.write('#include "{}"\n'.format(os.path.basename(path) + '.h'))
             c_f.write('#include "engine.h"\n')
             h_f.write('static const GLsizei %s_stride = %d;\n' % (id(mesh_name), stride))
+            h_f.write('extern const anim_step_t %s_anims[];\n' % id(mesh_name))
+            
+            h_f.write('enum state_names {\n')
+            for name, keys in anims[mesh_name].iteritems():
+                if len(keys) == 2:
+                    h_f.write('%s, ' % name)
+                else:
+                    for i in xrange(len(keys)-1):
+                        h_f.write('%s_%d, ' % (name, i+1))
+                h_f.write('\n')
+            h_f.write('};\n')
             
             p_offsets, d_offsets = {}, {}
             
             offset = 0
             for key in mesh:
-                h_f.write('static const GLsizei %s = %d;\n' %
-                          (id(mesh_name, key), offset * el_sz))
                 p_offsets[key] = offset * el_sz
                 offset += 1
 
@@ -90,15 +99,17 @@ for path in files():
                     d_offsets[name][key] = offset * el_sz
                     offset += 1
 
+            c_f.write('const anim_step_t %s_anims[] = {\n' % id(mesh_name))
+
             for name, keys in anims[mesh_name].iteritems():
                 for i in xrange(len(keys)-1):
                     step_name = id(mesh_name, name, keys[i], keys[i+1])
-                    h_f.write('extern const anim_step_t {};\n'.format(step_name))
-                    c_f.write('const anim_step_t {} = \n'.format(step_name))
-                    c_f.write('{{.p_from = {}, .p_to = {}, .d_from = {}, .d_to = {}}};\n'.format(
+                    c_f.write('{.p_from = %d, .p_to = %d, .d_from = %d, .d_to = %d},\n' % (
                         p_offsets[keys[i]], p_offsets[keys[i+1]],
                         d_offsets[name][keys[i]], d_offsets[name][keys[i+1]],))
-            
+
+            c_f.write('};\n')
+    
             h_f.write('extern float %s_verts[%d];\n' % (id(mesh_name), n_floats))
             
             c_f.write('float %s_verts[%d] = {\n' % (id(mesh_name), n_floats))

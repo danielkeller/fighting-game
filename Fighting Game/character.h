@@ -43,8 +43,8 @@ typedef struct strike_point {
 } strike_point_t;
 
 typedef struct fight_state {
-    strike_point_t hi, lo;
     int balance;
+    strike_point_t hi, lo;
 } fight_state_t;
 
 #define T(target) (&((fight_state_t*)NULL)->target - &((fight_state_t*)NULL)->hi)
@@ -52,7 +52,6 @@ typedef struct fight_state {
 typedef struct state
 {
     int frames;
-    const anim_step_t* anim;
     fight_state_t fight_state;
 } state_t;
 
@@ -78,6 +77,7 @@ typedef struct character {
     program_t program;
     direction_t direction;
     const state_t* states;
+    const anim_step_t* anims;
     struct character* other;
     health_bar_t health_bar;
     

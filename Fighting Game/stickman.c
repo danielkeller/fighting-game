@@ -12,32 +12,22 @@
 #include <math.h>
 #include <stdlib.h>
 
-enum state_names {
-    top, top_mid, mid_bot,
-    bottom, bot_mid, mid_top,
-};
-
-static const state_t states[] = {
-    [top] = {1, &stickman_top_Basis_Basis,
-        {.balance = 10, .hi = {8, MIDDLE}, .lo = {1, WEAK}}},
-    [bottom] = {1, &stickman_bottom_DS_Bot_DS_Bot,
-        {.balance = 8, .hi = {0, WEAK}, .lo = {8, MIDDLE}}},
-    [top_mid] = {2, &stickman_swing_Basis_DS_Mid,
-        {.balance = 6, .hi = {10, HEAVY}, .lo = {1, WEAK}}},
-    [mid_bot] = {3, &stickman_swing_DS_Mid_DS_Bot,
-        {.balance = 6, .hi = {10, HEAVY}, .lo = {1, WEAK}}},
-    [bot_mid] = {4, &stickman_swingup_DS_Bot_DS_Mid,
-        {.balance = 12, .hi = {0, WEAK}, .lo = {10, HEAVY}}},
-    [mid_top] = {3, &stickman_swingup_DS_Mid_Basis,
-        {.balance = 12, .hi = {0, WEAK}, .lo = {10, HEAVY}}},
-};
-
 //For attacks that give defense/momentum buffs, used symmetrically:
 //If the attack is before the midpoint of the animation, advantage goes to the
 //first player. After the midpoint, it goes to the second. If it is at the midpoint
 //either both attacks land or neither.
 
-attack_t
+//         frames  balance   hi        lo
+static const state_t states[] = {
+    [top]       = {1, {10, {8,  MIDDLE}, {1,  WEAK}}},
+    [bottom]    = {1, {8,  {0,  WEAK},   {8,  MIDDLE}}},
+    [swing_1]   = {2, {6,  {10, HEAVY},  {1,  WEAK}}},
+    [swing_2]   = {3, {6,  {10, HEAVY},  {1,  WEAK}}},
+    [swingup_1] = {4, {12, {0,  WEAK},   {10, HEAVY}}},
+    [swingup_2] = {3, {12, {0,  WEAK},   {10, HEAVY}}},
+};
+
+static attack_t
 down_attack = {2, T(hi), .6, 20, 20, MIDDLE},
 up_attack   = {3, T(lo), .6, 10, 30, MIDDLE};
 
@@ -57,12 +47,12 @@ void stickman_actions(stickman_t* sm)
     switch (c->prev.state) {
         case top:
             if (SHIFT_FLAG(c->attack_button))
-                goto_state(c, top_mid);
+                goto_state(c, swing_1);
             break;
-        case top_mid:
-            next_state(c, mid_bot);
+        case swing_1:
+            next_state(c, swing_2);
             break;
-        case mid_bot:
+        case swing_2:
             attack(c, &down_attack);
             if (c->next.attack_result & LANDED)  push_effect(&effects, make_hit_effect(sm));
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, 1.));
@@ -71,14 +61,14 @@ void stickman_actions(stickman_t* sm)
             
         case bottom:
             if (SHIFT_FLAG(c->attack_button))
-                goto_state(c, bot_mid);
+                goto_state(c, swingup_1);
             break;
-        case bot_mid:
+        case swingup_1:
             attack(c, &up_attack);
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .5));
-            next_state(c, mid_top);
+            next_state(c, swingup_2);
             break;
-        case mid_top:
+        case swingup_2:
             next_state(c, top);
             break;
         default:
@@ -121,6 +111,7 @@ void make_stickman(stickman_t *sm, character_t* other, direction_t direction)
     glUniform3f(sm->color_unif, 1., 1., 1.);
     
     c->states = states;
+    c->anims = stickman_anims;
     c->prev = c->next = (character_state_t){
         .ground_pos = -1.f,
         .health = 100,

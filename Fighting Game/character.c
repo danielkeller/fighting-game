@@ -15,7 +15,7 @@ void goto_state(character_t *c, int state)
     c->next.state = state;
     c->next.fight_state = c->states[state].fight_state;
     c->anim_start = game_time.frame;
-    anim_obj_keys(&c->obj, c->states[state].anim);
+    anim_obj_keys(&c->obj, &c->anims[state]);
 }
 
 void next_state(character_t *c, int state)
