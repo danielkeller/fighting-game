@@ -23,6 +23,7 @@ void init_game_time(game_time_t* gt)
     gt->frame = 0;
     gt->current_time = gt->unsimulated_time = 0;
     gt->last_frame_length = 0;
+    gt->multiplier = 1;
     gt->last_render = get_time();
 }
 
@@ -41,7 +42,7 @@ int phys_tick(game_time_t *gt)
 void render_tick(game_time_t *gt)
 {
     usec_t now = get_time();
-    usec_t frame_time = now - gt->last_render;
+    usec_t frame_time = (now - gt->last_render) / gt->multiplier;
     if (frame_time > frame_limit) frame_time = frame_limit;
     
     gt->last_render = now;

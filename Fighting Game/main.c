@@ -94,6 +94,10 @@ int main (int argc, char* argv[]) {
             blit_fbo(&fbo);
         }
         
+        //Step the characters one more time so prev == next and they actually stop
+        step_character(&left.character, 0, 0);
+        step_character(&right.character, 0, 0);
+        
         object_t game_over_text;
         make_object(&game_over_text, game_over_verts, sizeof(game_over_verts), 0);
         
@@ -106,6 +110,11 @@ int main (int argc, char* argv[]) {
         
         while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ENTER))
         {
+            game_time.multiplier++;
+            render_tick(&game_time);
+            while (phys_tick(&game_time))
+                ;
+            
             prepare_fbo(&fbo);
             draw_stickman(&left);
             draw_stickman(&right);
