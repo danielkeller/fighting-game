@@ -36,6 +36,13 @@ void draw_effects(effects_t* ef)
     ef->num_effects = j;
 }
 
+void clear_effects(effects_t* ef)
+{
+    for (int i = 0; i < ef->num_effects; ++i)
+        free_bound(&ef->effects[i]);
+    ef->num_effects = 0;
+}
+
 void free_effects(effects_t* ef)
 {
     for (int i = 0; i < ef->num_effects; ++i)

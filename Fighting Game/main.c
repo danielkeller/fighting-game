@@ -10,7 +10,7 @@
 
 #include "window.h"
 #include "engine.h"
-#include "objects/test.h"
+#include "objects/game over.h"
 #include "stickman.h"
 #include <math.h>
 
@@ -55,30 +55,9 @@ int main (int argc, char* argv[]) {
     GLFWwindow* window = init_window();
     glfwSetKeyCallback(window, key_callback);
     
-    //make_anim_obj(&box, test_verts, sizeof(test_verts), test_stride);
-    //anim_obj_keys(&box, &test_test_Basis_Key_1);
-    /*
-    program_t simple;
-    load_shader_program(&simple, anim_vert, waves_frag);
-    
-
-    GLint origin_unif = glGetUniformLocation(simple.program, "origin");
-    GLint color_unif = glGetUniformLocation(simple.program, "main_color");
-    GLint lead_color_unif = glGetUniformLocation(simple.program, "lead_color");
-
-     
-    glUseProgram(simple.program);
-    glUniformMatrix3fv(simple.camera, 1, GL_FALSE, camera.d);
-    glUniformMatrix3fv(simple.transform, 1, GL_FALSE, eye3.d);
-        */
-    
     make_box(&box);
     make_fbo(&fbo);
     make_effects(&effects);
-    
-    stickman_t left, right;
-    make_stickman(&left, &right.character, RIGHT);
-    make_stickman(&right, &left.character, LEFT);
     
     /*
     uint64_t load_total = 0;
@@ -86,93 +65,98 @@ int main (int argc, char* argv[]) {
     usec_t last_fps = get_time();
     */
     
-    init_game_time(&game_time);
-    
     while (!glfwWindowShouldClose(window))
     {
-        //usec_t frame_work_time = get_time() - game_time.last_render;
+        init_game_time(&game_time);
         
-        //render_tick must be called immediately after the frame appears
-        //onscreen for the algorithm to work.
-        glfwSwapBuffers(window);
-        render_tick(&game_time);
-        /*
-        ++frame_count;
-        load_total += (frame_work_time * 100ull) / game_time.last_frame_length;
-        usec_t elapsed = get_time() - last_fps;
-        if (elapsed > 4000000ll)
+        stickman_t left, right;
+        make_stickman(&left, &right.character, RIGHT);
+        make_stickman(&right, &left.character, LEFT);
+        
+        key_right = key_left = (struct key_events){0};
+        
+        while (!glfwWindowShouldClose(window))
         {
-            printf("%llu%% ", load_total / frame_count);
-            printf("%lld fps %lld uspf\n", (frame_count * 1000) / (elapsed / 1000), elapsed / frame_count);
-            load_total = 0;
-            frame_count = 0;
-            last_fps += elapsed;
-        }
-        */
-        
-        while (phys_tick(&game_time)) {
-            glfwPollEvents();
+            //usec_t frame_work_time = get_time() - game_time.last_render;
             
-            step_character(&left.character, SHIFT_FLAG(key_left.dodge), SHIFT_FLAG(key_left.attack));
-            step_character(&right.character, SHIFT_FLAG(key_right.dodge), SHIFT_FLAG(key_right.attack));
-            stickman_actions(&left);
-            stickman_actions(&right);
+            //render_tick must be called immediately after the frame appears
+            //onscreen for the algorithm to work.
+            glfwSwapBuffers(window);
+            render_tick(&game_time);
+            /*
+            ++frame_count;
+            load_total += (frame_work_time * 100ull) / game_time.last_frame_length;
+            usec_t elapsed = get_time() - last_fps;
+            if (elapsed > 4000000ll)
+            {
+                printf("%llu%% ", load_total / frame_count);
+                printf("%lld fps %lld uspf\n", (frame_count * 1000) / (elapsed / 1000), elapsed / frame_count);
+                load_total = 0;
+                frame_count = 0;
+                last_fps += elapsed;
+            }
+            */
+            
+            while (phys_tick(&game_time)) {
+                glfwPollEvents();
+                
+                step_character(&left.character, SHIFT_FLAG(key_left.dodge), SHIFT_FLAG(key_left.attack));
+                step_character(&right.character, SHIFT_FLAG(key_right.dodge), SHIFT_FLAG(key_right.attack));
+                stickman_actions(&left);
+                stickman_actions(&right);
+            }
+            
+            if (left.character.prev.health == 0 || right.character.prev.health == 0)
+                break;
+            
+            int width, height;
+            glfwGetFramebufferSize(window, &width, &height);
+            fbo_window_size(&fbo, width, height);
+            
+            poll_shader_changes();
+            
+            prepare_fbo(&fbo);
+            
+            draw_stickman(&left);
+            draw_stickman(&right);
+            draw_effects(&effects);
+            
+            blit_fbo(&fbo);
+            
+            GLenum err;
+            while((err = glGetError()) != GL_NO_ERROR)
+            {
+                printf("%s\n", gluErrorString(err));
+            }
         }
         
-        int width, height;
-        glfwGetFramebufferSize(window, &width, &height);
-        fbo_window_size(&fbo, width, height);
+        free_stickman(&left);
+        free_stickman(&right);
+        clear_effects(&effects);
         
-        poll_shader_changes();
+        object_t game_over_text;
+        make_object(&game_over_text, game_over_verts, sizeof(game_over_verts), 0);
         
-        prepare_fbo(&fbo);
+        program_t game_over_shader;
+        load_shader_program(&game_over_shader, simple_vert, color_frag);
+        GLint color_unif = glGetUniformLocation(game_over_shader.program, "main_color");
+        glUniform3f(color_unif, 1., 0., 0.);
+        glUniformMatrix3fv(game_over_shader.camera, 1, GL_FALSE, camera.d);
+        glUniformMatrix3fv(game_over_shader.transform, 1, GL_FALSE, eye3.d);
         
-        draw_stickman(&left);
-        draw_stickman(&right);
-        draw_effects(&effects);
-        
-        /*
-        flip_fbo(&fbo);
-        
-        glUseProgram(simple.program);
-        glBindVertexArray(box.vertexArrayObject);
-        
-        float time = secondsf(game_time.current_time);
-        glUniform1f(simple.time, time);
-        
-        glUniform1f(simple.pos_alpha, sawf(time));
-        glUniform3fv(color_unif, 1, blue);
-        glUniform3fv(lead_color_unif, 1, black);
-        glUniform2fv(origin_unif, 1, tl);
-        
-        glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
-
-        flip_fbo(&fbo);
-        
-        glUseProgram(simple.program);
-        glBindVertexArray(box.vertexArrayObject);
-        glUniform1f(simple.pos_alpha, 1.f - sawf(time));
-        glUniform3fv(color_unif, 1, red);
-        glUniform3fv(lead_color_unif, 1, white);
-        glUniform2fv(origin_unif, 1, bot);
-        
-        glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
-        */
-        
-        blit_fbo(&fbo);
-        
-        GLenum err;
-        while((err = glGetError()) != GL_NO_ERROR)
+        while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ENTER))
         {
-            printf("%s\n", gluErrorString(err));
+            glClear(GL_COLOR_BUFFER_BIT);
+            glDrawArrays(GL_TRIANGLES, 0, game_over_text.numVertecies);
+            glfwSwapBuffers(window);
+            glfwPollEvents();
         }
+        
+        free_object(&game_over_text);
+        free_program(&game_over_shader);
     }
     
-    free_stickman(&left);
-    free_stickman(&right);
     free_object(&box);
-    //free_program(&simple);
-    
     free_effects(&effects);
     free_fbo(&fbo);
     glfwTerminate();

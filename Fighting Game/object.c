@@ -18,24 +18,11 @@ static const GLfloat box_verts[] = {
     1.f, 0.f
 };
 
-void make_box(object_t* obj)
-{
-    glGenVertexArrays(1, &obj->vertexArrayObject);
-    glBindVertexArray(obj->vertexArrayObject);
-    
-    glGenBuffers(1, &obj->vertexBufferObject);
-    glBindBuffer(GL_ARRAY_BUFFER, obj->vertexBufferObject);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(box_verts), box_verts, GL_STATIC_DRAW);
-    
-    glEnableVertexAttribArray(POSITION_ATTRIB);
-    glVertexAttribPointer(POSITION_ATTRIB, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-    
-    obj->numVertecies = sizeof(box_verts)/(sizeof(float) * 2);
-    obj->stride = 0;
-}
 
-void make_anim_obj(object_t* obj, float* verts, GLsizei verts_sz, GLsizei stride)
+void make_object(object_t* obj, const float* verts, GLsizei verts_sz, GLsizei stride)
 {
+    if (stride == 0) stride = sizeof(float)*2;
+    
     glGenVertexArrays(1, &obj->vertexArrayObject);
     glBindVertexArray(obj->vertexArrayObject);
     
@@ -43,13 +30,26 @@ void make_anim_obj(object_t* obj, float* verts, GLsizei verts_sz, GLsizei stride
     glBindBuffer(GL_ARRAY_BUFFER, obj->vertexBufferObject);
     glBufferData(GL_ARRAY_BUFFER, verts_sz, verts, GL_STATIC_DRAW);
     
+    glEnableVertexAttribArray(POSITION_ATTRIB);
+    glVertexAttribPointer(POSITION_ATTRIB, 2, GL_FLOAT, GL_FALSE, stride, NULL);
+    
+    obj->numVertecies = verts_sz / stride;
+    obj->stride = stride;
+}
+
+void make_box(object_t* obj)
+{
+    make_object(obj, box_verts, sizeof(box_verts), 0);
+}
+
+void make_anim_obj(object_t* obj, const float* verts, GLsizei verts_sz, GLsizei stride)
+{
+    make_object(obj, verts, verts_sz, stride);
+    
     glEnableVertexAttribArray(POS_FROM_ATTRIB);
     glEnableVertexAttribArray(POS_TO_ATTRIB);
     glEnableVertexAttribArray(DERIV_FROM_ATTRIB);
     glEnableVertexAttribArray(DERIV_TO_ATTRIB);
-    
-    obj->numVertecies = verts_sz / stride;
-    obj->stride = stride;
 }
 
 void anim_obj_keys(object_t* obj, const anim_step_t* step)

@@ -1,5 +1,4 @@
 #include "types.h"
-typedef struct anim_step anim_step_t;
 static const GLsizei stickman_stride = 216;
 extern const anim_step_t stickman_anims[];
 enum state_names {

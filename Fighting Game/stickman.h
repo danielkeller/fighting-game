@@ -16,6 +16,7 @@ typedef struct stickman {
     program_t hit_effect, parry_effect;
 } stickman_t;
 
+//Relies on init_game_time having been called
 void make_stickman(stickman_t*, character_t* other, direction_t direction);
 //These might be bindable
 void stickman_actions(stickman_t*);

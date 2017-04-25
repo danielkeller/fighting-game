@@ -1,5 +1,4 @@
 #include "stickman.h"
-#include "engine.h"
 const anim_step_t stickman_anims[] = {
 {.p_from = 0, .p_to = 0, .d_from = 64, .d_to = 64},
 {.p_from = 16, .p_to = 16, .d_from = 80, .d_to = 80},

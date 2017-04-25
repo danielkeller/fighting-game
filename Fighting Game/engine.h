@@ -23,7 +23,8 @@ Mat3 affine(float theta, float x, float y);
 
 //*** Object
 void make_box(object_t*);
-void make_anim_obj(object_t*, float* verts, GLsizei verts_sz, GLsizei stride);
+void make_object(object_t*, const float* verts, GLsizei verts_sz, GLsizei stride);
+void make_anim_obj(object_t*, const float* verts, GLsizei verts_sz, GLsizei stride);
 void anim_obj_keys(object_t*, const anim_step_t* step);
 void free_object(object_t*);
 
@@ -124,7 +125,7 @@ void make_effects(effects_t*);
 
 //Takes ownership of effect
 void push_effect(effects_t*, bound_t effect);
-
+void clear_effects(effects_t*);
 void draw_effects(effects_t*);
 void free_effects(effects_t*);
 
