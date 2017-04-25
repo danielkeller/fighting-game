@@ -40,7 +40,6 @@
 		37EA38361EA4F0F700848254 /* particles.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37EA38351EA4F0F700848254 /* particles.vert */; };
 		37EA38401EA5139900848254 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA383F1EA5139900848254 /* AppKit.framework */; };
 		37EA38441EA513F400848254 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA38431EA513F400848254 /* IOKit.framework */; };
-		37EA38481EA5141E00848254 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA38471EA5141E00848254 /* OpenGL.framework */; };
 		37EA384A1EA5147000848254 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA38491EA5147000848254 /* CoreVideo.framework */; };
 /* End PBXBuildFile section */
 
@@ -120,7 +119,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				37EA384A1EA5147000848254 /* CoreVideo.framework in Frameworks */,
-				37EA38481EA5141E00848254 /* OpenGL.framework in Frameworks */,
 				37EA38441EA513F400848254 /* IOKit.framework in Frameworks */,
 				37EA38401EA5139900848254 /* AppKit.framework in Frameworks */,
 				37EA38291E9F65E300848254 /* libGLFW.a in Frameworks */,

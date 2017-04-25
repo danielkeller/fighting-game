@@ -14,8 +14,6 @@
 #include "stickman.h"
 #include <math.h>
 
-const GLubyte* gluErrorString(GLenum errorCode);
-
 float camera_[] = {
     2., 0., 0.,
     0., 2., 0.,
@@ -122,12 +120,6 @@ int main (int argc, char* argv[]) {
             draw_effects(&effects);
             
             blit_fbo(&fbo);
-            
-            GLenum err;
-            while((err = glGetError()) != GL_NO_ERROR)
-            {
-                printf("%s\n", gluErrorString(err));
-            }
         }
         
         free_stickman(&left);
