@@ -49,7 +49,7 @@ void compile_shader(shader_t shader_data)
     {
         GLint infoLogLength;
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
-        GLchar* infoLog = malloc_or_die(infoLogLength);
+        GLchar* infoLog = malloc(infoLogLength);
         
         //print error message
         glGetShaderInfoLog(shader, infoLogLength, NULL, infoLog);
@@ -88,7 +88,7 @@ void link_shader_program(program_t* prog)
     {
         GLint infoLogLength;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
-        GLchar* infoLog = malloc_or_die(infoLogLength);
+        GLchar* infoLog = malloc(infoLogLength);
         
         //print error message
         glGetProgramInfoLog(program, infoLogLength, NULL, infoLog);

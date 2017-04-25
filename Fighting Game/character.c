@@ -8,6 +8,7 @@
 
 #include "character.h"
 #include "engine.h"
+#include <stdio.h>
 
 void goto_state(character_t *c, int state)
 {
@@ -37,6 +38,7 @@ void step_character(character_t* c, int advance_button, int attack_button)
     c->next.attack_result = 0;
     c->attack_button |= attack_button;
     c->advance_button = advance_button;
+    c->next.advancing = c->advance_button;
 }
 
 //The attack is resolved against the previous state. This
@@ -56,10 +58,13 @@ void attack(character_t* attacker, attack_t* attack)
     
     strike_point_t* target = &victim->prev.fight_state.hi + attack->target;
     
-    int effective_momentum = attack->momentum - target->momentum;
-    if (effective_momentum >= attack->momentum / 2) //Attack lands
+    int knockback = attack->knock - victim->prev.fight_state.balance;
+    
+    if (attack->force > target->block) //Attack lands
     {
         int damage = attack->damage - target->defense;
+        printf("%d %d\n", attacker->prev.state, -damage);
+        
         victim->next.health -= damage;
         if (victim->next.health < 0)
             victim->next.health = 0;
@@ -69,8 +74,7 @@ void attack(character_t* attacker, attack_t* attack)
     else
         attacker->next.attack_result |= PARRIED;
     
-    int knockback = effective_momentum - victim->prev.fight_state.balance;
-    if (knockback > 0)
+    if (attack->force >= target->block && knockback > 0)
     {
         victim->next.ground_pos -= .02*knockback;
         attacker->next.attack_result |= KNOCKED;

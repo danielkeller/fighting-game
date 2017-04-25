@@ -11,7 +11,6 @@
 #include <stddef.h>
 
 _Noreturn void die(const char* reason);
-void* malloc_or_die(size_t size);
 void printStackTrace(void);
 
 #endif /* error_h */

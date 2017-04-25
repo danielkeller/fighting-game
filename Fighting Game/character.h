@@ -15,26 +15,35 @@ typedef enum direction {
     RIGHT = 1
 } direction_t;
 
+typedef enum force {
+    WEAK, LIGHT, MIDDLE, HEAVY, XHEAVY
+} force_t;
+
 typedef struct attack {
+    //The frame of the attack can never be 0. This is intentional: at frame 0 of a
+    //state, only next.state equals that state, and attacks are resolved against prev.
+    //To put an attack on a state transition, put it at the end of the previous state.
     int frame;
     ptrdiff_t target;
     float range;
-    int damage, momentum;
+    int damage, knock;
+    force_t force;
 } attack_t;
 
 typedef enum attack_result {
     WHIFFED = 1<<0,
-    LANDED = 1<<1,
+    LANDED  = 1<<1,
     PARRIED = 1<<2,
     KNOCKED = 1<<3,
 } attack_result_t;
 
 typedef struct strike_point {
-    int defense, momentum;
+    int defense;
+    force_t block;
 } strike_point_t;
 
 typedef struct fight_state {
-    strike_point_t hi, mid, lo;
+    strike_point_t hi, lo;
     int balance;
 } fight_state_t;
 
@@ -57,6 +66,7 @@ typedef struct health_bar {
 
 typedef struct character_state {
     int state;
+    int advancing;
     float ground_pos;
     fight_state_t fight_state;
     attack_result_t attack_result;

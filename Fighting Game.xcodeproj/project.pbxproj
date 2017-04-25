@@ -245,8 +245,6 @@
 		3791266A1E866E8600613418 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
-				379126731E86786100613418 /* shaders.c */,
-				379126741E86786100613418 /* shaders.h */,
 				3791266B1E866E8F00613418 /* color.frag */,
 				3791266C1E866E8F00613418 /* waves.frag */,
 				3791266D1E866E8F00613418 /* anim.vert */,
@@ -256,6 +254,8 @@
 				37EA38311EA24B4400848254 /* blit.frag */,
 				37EA38331EA2C18400848254 /* blast.frag */,
 				37EA38351EA4F0F700848254 /* particles.vert */,
+				379126731E86786100613418 /* shaders.c */,
+				379126741E86786100613418 /* shaders.h */,
 			);
 			name = shaders;
 			sourceTree = "<group>";

@@ -41,6 +41,8 @@ struct key_events {
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    if (action == GLFW_REPEAT) return;
+    
     if (key == GLFW_KEY_Z) key_left.advance = action;
     if (key == GLFW_KEY_COMMA) key_right.advance = action;
     
@@ -53,7 +55,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 int main (int argc, char* argv[]) {
     GLFWwindow* window = init_window();
     glfwSetKeyCallback(window, key_callback);
-    
     
     //make_anim_obj(&box, test_verts, sizeof(test_verts), test_stride);
     //anim_obj_keys(&box, &test_test_Basis_Key_1);
@@ -72,11 +73,9 @@ int main (int argc, char* argv[]) {
     glUniformMatrix3fv(simple.transform, 1, GL_FALSE, eye3.d);
         */
     
-    
     make_box(&box);
     make_fbo(&fbo);
     make_effects(&effects);
-    init_game_time(&game_time);
     
     stickman_t left, right;
     make_stickman(&left, &right.character, RIGHT);
@@ -87,6 +86,8 @@ int main (int argc, char* argv[]) {
     int64_t frame_count = 0;
     usec_t last_fps = get_time();
     */
+    
+    init_game_time(&game_time);
     
     while (!glfwWindowShouldClose(window))
     {

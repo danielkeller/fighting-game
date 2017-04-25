@@ -88,7 +88,7 @@ char* read_file(const char* name)
     if (stat(name, &sb))
         die(strerror(errno));
     
-    char* ret = malloc_or_die(sb.st_size + 1);
+    char* ret = malloc(sb.st_size + 1);
     
     int fd = open(name, O_RDONLY);
     if (fd == -1)

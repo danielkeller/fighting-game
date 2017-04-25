@@ -19,27 +19,37 @@ enum state_names {
 
 static const state_t states[] = {
     [top] = {1, &stickman_top_Basis_Basis,
-        {.balance = 10, .hi = {8, 10}, .mid = {2, 3}}},
+        {.balance = 10, .hi = {8, MIDDLE}, .lo = {1, WEAK}}},
     [bottom] = {1, &stickman_bottom_DS_Bot_DS_Bot,
-        {.balance = 8, .hi = {0, 1}, .mid = {8, 10}}},
+        {.balance = 8, .hi = {0, WEAK}, .lo = {8, MIDDLE}}},
     [top_mid] = {2, &stickman_swing_Basis_DS_Mid,
-        {.balance = 6, .hi = {10, 16}, .mid = {1, 1}}},
+        {.balance = 6, .hi = {10, HEAVY}, .lo = {1, WEAK}}},
     [mid_bot] = {3, &stickman_swing_DS_Mid_DS_Bot,
-        {.balance = 6, .hi = {10, 16}, .mid = {1, 1}}},
+        {.balance = 6, .hi = {10, HEAVY}, .lo = {1, WEAK}}},
     [bot_mid] = {4, &stickman_swingup_DS_Bot_DS_Mid,
-        {.balance = 12, .hi = {0, 1}, .mid = {10, 16}}},
+        {.balance = 12, .hi = {0, WEAK}, .lo = {10, HEAVY}}},
     [mid_top] = {3, &stickman_swingup_DS_Mid_Basis,
-        {.balance = 12, .hi = {0, 1}, .mid = {10, 16}}},
+        {.balance = 12, .hi = {0, WEAK}, .lo = {10, HEAVY}}},
 };
 
-attack_t
-down_attack = {1, T(hi), .6, 20, 20},
-up_attack = {3, T(mid), .6, 10, 30};
+//For attacks that give defense/momentum buffs, used symmetrically:
+//If the attack is before the midpoint of the animation, advantage goes to the
+//first player. After the midpoint, it goes to the second. If it is at the midpoint
+//either both attacks land or neither.
 
-static const float speed = .03;
+attack_t
+down_attack = {2, T(hi), .6, 20, 20, MIDDLE},
+up_attack   = {3, T(lo), .6, 10, 30, MIDDLE};
+
+static const float speed = .02;
+static const float dodge = .08;
 
 //Note that new actions are considered to start epsilon after the previous frame,
 //as opposed to on the start of the next frame. (the previous frame is stored in anim_start)
+//So the states and transitions for a 2-frame state look like this:
+//       _____#-----=-----=.....@
+// anim_start ^  +1 ^  +2 ^
+// where '=' are calls to _actions() in the '-' state
 void stickman_actions(stickman_t* sm)
 {
     character_t* c = &sm->character;
@@ -51,11 +61,11 @@ void stickman_actions(stickman_t* sm)
             break;
         case top_mid:
             next_state(c, mid_bot);
+            break;
+        case mid_bot:
             attack(c, &down_attack);
             if (c->next.attack_result & LANDED)  push_effect(&effects, make_hit_effect(sm));
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, 1.));
-            break;
-        case mid_bot:
             next_state(c, bottom);
             break;
             
@@ -64,9 +74,9 @@ void stickman_actions(stickman_t* sm)
                 goto_state(c, bot_mid);
             break;
         case bot_mid:
-            next_state(c, mid_top);
             attack(c, &up_attack);
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .5));
+            next_state(c, mid_top);
             break;
         case mid_top:
             next_state(c, top);
@@ -79,13 +89,15 @@ void stickman_actions(stickman_t* sm)
     //if (c->other->prev.attack_result & KNOCKED)
     //    goto_state(c, bottom);
     
+    //Another possible form of movement is the character always moves forwards,
+    //or moves forwards when attacking, and there is a dodge button. This is
+    //more like a "horizontal position as recharging dodge bar."
     float other_pos = -c->other->next.ground_pos;
     float fwd_limit = fmin(1, other_pos) - stickman_hitbox_width*2.;
-    
-    if (c->advance_button)
-        c->next.ground_pos = fmin(fwd_limit, c->next.ground_pos + speed);
-    else
-        c->next.ground_pos = fmax(-1, c->next.ground_pos - speed);
+    float move_dir = c->advance_button ? 1. : -1.;
+    float move_speed = c->prev.advancing == c->advance_button ? speed : dodge;
+    c->next.ground_pos += move_dir*move_speed;
+    c->next.ground_pos = fmin(fmax(c->next.ground_pos, -1), fwd_limit);
 }
 
 //'frame' is also the number of the previous frame here.
@@ -112,6 +124,7 @@ void make_stickman(stickman_t *sm, character_t* other, direction_t direction)
     c->prev = c->next = (character_state_t){
         .ground_pos = -1.f,
         .health = 100,
+        .advancing = 0,
     };
     
     c->direction = direction;

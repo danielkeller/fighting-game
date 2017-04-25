@@ -18,13 +18,6 @@ void die(const char* reason)
     exit(1);
 }
 
-void* malloc_or_die(size_t size)
-{
-    void* ret = malloc(size);
-    if (!ret) die("out of memory");
-    return ret;
-}
-
 void printStackTrace(void)
 {
     static const unsigned int max_frames = 63;
