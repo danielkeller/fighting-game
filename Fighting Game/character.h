@@ -52,6 +52,7 @@ typedef struct fight_state {
 typedef struct state
 {
     int frames;
+    float scooch;
     fight_state_t fight_state;
 } state_t;
 
@@ -65,7 +66,6 @@ typedef struct health_bar {
 
 typedef struct character_state {
     int state;
-    int advancing;
     float ground_pos;
     fight_state_t fight_state;
     attack_result_t attack_result;
@@ -73,15 +73,18 @@ typedef struct character_state {
 } character_state_t;
 
 typedef struct character {
+    const state_t* states;
+    const anim_step_t* anims;
+    float hitbox_width;
+    float speed;
+    
     object_t obj;
     program_t program;
     direction_t direction;
-    const state_t* states;
-    const anim_step_t* anims;
     struct character* other;
     health_bar_t health_bar;
     
-    int attack_button, advance_button;
+    int attack_button, dodge_button;
     long long anim_start;
     character_state_t prev, next;
 } character_t;
@@ -89,7 +92,8 @@ typedef struct character {
 void goto_state(character_t *c, int state);
 void next_state(character_t *c, int state);
 void run_anim(character_t *c);
-void step_character(character_t* c, int advance_button, int attack_button);
+void step_character(character_t* c, int dodge_button, int attack_button);
+void move_character(character_t* c);
 void attack(character_t* attacker, attack_t* attack);
 void draw_character(character_t* c);
 

@@ -3,6 +3,10 @@
     "top": ["Basis", "Basis"],
     "swing": ["Basis", "DS Mid", "DS Bot"],
     "bottom": ["DS Bot", "DS Bot"],
-    "swingup": ["DS Bot", "DS Mid", "Basis"]
+    "swingup": ["DS Bot", "DS Mid", "Basis"],
+    "hi_block": ["Basis", "Block"],
+    "lo_block": ["DS Bot", "Twirl 1", "Twirl 2", "Block"],
+    "block": ["Block", "Block"],
+    "unblock": ["Block", "Basis"]
 }
 }

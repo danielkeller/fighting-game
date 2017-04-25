@@ -9,22 +9,20 @@
 #include "stickman.h"
 #include "objects/stickman.h"
 #include "engine.h"
-#include <math.h>
-#include <stdlib.h>
 
 //For attacks that give defense/momentum buffs, used symmetrically:
 //If the attack is before the midpoint of the animation, advantage goes to the
 //first player. After the midpoint, it goes to the second. If it is at the midpoint
 //either both attacks land or neither.
 
-//         frames  balance   hi        lo
+//         frames  scooch balance   hi        lo
 static const state_t states[] = {
-    [top]       = {1, {10, {8,  MIDDLE}, {1,  WEAK}}},
-    [bottom]    = {1, {8,  {0,  WEAK},   {8,  MIDDLE}}},
-    [swing_1]   = {2, {6,  {10, HEAVY},  {1,  WEAK}}},
-    [swing_2]   = {3, {6,  {10, HEAVY},  {1,  WEAK}}},
-    [swingup_1] = {4, {12, {0,  WEAK},   {10, HEAVY}}},
-    [swingup_2] = {3, {12, {0,  WEAK},   {10, HEAVY}}},
+    [top]     = {1, 0,    {10, {8,  MIDDLE}, {1,  WEAK}}},
+    [bottom]  = {1, 0,    {8,  {0,  WEAK},   {8,  MIDDLE}}},
+    [swing_1] = {2, .01,  {6,  {10, HEAVY},  {1,  WEAK}}},
+    [swing_2] = {3, .01,  {6,  {10, HEAVY},  {1,  WEAK}}},
+    [swingup_1] = {4, .005, {12, {0,  WEAK},   {10, HEAVY}}},
+    [swingup_2] = {3, .005, {12, {0,  WEAK},   {10, HEAVY}}},
 };
 
 static attack_t
@@ -32,7 +30,6 @@ down_attack = {2, T(hi), .6, 20, 20, MIDDLE},
 up_attack   = {3, T(lo), .6, 10, 30, MIDDLE};
 
 static const float speed = .02;
-static const float dodge = .08;
 
 //Note that new actions are considered to start epsilon after the previous frame,
 //as opposed to on the start of the next frame. (the previous frame is stored in anim_start)
@@ -43,6 +40,8 @@ static const float dodge = .08;
 void stickman_actions(stickman_t* sm)
 {
     character_t* c = &sm->character;
+    
+    move_character(c);
     
     switch (c->prev.state) {
         case top:
@@ -78,16 +77,6 @@ void stickman_actions(stickman_t* sm)
     //This effect is annoying
     //if (c->other->prev.attack_result & KNOCKED)
     //    goto_state(c, bottom);
-    
-    //Another possible form of movement is the character always moves forwards,
-    //or moves forwards when attacking, and there is a dodge button. This is
-    //more like a "horizontal position as recharging dodge bar."
-    float other_pos = -c->other->next.ground_pos;
-    float fwd_limit = fmin(1, other_pos) - stickman_hitbox_width*2.;
-    float move_dir = c->advance_button ? 1. : -1.;
-    float move_speed = c->prev.advancing == c->advance_button ? speed : dodge;
-    c->next.ground_pos += move_dir*move_speed;
-    c->next.ground_pos = fmin(fmax(c->next.ground_pos, -1), fwd_limit);
 }
 
 //'frame' is also the number of the previous frame here.
@@ -112,15 +101,16 @@ void make_stickman(stickman_t *sm, character_t* other, direction_t direction)
     
     c->states = states;
     c->anims = stickman_anims;
+    c->speed = speed;
+    c->hitbox_width = stickman_hitbox_width;
     c->prev = c->next = (character_state_t){
         .ground_pos = -1.f,
         .health = 100,
-        .advancing = 0,
     };
     
     c->direction = direction;
     c->other = other;
-    c->advance_button = c->attack_button = 0;
+    c->dodge_button = c->attack_button = 0;
     
     goto_state(c, top);
 }

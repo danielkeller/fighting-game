@@ -9,6 +9,7 @@
 #include "character.h"
 #include "engine.h"
 #include <stdio.h>
+#include <math.h>
 
 void goto_state(character_t *c, int state)
 {
@@ -32,13 +33,21 @@ void run_anim(character_t *c)
     glUniform1f(c->program.pos_alpha, anim_alpha);
 }
 
-void step_character(character_t* c, int advance_button, int attack_button)
+void move_character(character_t* c)
+{
+    c->next.ground_pos += c->speed + c->states[c->prev.state].scooch;
+    
+    float other_pos = -c->other->next.ground_pos;
+    float fwd_limit = fmin(1, other_pos) - c->hitbox_width - c->other->hitbox_width;
+    c->next.ground_pos = fmin(fmax(c->next.ground_pos, -1), fwd_limit);
+}
+
+void step_character(character_t* c, int dodge_button, int attack_button)
 {
     c->prev = c->next;
     c->next.attack_result = 0;
     c->attack_button |= attack_button;
-    c->advance_button = advance_button;
-    c->next.advancing = c->advance_button;
+    c->dodge_button |= dodge_button;
 }
 
 //The attack is resolved against the previous state. This

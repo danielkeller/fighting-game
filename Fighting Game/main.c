@@ -36,20 +36,19 @@ float sawf(float v)
 }
 
 struct key_events {
-    int attack, advance;
+    int attack, dodge;
 } key_left, key_right;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (action == GLFW_REPEAT) return;
     
-    if (key == GLFW_KEY_Z) key_left.advance = action;
-    if (key == GLFW_KEY_COMMA) key_right.advance = action;
-    
     //Robust key-down detection
     if (action != GLFW_PRESS) return;
     if (key == GLFW_KEY_X) key_left.attack++;
     if (key == GLFW_KEY_PERIOD) key_right.attack++;
+    if (key == GLFW_KEY_Z) key_left.dodge++;
+    if (key == GLFW_KEY_COMMA) key_right.dodge++;
 }
 
 int main (int argc, char* argv[]) {
@@ -114,8 +113,8 @@ int main (int argc, char* argv[]) {
         while (phys_tick(&game_time)) {
             glfwPollEvents();
             
-            step_character(&left.character, key_left.advance, SHIFT_FLAG(key_left.attack));
-            step_character(&right.character, key_right.advance, SHIFT_FLAG(key_right.attack));
+            step_character(&left.character, SHIFT_FLAG(key_left.dodge), SHIFT_FLAG(key_left.attack));
+            step_character(&right.character, SHIFT_FLAG(key_right.dodge), SHIFT_FLAG(key_right.attack));
             stickman_actions(&left);
             stickman_actions(&right);
         }
