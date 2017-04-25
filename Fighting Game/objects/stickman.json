@@ -5,7 +5,7 @@
     "bottom": ["DS Bot", "DS Bot"],
     "swingup": ["DS Bot", "DS Mid", "Basis"],
     "hi_block": ["Basis", "Block"],
-    "lo_block": ["DS Bot", "Twirl 1", "Twirl 2", "Block"],
+    "lo_block": ["DS Bot", "Twirl 1", "Twirl 2", "Twirl Block"],
     "block": ["Block", "Block"],
     "unblock": ["Block", "Basis"]
 }

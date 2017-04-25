@@ -8,7 +8,6 @@
 
 #include "character.h"
 #include "engine.h"
-#include <stdio.h>
 #include <math.h>
 
 void goto_state(character_t *c, int state)
@@ -37,6 +36,7 @@ void move_character(character_t* c)
 {
     c->next.ground_pos += c->speed + c->states[c->prev.state].scooch;
     
+    //using next may not be fair here, but using prev causes weird oscillations
     float other_pos = -c->other->next.ground_pos;
     float fwd_limit = fmin(1, other_pos) - c->hitbox_width - c->other->hitbox_width;
     c->next.ground_pos = fmin(fmax(c->next.ground_pos, -1), fwd_limit);
@@ -72,7 +72,6 @@ void attack(character_t* attacker, attack_t* attack)
     if (attack->force > target->block) //Attack lands
     {
         int damage = attack->damage - target->defense;
-        printf("%d %d\n", attacker->prev.state, -damage);
         
         victim->next.health -= damage;
         if (victim->next.health < 0)
@@ -86,6 +85,9 @@ void attack(character_t* attacker, attack_t* attack)
     if (attack->force >= target->block && knockback > 0)
     {
         victim->next.ground_pos -= .02*knockback;
+        if (victim->next.ground_pos < -1.)
+            victim->next.ground_pos = -1.;
+        
         attacker->next.attack_result |= KNOCKED;
     }
 }

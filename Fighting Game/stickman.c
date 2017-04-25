@@ -10,6 +10,9 @@
 #include "objects/stickman.h"
 #include "engine.h"
 
+static const float speed = .01;
+static const float block_dist = .3;
+
 //For attacks that give defense/momentum buffs, used symmetrically:
 //If the attack is before the midpoint of the animation, advantage goes to the
 //first player. After the midpoint, it goes to the second. If it is at the midpoint
@@ -17,19 +20,26 @@
 
 //         frames  scooch balance   hi        lo
 static const state_t states[] = {
-    [top]     = {1, 0,    {10, {8,  MIDDLE}, {1,  WEAK}}},
-    [bottom]  = {1, 0,    {8,  {0,  WEAK},   {8,  MIDDLE}}},
-    [swing_1] = {2, .01,  {6,  {10, HEAVY},  {1,  WEAK}}},
-    [swing_2] = {3, .01,  {6,  {10, HEAVY},  {1,  WEAK}}},
-    [swingup_1] = {4, .005, {12, {0,  WEAK},   {10, HEAVY}}},
-    [swingup_2] = {3, .005, {12, {0,  WEAK},   {10, HEAVY}}},
+    [top]       = {1, 0,   {10, {8,  MIDDLE}, {1,  WEAK}}},
+    [bottom]    = {1, 0,   {8,  {0,  WEAK},   {8,  MIDDLE}}},
+    [swing_1]   = {2, .02, {6,  {10, HEAVY},  {1,  WEAK}}},
+    [swing_2]   = {3, .02, {6,  {10, HEAVY},  {1,  WEAK}}},
+    [swingup_1] = {4, .01, {12, {0,  WEAK},   {10, HEAVY}}},
+    [swingup_2] = {3, .01, {12, {0,  WEAK},   {10, HEAVY}}},
+    
+    [hi_block]   = {2, -block_dist/2., {10, {20, HEAVY}, {8, MIDDLE}}},
+    [lo_block_1] = {1, -block_dist/3., {10, {8, MIDDLE}, {20, HEAVY}}},
+    [lo_block_2] = {1, -block_dist/3., {10, {8, MIDDLE}, {20, HEAVY}}},
+    [lo_block_3] = {1, -block_dist/3., {10, {8, MIDDLE}, {20, HEAVY}}},
+    [block]     = {7, -speed, {10, {20, HEAVY}, {20, HEAVY}}},
+    [unblock]   = {2, 0, {10, {20, HEAVY}, {8, MIDDLE}}},
 };
 
 static attack_t
 down_attack = {2, T(hi), .6, 20, 20, MIDDLE},
 up_attack   = {3, T(lo), .6, 10, 30, MIDDLE};
 
-static const float speed = .02;
+#define PASSIVE(from, to) case from: next_state(c, to); break;
 
 //Note that new actions are considered to start epsilon after the previous frame,
 //as opposed to on the start of the next frame. (the previous frame is stored in anim_start)
@@ -47,10 +57,10 @@ void stickman_actions(stickman_t* sm)
         case top:
             if (SHIFT_FLAG(c->attack_button))
                 goto_state(c, swing_1);
+            if (SHIFT_FLAG(c->dodge_button) && c->prev.ground_pos > -1. + block_dist)
+                goto_state(c, hi_block);
             break;
-        case swing_1:
-            next_state(c, swing_2);
-            break;
+        PASSIVE(swing_1, swing_2)
         case swing_2:
             attack(c, &down_attack);
             if (c->next.attack_result & LANDED)  push_effect(&effects, make_hit_effect(sm));
@@ -61,15 +71,24 @@ void stickman_actions(stickman_t* sm)
         case bottom:
             if (SHIFT_FLAG(c->attack_button))
                 goto_state(c, swingup_1);
+            if (SHIFT_FLAG(c->dodge_button) && c->prev.ground_pos > -1. + block_dist)
+                goto_state(c, lo_block_1);
             break;
         case swingup_1:
             attack(c, &up_attack);
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .5));
             next_state(c, swingup_2);
             break;
-        case swingup_2:
-            next_state(c, top);
-            break;
+        PASSIVE(swingup_2, top)
+            
+        PASSIVE(hi_block, block)
+        PASSIVE(lo_block_1, lo_block_2)
+        PASSIVE(lo_block_2, lo_block_3)
+        PASSIVE(lo_block_3, block)
+        
+        PASSIVE(block, unblock)
+        PASSIVE(unblock, top)
+            
         default:
             break;
     }
@@ -104,7 +123,7 @@ void make_stickman(stickman_t *sm, character_t* other, direction_t direction)
     c->speed = speed;
     c->hitbox_width = stickman_hitbox_width;
     c->prev = c->next = (character_state_t){
-        .ground_pos = -1.f,
+        .ground_pos = -.5f,
         .health = 100,
     };
     
