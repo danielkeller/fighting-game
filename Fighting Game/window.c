@@ -12,11 +12,13 @@
 #include "gl_core_3_3.h"
 #include <stdio.h>
 
+static const char* window_title = "Fighting Game";
+
 void error_callback(int error, const char* description) {
     printf("%s\n", description);
 }
 
-GLFWwindow* init_window() {
+GLFWwindow* init_window(void) {
     glfwSetErrorCallback(error_callback);
     if (!glfwInit())
         die("Could not initialize glfw");
@@ -30,7 +32,7 @@ GLFWwindow* init_window() {
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1);
 #endif
     
-    GLFWwindow* window = glfwCreateWindow(1024, 768, "Fighting Game", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1024, 768, window_title, NULL, NULL);
     if (!window)
         die("Could not create window");
     
@@ -43,4 +45,24 @@ GLFWwindow* init_window() {
     //glDepthFunc(GL_LESS);
     
     return window;
+}
+
+static int xpos, ypos, width, height;
+
+void toggle_fullscreen(GLFWwindow* window)
+{
+    if (glfwGetWindowMonitor(window))
+    {
+        glfwSetWindowMonitor(window, NULL, xpos, ypos, width, height, 0);
+        glfwSetWindowTitle(window, window_title);
+    }
+    else
+    {
+        glfwGetWindowPos(window, &xpos, &ypos);
+        glfwGetWindowSize(window, &width, &height);
+        
+        GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+        glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+    }
 }

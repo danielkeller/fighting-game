@@ -14,6 +14,7 @@
 #include "GLFW/include/GLFW/glfw3.h"
 
 typedef struct GLFWwindow GLFWwindow;
-GLFWwindow* init_window();
+GLFWwindow* init_window(void);
+void toggle_fullscreen(GLFWwindow*);
 
 #endif /* window_h */

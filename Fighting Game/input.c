@@ -21,6 +21,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_PERIOD) key_right.attack++;
     if (key == GLFW_KEY_Z) key_left.dodge++;
     if (key == GLFW_KEY_COMMA) key_right.dodge++;
+    
+    if (key == GLFW_KEY_F) toggle_fullscreen(window);
 }
 
 int joy_left = -1, joy_right = -1;
