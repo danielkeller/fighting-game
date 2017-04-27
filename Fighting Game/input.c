@@ -66,6 +66,15 @@ void poll_input()
     int count;
     if (joy_left != -1) {
         const unsigned char* axes = glfwGetJoystickButtons(joy_left,  &count);
+        //Button-finding code
+        /*
+        for (int i = 0; i < count; ++i)
+            if (axes[i])
+                printf("%d ", i);
+        printf("\n");
+        */
+        
+        key_left.start = axes[9];
         if (joy_left_prev.dodge != axes[1]) key_left.dodge += axes[1];
         if (joy_left_prev.attack != axes[2]) key_left.attack += axes[2];
         joy_left_prev.dodge = axes[1];
@@ -73,6 +82,7 @@ void poll_input()
     }
     if (joy_right != -1) {
         const unsigned char* axes = glfwGetJoystickButtons(joy_right,  &count);
+        key_right.start = axes[9];
         if (joy_right_prev.dodge != axes[1]) key_right.dodge += axes[1];
         if (joy_right_prev.attack != axes[2]) key_right.attack += axes[2];
         joy_right_prev.dodge = axes[1];

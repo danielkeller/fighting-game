@@ -112,7 +112,8 @@ int main (int argc, char* argv[]) {
         glUniformMatrix3fv(game_over_shader.camera, 1, GL_FALSE, camera.d);
         glUniformMatrix3fv(game_over_shader.transform, 1, GL_FALSE, eye3.d);
         
-        while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ENTER))
+        while (!glfwWindowShouldClose(window) &&
+               !(glfwGetKey(window, GLFW_KEY_ENTER) || (key_left.start && key_right.start)))
         {
             game_time.multiplier += 1;
             render_tick(&game_time);

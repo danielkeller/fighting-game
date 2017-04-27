@@ -48,7 +48,7 @@ int step_character(character_t* c, int dodge_button, int attack_button)
     c->next.attack_result = 0;
     c->attack_button |= attack_button;
     c->dodge_button |= dodge_button;
-    return c->prev.health > 1;
+    return c->prev.health > 0;
 }
 
 //The attack is resolved against the previous state. This

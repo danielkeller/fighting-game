@@ -14,7 +14,7 @@ void init_input(struct GLFWwindow* window);
 void poll_input();
 
 typedef struct key_events {
-    int attack, dodge;
+    int attack, dodge, start;
 } key_events_t;
 
 extern key_events_t key_left, key_right;
