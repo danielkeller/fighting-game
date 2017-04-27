@@ -75,6 +75,8 @@ void link_shader_program(program_t* prog)
     
     load_shader(lib_frag);
     glAttachShader(program, lib_frag->shader);
+    load_shader(lib_vert);
+    glAttachShader(program, lib_vert->shader);
     
     glBindAttribLocation(program, POSITION_ATTRIB, "position");
     glBindAttribLocation(program, POS_FROM_ATTRIB, "pos_from");

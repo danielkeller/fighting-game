@@ -43,6 +43,7 @@
 		37EA38441EA513F400848254 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA38431EA513F400848254 /* IOKit.framework */; };
 		37EA384A1EA5147000848254 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA38491EA5147000848254 /* CoreVideo.framework */; };
 		37F36A321EB2124800E30D1D /* lib.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37F36A311EB2124800E30D1D /* lib.frag */; };
+		37F36A341EB22C0800E30D1D /* lib.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37F36A331EB22C0800E30D1D /* lib.vert */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -116,6 +117,7 @@
 		37EA38491EA5147000848254 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		37F36A301EB1EE2400E30D1D /* character_internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = character_internal.h; sourceTree = "<group>"; };
 		37F36A311EB2124800E30D1D /* lib.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = lib.frag; path = shaders/lib.frag; sourceTree = "<group>"; };
+		37F36A331EB22C0800E30D1D /* lib.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = lib.vert; path = shaders/lib.vert; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -262,9 +264,10 @@
 				37EA38311EA24B4400848254 /* blit.frag */,
 				37EA38331EA2C18400848254 /* blast.frag */,
 				37EA38351EA4F0F700848254 /* particles.vert */,
+				37F36A311EB2124800E30D1D /* lib.frag */,
+				37F36A331EB22C0800E30D1D /* lib.vert */,
 				379126731E86786100613418 /* shaders.c */,
 				379126741E86786100613418 /* shaders.h */,
-				37F36A311EB2124800E30D1D /* lib.frag */,
 			);
 			name = shaders;
 			sourceTree = "<group>";
@@ -371,6 +374,7 @@
 			files = (
 				37EA38361EA4F0F700848254 /* particles.vert in Resources */,
 				37F36A321EB2124800E30D1D /* lib.frag in Resources */,
+				37F36A341EB22C0800E30D1D /* lib.vert in Resources */,
 				37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */,
 				37EA38321EA24B4400848254 /* blit.frag in Resources */,
 				37EA38301EA24B0B00848254 /* screenspace.vert in Resources */,

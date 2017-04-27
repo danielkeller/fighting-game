@@ -7,19 +7,15 @@ static struct shader anim_vert_struct = {
 .name = "anim_vert",
 .type = GL_VERTEX_SHADER,
 .source =
-"in vec2 pos_from, pos_to, deriv_from, deriv_to;\n"
+"in vec2 pos_from, deriv_from, pos_to, deriv_to;\n"
 "uniform float pos_alpha;\n"
 "uniform mat3 camera;\n"
 "uniform mat3 transform;\n"
 "out vec2 posFrag;\n"
+"vec2 spline(vec2 a, vec2 da, vec2 b, vec2 db, float alpha);\n"
 "void main()\n"
 "{\n"
-"//Spline calculation\n"
-"vec2 a = deriv_from - (pos_to - pos_from),\n"
-"b = -deriv_to + (pos_to - pos_from);\n"
-"float inv_alpha = 1. - pos_alpha;\n"
-"vec2 position = pos_from*inv_alpha + pos_to*pos_alpha\n"
-"+ inv_alpha*pos_alpha*(a*inv_alpha + b*pos_alpha);\n"
+"vec2 position = spline(pos_from, deriv_from, pos_to, deriv_to, pos_alpha);\n"
 "gl_Position = vec4((camera * transform * vec3(position, 1)).xy, 0, 1);\n"
 "posFrag = (transform * vec3(position, 1)).xy;\n"
 "}\n"
@@ -164,6 +160,24 @@ static struct shader lib_frag_struct = {
 "}\n"
 };
 shader_t lib_frag = &lib_frag_struct;
+
+static struct shader lib_vert_struct = {
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/lib.vert",
+#endif
+.name = "lib_vert",
+.type = GL_VERTEX_SHADER,
+.source =
+"vec2 spline(vec2 a, vec2 da, vec2 b, vec2 db, float alpha)\n"
+"{\n"
+"vec2 x = da - (b - a),\n"
+"y = -db + (b - a);\n"
+"float inv_alpha = 1. - alpha;\n"
+"return a*inv_alpha + b*alpha + inv_alpha*alpha*(x*inv_alpha + y*alpha);\n"
+"}\n"
+};
+shader_t lib_vert = &lib_vert_struct;
 
 static struct shader particles_vert_struct = {
 .shader = 0,
