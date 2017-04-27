@@ -6,7 +6,7 @@
 //  Copyright © 2017 Daniel Keller. All rights reserved.
 //
 
-#include "character.h"
+#include "character_internal.h"
 #include "engine.h"
 #include <math.h>
 
@@ -42,12 +42,13 @@ void move_character(character_t* c)
     c->next.ground_pos = fmin(fmax(c->next.ground_pos, -1), fwd_limit);
 }
 
-void step_character(character_t* c, int dodge_button, int attack_button)
+int step_character(character_t* c, int dodge_button, int attack_button)
 {
     c->prev = c->next;
     c->next.attack_result = 0;
     c->attack_button |= attack_button;
     c->dodge_button |= dodge_button;
+    return c->prev.health > 1;
 }
 
 //The attack is resolved against the previous state. This
@@ -92,7 +93,7 @@ void attack(character_t* attacker, attack_t* attack)
     }
 }
 
-void draw_character(character_t* c)
+void draw_character_internal(character_t* c)
 {
     glUseProgram(c->program.program);
     glBindVertexArray(c->obj.vertexArrayObject);
@@ -109,6 +110,19 @@ void draw_character(character_t* c)
     run_anim(c);
     
     glDrawArrays(GL_TRIANGLES, 0, c->obj.numVertecies);
+}
+
+void character_actions(character_t* c)
+{
+    CALL_BOUND(c->actions);
+}
+void draw_character(character_t* c)
+{
+    CALL_BOUND(c->draw);
+}
+void free_character(character_t* c)
+{
+    CALL_BOUND(c->free);
 }
 
 void make_heath_bar(health_bar_t* hb, direction_t direction)

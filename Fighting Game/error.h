@@ -8,7 +8,6 @@
 
 #ifndef error_h
 #define error_h
-#include <stddef.h>
 
 _Noreturn void die(const char* reason);
 void printStackTrace(void);

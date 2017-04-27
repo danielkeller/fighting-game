@@ -8,7 +8,6 @@
 
 #ifndef file_h
 #define file_h
-#include <stdint.h>
 
 #ifdef __APPLE__
 typedef int watch_t;

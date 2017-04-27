@@ -66,7 +66,6 @@
 		372F30B31EA8AA3200F9AE22 /* character.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = character.h; sourceTree = "<group>"; };
 		372F30B51EA910AD00F9AE22 /* stickman_effects.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stickman_effects.c; sourceTree = "<group>"; };
 		372F337C1D78A9020076D98E /* stickman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stickman.c; sourceTree = "<group>"; };
-		372F337D1D78A9020076D98E /* stickman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stickman.h; sourceTree = "<group>"; };
 		37421AA11CB2FDCB0027B7D4 /* Fighting Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Fighting Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		37421AAA1CB2FDCC0027B7D4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		37421AAD1CB2FDCC0027B7D4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -114,6 +113,7 @@
 		37EA38431EA513F400848254 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		37EA38471EA5141E00848254 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		37EA38491EA5147000848254 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		37F36A301EB1EE2400E30D1D /* character_internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = character_internal.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,8 +156,8 @@
 			children = (
 				37421ABF1CB2FFE50027B7D4 /* main.c */,
 				372F30B31EA8AA3200F9AE22 /* character.h */,
+				37F36A301EB1EE2400E30D1D /* character_internal.h */,
 				372F30B21EA8AA3200F9AE22 /* character.c */,
-				372F337D1D78A9020076D98E /* stickman.h */,
 				372F337C1D78A9020076D98E /* stickman.c */,
 				372F30B51EA910AD00F9AE22 /* stickman_effects.c */,
 			);

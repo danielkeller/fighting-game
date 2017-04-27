@@ -6,7 +6,7 @@
 //  Copyright © 2016 Daniel Keller. All rights reserved.
 //
 
-#include "stickman.h"
+#include "character_internal.h"
 #include "objects/stickman.h"
 #include "engine.h"
 
@@ -47,9 +47,9 @@ up_attack   = {3, T(lo), .6, 10, 30, MIDDLE};
 //       _____#-----=-----=.....@
 // anim_start ^  +1 ^  +2 ^
 // where '=' are calls to _actions() in the '-' state
-void stickman_actions(stickman_t* sm)
+int stickman_actions(stickman_t* sm)
 {
-    character_t* c = &sm->character;
+    character_t* c = sm->character;
     
     move_character(c);
     
@@ -96,26 +96,53 @@ void stickman_actions(stickman_t* sm)
     //This effect is annoying
     //if (c->other->prev.attack_result & KNOCKED)
     //    goto_state(c, bottom);
+    
+    return 0;
 }
+BINDABLE(stickman_actions, stickman_t)
 
 //'frame' is also the number of the previous frame here.
-void draw_stickman(stickman_t* sm)
+int draw_stickman(stickman_t* sm)
 {
-    draw_character(&sm->character);
-    draw_health_bar(&sm->character);
+    draw_character_internal(sm->character);
+    draw_health_bar(sm->character);
+    return 0;
 }
+BINDABLE(draw_stickman, stickman_t)
 
-void make_stickman(stickman_t *sm, character_t* other, direction_t direction)
+int free_stickman(stickman_t* sm)
 {
-    character_t* c = &sm->character;
+    character_t* c = sm->character;
     
-    make_heath_bar(&sm->character.health_bar, direction);
+    free_health_bar(&c->health_bar);
+    free_program(&sm->hit_effect);
+    free_program(&sm->parry_effect);
+    free_object(&c->obj);
+    free_program(&c->program);
+    
+    free(sm);
+    return 0;
+}
+BINDABLE(free_stickman, stickman_t)
+
+void make_stickman(character_t* c, character_t* other, direction_t direction)
+{
+    stickman_t* sm = malloc(sizeof(stickman_t));
+    
+    sm->character = c;
+    sm->character->other = other;
+    
+    c->actions = ref_bind_stickman_actions(sm);
+    c->draw = ref_bind_draw_stickman(sm);
+    c->free = ref_bind_free_stickman(sm);
+    
+    make_heath_bar(&sm->character->health_bar, direction);
     load_shader_program(&sm->hit_effect, screenspace_vert, blast_frag);
     load_shader_program(&sm->parry_effect, particles_vert, color_frag);
     
-    make_anim_obj(&sm->character.obj, stickman_verts, sizeof(stickman_verts), stickman_stride);
-    load_shader_program(&sm->character.program, anim_vert, color_frag);
-    sm->color_unif = glGetUniformLocation(sm->character.program.program, "main_color");
+    make_anim_obj(&sm->character->obj, stickman_verts, sizeof(stickman_verts), stickman_stride);
+    load_shader_program(&sm->character->program, anim_vert, color_frag);
+    sm->color_unif = glGetUniformLocation(sm->character->program.program, "main_color");
     glUniform3f(sm->color_unif, 1., 1., 1.);
     
     c->states = states;
@@ -128,19 +155,7 @@ void make_stickman(stickman_t *sm, character_t* other, direction_t direction)
     };
     
     c->direction = direction;
-    c->other = other;
     c->dodge_button = c->attack_button = 0;
     
     goto_state(c, top);
-}
-
-void free_stickman(stickman_t* sm)
-{
-    character_t* c = &sm->character;
-    
-    free_health_bar(&c->health_bar);
-    free_program(&sm->hit_effect);
-    free_program(&sm->parry_effect);
-    free_object(&c->obj);
-    free_program(&c->program);
 }

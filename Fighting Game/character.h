@@ -9,26 +9,27 @@
 #ifndef character_h
 #define character_h
 #include "types.h"
+#include "function.h"
+
+typedef struct character character_t;
 
 typedef enum direction {
     LEFT = -1,
     RIGHT = 1
 } direction_t;
 
+int step_character(character_t*, int dodge_button, int attack_button);
+void character_actions(character_t*);
+void draw_character(character_t*);
+//Must clear effects after calling this
+void free_character(character_t*);
+
+//Relies on init_game_time having been called
+void make_stickman(character_t* c, character_t* other, direction_t direction);
+
 typedef enum force {
     WEAK, LIGHT, MIDDLE, HEAVY, XHEAVY
 } force_t;
-
-typedef struct attack {
-    //The frame of the attack can never be 0. This is intentional: at frame 0 of a
-    //state, only next.state equals that state, and attacks are resolved against prev.
-    //To put an attack on a state transition, put it at the end of the previous state.
-    int frame;
-    ptrdiff_t target;
-    float range;
-    int damage, knock;
-    force_t force;
-} attack_t;
 
 typedef enum attack_result {
     WHIFFED = 1<<0,
@@ -46,8 +47,6 @@ typedef struct fight_state {
     int balance;
     strike_point_t hi, lo;
 } fight_state_t;
-
-#define T(target) (&((fight_state_t*)NULL)->target - &((fight_state_t*)NULL)->hi)
 
 typedef struct state
 {
@@ -73,6 +72,8 @@ typedef struct character_state {
 } character_state_t;
 
 typedef struct character {
+    bound_t actions, draw, free;
+    
     const state_t* states;
     const anim_step_t* anims;
     float hitbox_width;
@@ -88,17 +89,5 @@ typedef struct character {
     long long anim_start;
     character_state_t prev, next;
 } character_t;
-
-void goto_state(character_t *c, int state);
-void next_state(character_t *c, int state);
-void run_anim(character_t *c);
-void step_character(character_t* c, int dodge_button, int attack_button);
-void move_character(character_t* c);
-void attack(character_t* attacker, attack_t* attack);
-void draw_character(character_t* c);
-
-void make_heath_bar(health_bar_t* hb, direction_t direction);
-void draw_health_bar(character_t *c);
-void free_health_bar(health_bar_t* hb);
 
 #endif /* character_h */

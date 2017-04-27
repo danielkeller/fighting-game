@@ -15,7 +15,7 @@ typedef struct bound {
 } bound_t;
 
 #define BINDABLE_PROTO(func, argty) \
-    int func##bindhelper(void* arg); \
+    int func##_bindhelper(void* arg); \
     bound_t bind_##func(argty* arg);
 
 #define BINDABLE(func, argty) \

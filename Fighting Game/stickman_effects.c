@@ -6,7 +6,7 @@
 //  Copyright © 2017 Daniel Keller. All rights reserved.
 //
 
-#include "stickman.h"
+#include "character_internal.h"
 #include "engine.h"
 
 typedef struct hit_effect {
@@ -39,7 +39,7 @@ bound_t make_hit_effect(stickman_t* sm)
     he.attacker = sm;
     he.start_time = game_time.current_time;
     he.origin_unif = glGetUniformLocation(sm->hit_effect.program, "origin");
-    he.x = (sm->character.next.ground_pos + 2*stickman_hitbox_width)*sm->character.direction;
+    he.x = (sm->character->next.ground_pos + 2*stickman_hitbox_width)*sm->character->direction;
     return bind_draw_hit_effect(&he);
 }
 
@@ -57,7 +57,7 @@ int draw_parry_effect(parry_effect_t* pe)
     glUseProgram(program->program);
     
     glUniform3f(pe->color_unif, 1., 1., 0.5);
-    float dir = (float)pe->attacker->character.direction;
+    float dir = (float)pe->attacker->character->direction;
     glUniform1f(pe->direction_unif, dir);
     glUniform2f(pe->init_vel_unif, 1, 0);
     glUniformMatrix3fv(program->camera, 1, GL_FALSE, camera.d);
@@ -81,8 +81,8 @@ bound_t make_parry_effect(stickman_t* sm, float y)
     pe.direction_unif = glGetUniformLocation(sm->parry_effect.program, "direction");
     pe.init_vel_unif = glGetUniformLocation(sm->parry_effect.program, "init_vel");
     
-    pe.position = affine(0., (sm->character.next.ground_pos + stickman_hitbox_width)*sm->character.direction, y);
-    pe.position.d[0] = sm->character.direction;
+    pe.position = affine(0., (sm->character->next.ground_pos + stickman_hitbox_width)*sm->character->direction, y);
+    pe.position.d[0] = sm->character->direction;
     
     return bind_draw_parry_effect(&pe);
 }
