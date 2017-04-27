@@ -75,12 +75,9 @@ typedef struct character {
     bound_t actions, draw, free;
     
     const state_t* states;
-    const anim_step_t* anims;
     float hitbox_width;
     float speed;
     
-    object_t obj;
-    program_t program;
     direction_t direction;
     struct character* other;
     health_bar_t health_bar;

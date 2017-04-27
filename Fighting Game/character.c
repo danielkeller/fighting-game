@@ -15,21 +15,12 @@ void goto_state(character_t *c, int state)
     c->next.state = state;
     c->next.fight_state = c->states[state].fight_state;
     c->anim_start = game_time.frame;
-    anim_obj_keys(&c->obj, &c->anims[state]);
 }
 
 void next_state(character_t *c, int state)
 {
     if (game_time.frame - c->anim_start >= c->states[c->prev.state].frames)
         goto_state(c, state);
-}
-
-void run_anim(character_t *c)
-{
-    //next state determines which animation is drawn
-    float anim_alpha = ((float)(game_time.frame - c->anim_start) + game_time.alpha)
-        / (float)c->states[c->next.state].frames;
-    glUniform1f(c->program.pos_alpha, anim_alpha);
 }
 
 void move_character(character_t* c)
@@ -93,24 +84,22 @@ void attack(character_t* attacker, attack_t* attack)
     }
 }
 
-void draw_character_internal(character_t* c)
+void set_character_uniforms(character_t* c, program_t* program)
 {
-    glUseProgram(c->program.program);
-    glBindVertexArray(c->obj.vertexArrayObject);
-    
-    glUniform1f(c->program.time, (float)game_time.current_time / 1000000.f);
-    glUniformMatrix3fv(c->program.camera, 1, GL_FALSE, camera.d);
+    glUniform1f(program->time, (float)game_time.current_time / 1000000.f);
+    glUniformMatrix3fv(program->camera, 1, GL_FALSE, camera.d);
     
     float ground_pos = c->prev.ground_pos * (1. - game_time.alpha)
     + c->next.ground_pos * game_time.alpha;
     
     Mat3 pos = affine(0., ground_pos * c->direction, 0.);
     pos.d[0] = c->direction;
-    glUniformMatrix3fv(c->program.transform, 1, GL_FALSE, pos.d);
+    glUniformMatrix3fv(program->transform, 1, GL_FALSE, pos.d);
     
-    run_anim(c);
-    
-    glDrawArrays(GL_TRIANGLES, 0, c->obj.numVertecies);
+    //next state determines which animation is drawn
+    float anim_alpha = ((float)(game_time.frame - c->anim_start) + game_time.alpha)
+    / (float)c->states[c->next.state].frames;
+    glUniform1f(program->pos_alpha, anim_alpha);
 }
 
 void character_actions(character_t* c)

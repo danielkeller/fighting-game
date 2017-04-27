@@ -93,6 +93,8 @@ int stickman_actions(stickman_t* sm)
             break;
     }
     
+    anim_obj_keys(&sm->obj, &stickman_anims[c->next.state]);
+    
     //This effect is annoying
     //if (c->other->prev.attack_result & KNOCKED)
     //    goto_state(c, bottom);
@@ -104,7 +106,11 @@ BINDABLE(stickman_actions, stickman_t)
 //'frame' is also the number of the previous frame here.
 int draw_stickman(stickman_t* sm)
 {
-    draw_character_internal(sm->character);
+    glUseProgram(sm->program.program);
+    set_character_uniforms(sm->character, &sm->program);
+    glBindVertexArray(sm->obj.vertexArrayObject);
+    glDrawArrays(GL_TRIANGLES, 0, sm->obj.numVertecies);
+    
     draw_health_bar(sm->character);
     return 0;
 }
@@ -117,8 +123,8 @@ int free_stickman(stickman_t* sm)
     free_health_bar(&c->health_bar);
     free_program(&sm->hit_effect);
     free_program(&sm->parry_effect);
-    free_object(&c->obj);
-    free_program(&c->program);
+    free_object(&sm->obj);
+    free_program(&sm->program);
     
     free(sm);
     return 0;
@@ -140,13 +146,12 @@ void make_stickman(character_t* c, character_t* other, direction_t direction)
     load_shader_program(&sm->hit_effect, screenspace_vert, blast_frag);
     load_shader_program(&sm->parry_effect, particles_vert, color_frag);
     
-    make_anim_obj(&sm->character->obj, stickman_verts, sizeof(stickman_verts), stickman_stride);
-    load_shader_program(&sm->character->program, anim_vert, color_frag);
-    sm->color_unif = glGetUniformLocation(sm->character->program.program, "main_color");
+    make_anim_obj(&sm->obj, stickman_verts, sizeof(stickman_verts), stickman_stride);
+    load_shader_program(&sm->program, anim_vert, color_frag);
+    sm->color_unif = glGetUniformLocation(sm->program.program, "main_color");
     glUniform3f(sm->color_unif, 1., 1., 1.);
     
     c->states = states;
-    c->anims = stickman_anims;
     c->speed = speed;
     c->hitbox_width = stickman_hitbox_width;
     c->prev = c->next = (character_state_t){

@@ -25,10 +25,11 @@ typedef struct attack {
 
 void goto_state(character_t *c, int state);
 void next_state(character_t *c, int state);
-void run_anim(character_t *c);
+
 void move_character(character_t* c);
 void attack(character_t* attacker, attack_t* attack);
-void draw_character_internal(character_t* c);
+
+void set_character_uniforms(character_t* c, program_t* program);
 
 void make_heath_bar(health_bar_t* hb, direction_t direction);
 void draw_health_bar(character_t *c);
@@ -37,6 +38,8 @@ void free_health_bar(health_bar_t* hb);
 //*** Stickman
 typedef struct stickman {
     character_t* character;
+    program_t program;
+    object_t obj;
     GLint color_unif;
     program_t hit_effect, parry_effect;
 } stickman_t;
