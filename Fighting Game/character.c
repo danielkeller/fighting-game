@@ -98,6 +98,7 @@ void draw_character_internal(character_t* c)
     glUseProgram(c->program.program);
     glBindVertexArray(c->obj.vertexArrayObject);
     
+    glUniform1f(c->program.time, (float)game_time.current_time / 1000000.f);
     glUniformMatrix3fv(c->program.camera, 1, GL_FALSE, camera.d);
     
     float ground_pos = c->prev.ground_pos * (1. - game_time.alpha)

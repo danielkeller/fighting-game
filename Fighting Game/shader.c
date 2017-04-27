@@ -21,6 +21,8 @@ void add_program(program_t* program);
 void remove_program(program_t* program);
 #endif
 
+void load_shader(shader_t shader);
+
 void compile_shader(shader_t shader_data)
 {
     //create the shader object
@@ -70,6 +72,9 @@ void link_shader_program(program_t* prog)
     //attach vertex and fragment shaders
     glAttachShader(program, prog->vert->shader);
     glAttachShader(program, prog->frag->shader);
+    
+    load_shader(lib_frag);
+    glAttachShader(program, lib_frag->shader);
     
     glBindAttribLocation(program, POSITION_ATTRIB, "position");
     glBindAttribLocation(program, POS_FROM_ATTRIB, "pos_from");
