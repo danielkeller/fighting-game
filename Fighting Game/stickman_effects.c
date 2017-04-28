@@ -12,7 +12,7 @@
 typedef struct hit_effect {
     stickman_t* attacker;
     usec_t start_time;
-    GLint origin_unif;
+    GLint origin_unif, direction_unif;
     float x;
 } hit_effect_t;
 
@@ -24,11 +24,13 @@ int draw_hit_effect(hit_effect_t* he)
     glUseProgram(he->attacker->hit_effect.program);
     glUniform1f(he->attacker->hit_effect.time, (float)elapsed / 1000000.f);
     glUniform2f(he->origin_unif, he->x, .4);
+    float dir = (float)he->attacker->character->direction;
+    glUniform1f(he->direction_unif, dir);
     
     glBindVertexArray(box.vertexArrayObject);
     glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
     
-    return elapsed < 150000ll;
+    return elapsed < 200000ll;
 }
 
 BINDABLE(draw_hit_effect, hit_effect_t)
@@ -39,6 +41,7 @@ bound_t make_hit_effect(stickman_t* sm)
     he.attacker = sm;
     he.start_time = game_time.current_time;
     he.origin_unif = glGetUniformLocation(sm->hit_effect.program, "origin");
+    he.direction_unif = glGetUniformLocation(sm->hit_effect.program, "direction");
     he.x = (sm->character->next.ground_pos + 2*stickman_hitbox_width)*sm->character->direction;
     return bind_draw_hit_effect(&he);
 }

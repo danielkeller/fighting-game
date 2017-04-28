@@ -84,6 +84,7 @@ int main (int argc, char* argv[]) {
             int width, height;
             glfwGetFramebufferSize(window, &width, &height);
             fbo_window_size(&fbo, width, height);
+            calculate_camera((float)width, (float)height);
             
             poll_shader_changes();
             
@@ -132,6 +133,7 @@ int main (int argc, char* argv[]) {
             blit_fbo(&fbo);
             glfwSwapBuffers(window);
             glfwPollEvents();
+            poll_shader_changes();
         }
         
         clear_effects(&effects);

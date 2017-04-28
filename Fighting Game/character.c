@@ -131,26 +131,26 @@ void make_heath_bar(health_bar_t* hb, direction_t direction)
     Mat3 transform = {{
         -.8*direction, 0, 0,
         0, .1, 0,
-        -.1*direction, .8, 1}};
+        -.1*direction, 1.1, 1}};
     glUniformMatrix3fv(hb->program.transform, 1, GL_FALSE, transform.d);
-    glUniformMatrix3fv(hb->program.camera, 1, GL_FALSE, eye3.d);
 }
 
 void draw_health_bar(character_t *c)
 {
-    health_bar_t* bar = &c->health_bar;
+    health_bar_t* hb = &c->health_bar;
     
-    if (c->next.health != bar->health) {
-        bar->last_health_change_time = game_time.current_time;
-        bar->last_health = bar->health;
-        bar->health = c->next.health;
+    if (c->next.health != hb->health) {
+        hb->last_health_change_time = game_time.current_time;
+        hb->last_health = hb->health;
+        hb->health = c->next.health;
     }
     
-    glUseProgram(bar->program.program);
-    glUniform1f(bar->health_unif, bar->health);
-    glUniform1f(bar->last_health_unif, bar->last_health);
-    glUniform1f(bar->time_since_change_unif,
-                (float)(game_time.current_time - bar->last_health_change_time) / 1000000.f);
+    glUseProgram(hb->program.program);
+    glUniformMatrix3fv(hb->program.camera, 1, GL_FALSE, camera.d);
+    glUniform1f(hb->health_unif, hb->health);
+    glUniform1f(hb->last_health_unif, hb->last_health);
+    glUniform1f(hb->time_since_change_unif,
+                (float)(game_time.current_time - hb->last_health_change_time) / 1000000.f);
     glBindVertexArray(box.vertexArrayObject);
     glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
 }

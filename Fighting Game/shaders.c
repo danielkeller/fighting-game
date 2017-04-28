@@ -63,6 +63,70 @@ static struct shader blit_frag_struct = {
 };
 shader_t blit_frag = &blit_frag_struct;
 
+static struct shader chevron_frag_struct = {
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/chevron.frag",
+#endif
+.name = "chevron_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"uniform float time, direction;\n"
+"uniform vec2 origin;\n"
+"uniform sampler2DRect framebuffer;\n"
+"in vec2 posFrag;\n"
+"void main()\n"
+"{\n"
+"vec2 dir = posFrag - origin;\n"
+"float dist = dir.x;// + direction*abs(dir.y);\n"
+"float amount = dist*2;\n"
+"color = texture(framebuffer, gl_FragCoord.xy);\n"
+"if (amount > .8 && amount < 1)\n"
+"color += vec4(1,0,0,1);\n"
+"}\n"
+};
+shader_t chevron_frag = &chevron_frag_struct;
+
+static struct shader chevron_hit_frag_struct = {
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/chevron_hit.frag",
+#endif
+.name = "chevron_hit_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"uniform float time, direction;\n"
+"uniform vec2 origin;\n"
+"uniform sampler2DRect framebuffer;\n"
+"in vec2 posFrag;\n"
+"float snoise(vec2 v);\n"
+"float srdnoise(in vec2 P, in float rot, out vec2 grad);\n"
+"void main()\n"
+"{\n"
+"float move_amt = time*.5;\n"
+"const float xslope = 1, yslope = 1;\n"
+"vec2 dir = posFrag - origin;\n"
+"vec2 moved_dir = dir - vec2(direction*move_amt, 0);\n"
+"float dist = direction*dir.x + abs(dir.y);\n"
+"float moved_dist = direction*moved_dir.x + abs(moved_dir.y);\n"
+"vec2 grad = vec2(direction*xslope, yslope);\n"
+"float amount = mod(moved_dist*2, 1);\n"
+"vec2 displacement = exp(amount*3)*normalize(grad)*10;\n"
+"vec2 noisegrad;\n"
+"float noise = srdnoise(moved_dir*vec2(10,100), move_amt, noisegrad)*.2 + .3;\n"
+"vec4 draw_color = vec4(0);\n"
+"if (amount > .8)\n"
+"draw_color = vec4((dist+1)*noise,0,0,1);\n"
+"else if (amount < .1)\n"
+"draw_color = vec4(.1-amount, 0, 0, .1-amount)*4*(dist+1);\n"
+"color = texture(framebuffer, gl_FragCoord.xy - displacement);\n"
+"color = color*(1-draw_color.a) + draw_color;\n"
+"}\n"
+};
+shader_t chevron_hit_frag = &chevron_hit_frag_struct;
+
 static struct shader color_frag_struct = {
 .shader = 0,
 #ifdef DEBUG
@@ -121,6 +185,9 @@ static struct shader lib_frag_struct = {
 .type = GL_FRAGMENT_SHADER,
 .source =
 "const float pi = 3.14159265358979323846;\n"
+"#define F2 0.366025403\n"
+"#define G2 0.211324865\n"
+"#define K 0.0243902439 // 1/41\n"
 "vec3 mod289(vec3 x) {\n"
 "return x - floor(x * (1.0 / 289.0)) * 289.0;\n"
 "}\n"
@@ -129,6 +196,14 @@ static struct shader lib_frag_struct = {
 "}\n"
 "vec3 permute(vec3 x) {\n"
 "return mod289(((x*34.0)+1.0)*x);\n"
+"}\n"
+"float permute(float x) {\n"
+"return mod((34.0 * x + 1.0)*x, 289.0);\n"
+"}\n"
+"vec2 grad2(vec2 p, float rot) {\n"
+"float u = permute(permute(p.x) + p.y) * 0.0243902439 + rot; // Rotate by shift\n"
+"u = fract(u) * 6.28318530718; // 2*pi\n"
+"return vec2(cos(u), sin(u));\n"
 "}\n"
 "float snoise(vec2 v)\n"
 "{\n"
@@ -157,6 +232,33 @@ static struct shader lib_frag_struct = {
 "g.x  = a0.x  * x0.x  + h.x  * x0.y;\n"
 "g.yz = a0.yz * x12.xz + h.yz * x12.yw;\n"
 "return 130.0 * dot(m, g);\n"
+"}\n"
+"float srdnoise(in vec2 P, in float rot, out vec2 grad) {\n"
+"vec2 Ps = P + dot(P, vec2(F2));\n"
+"vec2 Pi = floor(Ps);\n"
+"vec2 P0 = Pi - dot(Pi, vec2(G2));\n"
+"vec2 v0 = P - P0;\n"
+"vec2 i1 = (v0.x > v0.y) ? vec2(1.0, 0.0) : vec2 (0.0, 1.0);\n"
+"vec2 v1 = v0 - i1 + G2;\n"
+"vec2 v2 = v0 - 1.0 + 2.0 * G2;\n"
+"Pi = mod(Pi, 289.0);\n"
+"vec3 t = max(0.5 - vec3(dot(v0,v0), dot(v1,v1), dot(v2,v2)), 0.0);\n"
+"vec3 t2 = t*t;\n"
+"vec3 t4 = t2*t2;\n"
+"vec2 g0 = grad2(Pi, rot);\n"
+"vec2 g1 = grad2(Pi + i1, rot);\n"
+"vec2 g2 = grad2(Pi + 1.0, rot);\n"
+"vec3 gv = vec3(dot(g0,v0), dot(g1,v1), dot(g2,v2)); // ramp: g dot v\n"
+"vec3 n = t4 * gv;  // Circular kernel times linear ramp\n"
+"vec3 temp = t2 * t * gv;\n"
+"vec3 gradx = temp * vec3(v0.x, v1.x, v2.x);\n"
+"vec3 grady = temp * vec3(v0.y, v1.y, v2.y);\n"
+"grad.x = -8.0 * (gradx.x + gradx.y + gradx.z);\n"
+"grad.y = -8.0 * (grady.x + grady.y + grady.z);\n"
+"grad.x += dot(t4, vec3(g0.x, g1.x, g2.x));\n"
+"grad.y += dot(t4, vec3(g0.y, g1.y, g2.y));\n"
+"grad *= 40.0;\n"
+"return 40.0 * (n.x + n.y + n.z);\n"
 "}\n"
 };
 shader_t lib_frag = &lib_frag_struct;

@@ -137,4 +137,6 @@ extern game_time_t game_time;
 extern object_t box;
 extern effects_t effects;
 
+void calculate_camera(float width_px, float height_px);
+
 #endif /* engine_h */
