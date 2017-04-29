@@ -31,7 +31,7 @@ void move_character(character_t* c)
 #else
     c->next.ground_pos += c->speed;
 #endif
-#if SCOOCH || DODGE
+#if SCOOCH
     c->next.ground_pos += c->states[c->prev.state].scooch;
 #endif
     

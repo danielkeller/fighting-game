@@ -122,6 +122,7 @@
 		37F36A331EB22C0800E30D1D /* lib.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = lib.vert; path = shaders/lib.vert; sourceTree = "<group>"; };
 		37F36A371EB239FC00E30D1D /* blast.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = blast.frag; path = shaders/blast.frag; sourceTree = "<group>"; };
 		37F36A391EB23A1600E30D1D /* chevron.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = chevron.frag; path = shaders/chevron.frag; sourceTree = "<group>"; };
+		37F36A3C1EB499AE00E30D1D /* options.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = options.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +163,7 @@
 		372F30AB1EA89E7D00F9AE22 /* game */ = {
 			isa = PBXGroup;
 			children = (
+				37F36A3C1EB499AE00E30D1D /* options.h */,
 				37421ABF1CB2FFE50027B7D4 /* main.c */,
 				372F30B31EA8AA3200F9AE22 /* character.h */,
 				37F36A301EB1EE2400E30D1D /* character_internal.h */,

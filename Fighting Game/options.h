@@ -17,7 +17,7 @@
 //Enable action scooch
 #define SCOOCH 1
 
-//Enable dodge button. Implies scooch.
+//Enable dodge/block button
 #define DODGE 1
 
 #endif /* options_h */
