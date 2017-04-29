@@ -27,7 +27,7 @@
 		3791267E1E87F98C00613418 /* test.json in Resources */ = {isa = PBXBuildFile; fileRef = 3791267D1E87F98C00613418 /* test.json */; };
 		37B6950C1D737A0D009A40B1 /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B6950A1D737A0D009A40B1 /* test.c */; };
 		37B7BC501D6F311400EF0A7E /* fbo.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B7BC4E1D6F311400EF0A7E /* fbo.c */; };
-		37CFC0E91D7B2584000A795E /* globals.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0E71D7B2584000A795E /* globals.c */; };
+		37CFC0E91D7B2584000A795E /* world.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0E71D7B2584000A795E /* world.c */; };
 		37CFC0EC1D7B2671000A795E /* math.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0EA1D7B2671000A795E /* math.c */; };
 		37E1D7F41D77633E005C7198 /* stickman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37E1D7F21D77633E005C7198 /* stickman.c */; };
 		37E3B5681EAF8834004DBE36 /* game over.c in Sources */ = {isa = PBXBuildFile; fileRef = 37E3B5661EAF8834004DBE36 /* game over.c */; };
@@ -37,13 +37,15 @@
 		37EA382E1E9F986900848254 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 37EA382D1E9F986900848254 /* file.c */; };
 		37EA38301EA24B0B00848254 /* screenspace.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37EA382F1EA24B0B00848254 /* screenspace.vert */; };
 		37EA38321EA24B4400848254 /* blit.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37EA38311EA24B4400848254 /* blit.frag */; };
-		37EA38341EA2C18400848254 /* blast.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37EA38331EA2C18400848254 /* blast.frag */; };
+		37EA38341EA2C18400848254 /* chevron_hit.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37EA38331EA2C18400848254 /* chevron_hit.frag */; };
 		37EA38361EA4F0F700848254 /* particles.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37EA38351EA4F0F700848254 /* particles.vert */; };
 		37EA38401EA5139900848254 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA383F1EA5139900848254 /* AppKit.framework */; };
 		37EA38441EA513F400848254 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA38431EA513F400848254 /* IOKit.framework */; };
 		37EA384A1EA5147000848254 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA38491EA5147000848254 /* CoreVideo.framework */; };
 		37F36A321EB2124800E30D1D /* lib.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37F36A311EB2124800E30D1D /* lib.frag */; };
 		37F36A341EB22C0800E30D1D /* lib.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37F36A331EB22C0800E30D1D /* lib.vert */; };
+		37F36A381EB239FC00E30D1D /* blast.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37F36A371EB239FC00E30D1D /* blast.frag */; };
+		37F36A3A1EB23A1600E30D1D /* chevron.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37F36A391EB23A1600E30D1D /* chevron.frag */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,7 +98,7 @@
 		37B6950A1D737A0D009A40B1 /* test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test.c; path = objects/test.c; sourceTree = "<group>"; };
 		37B6950B1D737A0D009A40B1 /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test.h; path = objects/test.h; sourceTree = "<group>"; };
 		37B7BC4E1D6F311400EF0A7E /* fbo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fbo.c; sourceTree = "<group>"; };
-		37CFC0E71D7B2584000A795E /* globals.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = globals.c; sourceTree = "<group>"; };
+		37CFC0E71D7B2584000A795E /* world.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = world.c; sourceTree = "<group>"; };
 		37CFC0EA1D7B2671000A795E /* math.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = math.c; sourceTree = "<group>"; };
 		37E1D7F21D77633E005C7198 /* stickman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stickman.c; path = objects/stickman.c; sourceTree = "<group>"; };
 		37E1D7F31D77633E005C7198 /* stickman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stickman.h; path = objects/stickman.h; sourceTree = "<group>"; };
@@ -109,7 +111,7 @@
 		37EA382D1E9F986900848254 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = file.c; sourceTree = "<group>"; };
 		37EA382F1EA24B0B00848254 /* screenspace.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = screenspace.vert; path = shaders/screenspace.vert; sourceTree = "<group>"; };
 		37EA38311EA24B4400848254 /* blit.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = blit.frag; path = shaders/blit.frag; sourceTree = "<group>"; };
-		37EA38331EA2C18400848254 /* blast.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = blast.frag; path = shaders/blast.frag; sourceTree = "<group>"; };
+		37EA38331EA2C18400848254 /* chevron_hit.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = chevron_hit.frag; path = shaders/chevron_hit.frag; sourceTree = "<group>"; };
 		37EA38351EA4F0F700848254 /* particles.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = particles.vert; path = shaders/particles.vert; sourceTree = "<group>"; };
 		37EA383F1EA5139900848254 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		37EA38431EA513F400848254 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -118,6 +120,8 @@
 		37F36A301EB1EE2400E30D1D /* character_internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = character_internal.h; sourceTree = "<group>"; };
 		37F36A311EB2124800E30D1D /* lib.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = lib.frag; path = shaders/lib.frag; sourceTree = "<group>"; };
 		37F36A331EB22C0800E30D1D /* lib.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = lib.vert; path = shaders/lib.vert; sourceTree = "<group>"; };
+		37F36A371EB239FC00E30D1D /* blast.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = blast.frag; path = shaders/blast.frag; sourceTree = "<group>"; };
+		37F36A391EB23A1600E30D1D /* chevron.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = chevron.frag; path = shaders/chevron.frag; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,7 +150,7 @@
 				37853D5B1D6622680052A8C8 /* shader.c */,
 				37421AD51CB3CF070027B7D4 /* time.c */,
 				371FF0AE1EA5FE81003274FE /* effects.c */,
-				37CFC0E71D7B2584000A795E /* globals.c */,
+				37CFC0E71D7B2584000A795E /* world.c */,
 				37421AD31CB3066D0027B7D4 /* window.h */,
 				37421AD21CB3066D0027B7D4 /* window.c */,
 				37E3B56C1EAFA283004DBE36 /* input.h */,
@@ -255,6 +259,9 @@
 		3791266A1E866E8600613418 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
+				37F36A371EB239FC00E30D1D /* blast.frag */,
+				37EA38331EA2C18400848254 /* chevron_hit.frag */,
+				37F36A391EB23A1600E30D1D /* chevron.frag */,
 				3791266B1E866E8F00613418 /* color.frag */,
 				3791266C1E866E8F00613418 /* waves.frag */,
 				3791266D1E866E8F00613418 /* anim.vert */,
@@ -262,7 +269,6 @@
 				37EA382A1E9F726E00848254 /* health bar.frag */,
 				37EA382F1EA24B0B00848254 /* screenspace.vert */,
 				37EA38311EA24B4400848254 /* blit.frag */,
-				37EA38331EA2C18400848254 /* blast.frag */,
 				37EA38351EA4F0F700848254 /* particles.vert */,
 				37F36A311EB2124800E30D1D /* lib.frag */,
 				37F36A331EB22C0800E30D1D /* lib.vert */,
@@ -374,6 +380,7 @@
 			files = (
 				37EA38361EA4F0F700848254 /* particles.vert in Resources */,
 				37F36A321EB2124800E30D1D /* lib.frag in Resources */,
+				37F36A381EB239FC00E30D1D /* blast.frag in Resources */,
 				37F36A341EB22C0800E30D1D /* lib.vert in Resources */,
 				37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */,
 				37EA38321EA24B4400848254 /* blit.frag in Resources */,
@@ -381,7 +388,8 @@
 				3791267E1E87F98C00613418 /* test.json in Resources */,
 				3791267C1E86A90200613418 /* stickman.json in Resources */,
 				37EA382B1E9F726E00848254 /* health bar.frag in Resources */,
-				37EA38341EA2C18400848254 /* blast.frag in Resources */,
+				37F36A3A1EB23A1600E30D1D /* chevron.frag in Resources */,
+				37EA38341EA2C18400848254 /* chevron_hit.frag in Resources */,
 				37421AAE1CB2FDCC0027B7D4 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -419,7 +427,7 @@
 				371FF0AC1EA528A0003274FE /* function.c in Sources */,
 				37853D681D662D520052A8C8 /* error.c in Sources */,
 				379126751E86786100613418 /* shaders.c in Sources */,
-				37CFC0E91D7B2584000A795E /* globals.c in Sources */,
+				37CFC0E91D7B2584000A795E /* world.c in Sources */,
 				37B7BC501D6F311400EF0A7E /* fbo.c in Sources */,
 				37EA382E1E9F986900848254 /* file.c in Sources */,
 				37853D6B1D68AA720052A8C8 /* object.c in Sources */,
