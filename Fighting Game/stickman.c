@@ -58,7 +58,7 @@ int stickman_actions(stickman_t* sm)
         case top:
             if (SHIFT_FLAG(c->attack_button))
                 goto_state(c, swing_1);
-            if (SHIFT_FLAG(c->dodge_button) && c->prev.ground_pos > -1. + block_dist)
+            if (DODGE && SHIFT_FLAG(c->dodge_button) && c->prev.ground_pos > -1. + block_dist)
                 goto_state(c, hi_block);
             break;
         PASSIVE(swing_1, swing_2)
@@ -72,7 +72,7 @@ int stickman_actions(stickman_t* sm)
         case bottom:
             if (SHIFT_FLAG(c->attack_button))
                 goto_state(c, swingup_1);
-            if (SHIFT_FLAG(c->dodge_button) && c->prev.ground_pos > -1. + block_dist)
+            if (DODGE && SHIFT_FLAG(c->dodge_button) && c->prev.ground_pos > -1. + block_dist)
                 goto_state(c, lo_block_1);
             break;
         case swingup_1:
@@ -157,7 +157,7 @@ void make_stickman(character_t* c, character_t* other, direction_t direction)
     c->dodge = dodge;
     c->hitbox_width = stickman_hitbox_width;
     c->prev = c->next = (character_state_t){
-        .ground_pos = -.5f,
+        .ground_pos = -1.f,
         .health = 100,
         .advancing = 0,
     };

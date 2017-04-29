@@ -10,6 +10,7 @@
 #define character_h
 #include "types.h"
 #include "function.h"
+#include "options.h"
 
 typedef struct character character_t;
 
