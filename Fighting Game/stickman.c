@@ -10,7 +10,11 @@
 #include "objects/stickman.h"
 #include "engine.h"
 
+#if !MOVEMENT_CONTROL
 static const float speed = .01;
+#else
+static const float speed = .015;
+#endif
 static const float dodge = .08;
 static const float block_dist = .3;
 
@@ -23,17 +27,17 @@ static const float block_dist = .3;
 static const state_t states[] = {
     [top]       = {1, 0,   {10, {8,  MIDDLE}, {1,  WEAK}}},
     [bottom]    = {1, 0,   {8,  {0,  WEAK},   {8,  MIDDLE}}},
-    [swing_1]   = {2, .02, {6,  {10, HEAVY},  {1,  WEAK}}},
-    [swing_2]   = {3, .02, {6,  {10, HEAVY},  {1,  WEAK}}},
-    [swingup_1] = {4, .01, {12, {0,  WEAK},   {10, HEAVY}}},
-    [swingup_2] = {3, .01, {12, {0,  WEAK},   {10, HEAVY}}},
+    [swing_1]   = {3, .02, {6,  {10, HEAVY},  {1,  WEAK}}},
+    [swing_2]   = {5, .02, {6,  {10, HEAVY},  {1,  WEAK}}},
+    [swingup_1] = {5, .01, {12, {0,  WEAK},   {10, HEAVY}}},
+    [swingup_2] = {4, .01, {12, {0,  WEAK},   {10, HEAVY}}},
     
     [hi_block]   = {2, -block_dist/2., {10, {20, HEAVY}, {8, MIDDLE}}},
     [lo_block_1] = {1, -block_dist/3., {10, {8, MIDDLE}, {20, HEAVY}}},
     [lo_block_2] = {1, -block_dist/3., {10, {8, MIDDLE}, {20, HEAVY}}},
     [lo_block_3] = {1, -block_dist/3., {10, {8, MIDDLE}, {20, HEAVY}}},
-    [block]     = {6, -speed, {10, {20, HEAVY}, {20, HEAVY}}},
-    [unblock]   = {2, 0, {10, {20, HEAVY}, {8, MIDDLE}}},
+    [block]      = {6, -speed, {10, {20, HEAVY}, {20, HEAVY}}},
+    [unblock]    = {2, 0, {10, {20, HEAVY}, {8, MIDDLE}}},
 };
 
 static attack_t
@@ -60,7 +64,7 @@ int stickman_actions(stickman_t* sm)
         case top:
             if (SHIFT_FLAG(c->attack_button))
                 goto_state(c, swing_1);
-            if (can_dodge && SHIFT_FLAG(c->dodge_button))
+            if (SHIFT_FLAG(c->dodge_button) && can_dodge)
                 goto_state(c, hi_block);
             break;
         PASSIVE(swing_1, swing_2)
@@ -74,7 +78,7 @@ int stickman_actions(stickman_t* sm)
         case bottom:
             if (SHIFT_FLAG(c->attack_button))
                 goto_state(c, swingup_1);
-            if (can_dodge && SHIFT_FLAG(c->dodge_button))
+            if (SHIFT_FLAG(c->dodge_button) && can_dodge)
                 goto_state(c, lo_block_1);
             break;
         case swingup_1:
