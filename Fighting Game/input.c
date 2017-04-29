@@ -15,6 +15,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
     if (action == GLFW_REPEAT) return;
     
+    if (key == GLFW_KEY_C) key_left.move = action;
+    if (key == GLFW_KEY_SLASH) key_right.move = action;
+    
     //Robust key-down detection
     if (action != GLFW_PRESS) return;
     if (key == GLFW_KEY_X) key_left.attack++;

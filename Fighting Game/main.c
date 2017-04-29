@@ -71,8 +71,8 @@ int main (int argc, char* argv[]) {
                 poll_input();
                 
                 int both_alive
-                = step_character(&left, SHIFT_FLAG(key_left.dodge), SHIFT_FLAG(key_left.attack))
-                & step_character(&right, SHIFT_FLAG(key_right.dodge), SHIFT_FLAG(key_right.attack));
+                = step_character(&left, key_left.move, SHIFT_FLAG(key_left.dodge), SHIFT_FLAG(key_left.attack))
+                & step_character(&right, key_right.move, SHIFT_FLAG(key_right.dodge), SHIFT_FLAG(key_right.attack));
                 
                 if (!both_alive)
                     goto game_over;
@@ -100,8 +100,8 @@ int main (int argc, char* argv[]) {
     game_over:
         
         //Step the characters one more time so prev == next and they actually stop
-        step_character(&left, 0, 0);
-        step_character(&right, 0, 0);
+        step_character(&left, 0, 0, 0);
+        step_character(&right, 0, 0, 0);
         
         object_t game_over_text;
         make_object(&game_over_text, game_over_verts, sizeof(game_over_verts), 0);

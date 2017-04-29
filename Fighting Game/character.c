@@ -25,7 +25,9 @@ void next_state(character_t *c, int state)
 
 void move_character(character_t* c)
 {
-    c->next.ground_pos += c->speed + c->states[c->prev.state].scooch;
+    float move_amt = c->move_button == c->prev.advancing ? c->speed : c->dodge;
+    c->next.ground_pos += c->move_button ? move_amt : -move_amt;
+    c->next.ground_pos += c->states[c->prev.state].scooch;
     
     //using next may not be fair here, but using prev causes weird oscillations
     float other_pos = -c->other->next.ground_pos;
@@ -33,10 +35,11 @@ void move_character(character_t* c)
     c->next.ground_pos = fmin(fmax(c->next.ground_pos, -1), fwd_limit);
 }
 
-int step_character(character_t* c, int dodge_button, int attack_button)
+int step_character(character_t* c, int move_button, int dodge_button, int attack_button)
 {
     c->prev = c->next;
     c->next.attack_result = 0;
+    c->next.advancing = c->move_button = move_button;
     c->attack_button |= attack_button;
     c->dodge_button |= dodge_button;
     return c->prev.health > 0;

@@ -11,6 +11,7 @@
 #include "engine.h"
 
 static const float speed = .01;
+static const float dodge = .08;
 static const float block_dist = .3;
 
 //For attacks that give defense/momentum buffs, used symmetrically:
@@ -153,10 +154,12 @@ void make_stickman(character_t* c, character_t* other, direction_t direction)
     
     c->states = states;
     c->speed = speed;
+    c->dodge = dodge;
     c->hitbox_width = stickman_hitbox_width;
     c->prev = c->next = (character_state_t){
         .ground_pos = -.5f,
         .health = 100,
+        .advancing = 0,
     };
     
     c->direction = direction;
