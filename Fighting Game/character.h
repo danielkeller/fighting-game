@@ -52,7 +52,7 @@ typedef struct fight_state {
 typedef struct state
 {
     int frames;
-    float scooch;
+    float fwd_speed, rev_speed;
     fight_state_t fight_state;
 } state_t;
 

@@ -25,15 +25,16 @@ void next_state(character_t *c, int state)
 
 void move_character(character_t* c)
 {
-#if MOVEMENT_CONTROL
-    float move_amt = c->move_button == c->prev.advancing ? c->speed : c->dodge;
-    c->next.ground_pos += c->move_button ? move_amt : -move_amt;
-#else
-    c->next.ground_pos += c->speed;
-#endif
+    float move_amt = 0;
 #if SCOOCH
-    c->next.ground_pos += c->states[c->prev.state].scooch;
+    move_amt = c->prev.advancing
+        ? c->states[c->prev.state].fwd_speed
+        : c->states[c->prev.state].rev_speed;
+#else
+    move_amt = c->move_button == c->prev.advancing ? c->speed : c->dodge;
 #endif
+    move_amt *= c->move_button ? 1. : -1.;
+    c->next.ground_pos += move_amt;
     
     //using next may not be fair here, but using prev causes weird oscillations
     float other_pos = -c->other->next.ground_pos;

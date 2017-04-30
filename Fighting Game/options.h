@@ -11,10 +11,7 @@
 
 //Various gameplay options
 
-//Enable manual movement control
-#define MOVEMENT_CONTROL 1
-
-//Enable action scooch
+//Enable action scooch instead of regular movement control
 #define SCOOCH 1
 
 //Enable dodge/block button

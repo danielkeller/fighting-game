@@ -10,11 +10,7 @@
 #include "objects/stickman.h"
 #include "engine.h"
 
-#if !MOVEMENT_CONTROL
-static const float speed = .01;
-#else
 static const float speed = .015;
-#endif
 static const float dodge = .08;
 static const float block_dist = .3;
 
@@ -23,21 +19,21 @@ static const float block_dist = .3;
 //first player. After the midpoint, it goes to the second. If it is at the midpoint
 //either both attacks land or neither.
 
-//         frames  scooch balance   hi        lo
+//         frames  fwd_speed rev_speed balance   hi        lo
 static const state_t states[] = {
-    [top]       = {1, 0,   {10, {8,  MIDDLE}, {1,  WEAK}}},
-    [bottom]    = {1, 0,   {8,  {0,  WEAK},   {8,  MIDDLE}}},
-    [swing_1]   = {3, .02, {6,  {10, HEAVY},  {1,  WEAK}}},
-    [swing_2]   = {5, .02, {6,  {10, HEAVY},  {1,  WEAK}}},
-    [swingup_1] = {5, .01, {12, {0,  WEAK},   {10, HEAVY}}},
-    [swingup_2] = {4, .01, {12, {0,  WEAK},   {10, HEAVY}}},
+    [top]       = {1, speed, speed, {10, {8,  MIDDLE}, {1,  WEAK}}},
+    [bottom]    = {1, speed, speed, {8,  {0,  WEAK},   {8,  MIDDLE}}},
+    [swing_1]   = {3, .025,  0,     {6,  {10, HEAVY},  {1,  WEAK}}},
+    [swing_2]   = {5, .025,  0,     {6,  {10, HEAVY},  {1,  WEAK}}},
+    [swingup_1] = {5, .02,   0,     {12, {0,  WEAK},   {10, HEAVY}}},
+    [swingup_2] = {4, .02,   0,     {12, {0,  WEAK},   {10, HEAVY}}},
     
-    [hi_block]   = {2, -block_dist/2., {10, {20, HEAVY}, {8, MIDDLE}}},
-    [lo_block_1] = {1, -block_dist/3., {10, {8, MIDDLE}, {20, HEAVY}}},
-    [lo_block_2] = {1, -block_dist/3., {10, {8, MIDDLE}, {20, HEAVY}}},
-    [lo_block_3] = {1, -block_dist/3., {10, {8, MIDDLE}, {20, HEAVY}}},
-    [block]      = {6, -speed, {10, {20, HEAVY}, {20, HEAVY}}},
-    [unblock]    = {2, 0, {10, {20, HEAVY}, {8, MIDDLE}}},
+    [hi_block]   = {2, 0, block_dist/2., {5, {1, WEAK}, {1, WEAK}}},
+    [lo_block_1] = {1, 0, block_dist/3., {5, {1, WEAK}, {1, WEAK}}},
+    [lo_block_2] = {1, 0, block_dist/3., {5, {1, WEAK}, {1, WEAK}}},
+    [lo_block_3] = {1, 0, block_dist/3., {5, {1, WEAK}, {1, WEAK}}},
+    [block]      = {6, 0, 0, {10, {20, HEAVY}, {20, HEAVY}}},
+    [unblock]    = {3, 0, 0, {10, {1, WEAK}, {1, WEAK}}},
 };
 
 static attack_t
@@ -58,7 +54,7 @@ int stickman_actions(stickman_t* sm)
     
     move_character(c);
     
-    int can_dodge = DODGE && (!SCOOCH || c->prev.ground_pos > -1. + block_dist);
+    int can_dodge = DODGE && (!SCOOCH || c->prev.ground_pos > -1. + block_dist || c->prev.advancing);
     
     switch (c->prev.state) {
         case top:
