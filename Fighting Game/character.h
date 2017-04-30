@@ -64,6 +64,13 @@ typedef struct health_bar {
     usec_t last_health_change_time;
 } health_bar_t;
 
+typedef struct state_indicator {
+    program_t program;
+    GLint top_unif, bot_unif, top_attack_unif, bot_attack_unif;
+    force_t top_attack, bot_attack;
+    usec_t last_attack_time;
+} state_indicator_t;
+
 typedef struct character_state {
     int state;
     float ground_pos;
@@ -83,10 +90,12 @@ typedef struct character {
     direction_t direction;
     struct character* other;
     health_bar_t health_bar;
+    state_indicator_t state_indicator;
     
     int move_button, attack_button, dodge_button;
     long long anim_start;
     character_state_t prev, next;
+    float ground_pos;
 } character_t;
 
 #endif /* character_h */

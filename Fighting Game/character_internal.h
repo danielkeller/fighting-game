@@ -29,11 +29,15 @@ void next_state(character_t *c);
 void move_character(character_t* c);
 void attack(character_t* attacker, attack_t* attack);
 
-void set_character_uniforms(character_t* c, program_t* program);
+void set_character_draw_state(character_t* c, program_t* program);
 
 void make_heath_bar(health_bar_t* hb, direction_t direction);
 void draw_health_bar(character_t *c);
 void free_health_bar(health_bar_t* hb);
+
+void make_state_indicator(state_indicator_t*);
+void draw_state_indicator(character_t*);
+void free_state_indicator(state_indicator_t*);
 
 //*** Stickman
 typedef struct stickman {

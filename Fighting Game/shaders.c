@@ -358,6 +358,37 @@ static struct shader simple_vert_struct = {
 };
 shader_t simple_vert = &simple_vert_struct;
 
+static struct shader state_indicator_frag_struct = {
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/state_indicator.frag",
+#endif
+.name = "state_indicator_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"in vec2 uv;\n"
+"uniform int top, bottom, top_attack, bottom_attack;\n"
+"void main()\n"
+"{\n"
+"if (uv.y > .5)\n"
+"{\n"
+"if (uv.x > .5)\n"
+"color = vec4(1,0,0,1)*float(top_attack)*.33;\n"
+"else\n"
+"color = vec4(1,1,1,1)*float(top)*.33;\n"
+"}\n"
+"else\n"
+"{\n"
+"if (uv.x > .5)\n"
+"color = vec4(1,0,0,1)*float(bottom_attack)*.33;\n"
+"else\n"
+"color = vec4(1,1,1,1)*float(bottom)*.33;\n"
+"}\n"
+"}\n"
+};
+shader_t state_indicator_frag = &state_indicator_frag_struct;
+
 static struct shader waves_frag_struct = {
 .shader = 0,
 #ifdef DEBUG

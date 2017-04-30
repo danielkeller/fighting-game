@@ -124,11 +124,12 @@ BINDABLE(stickman_actions, stickman_t)
 int draw_stickman(stickman_t* sm)
 {
     glUseProgram(sm->program.program);
-    set_character_uniforms(sm->character, &sm->program);
+    set_character_draw_state(sm->character, &sm->program);
     glBindVertexArray(sm->obj.vertexArrayObject);
     glDrawArrays(GL_TRIANGLES, 0, sm->obj.numVertecies);
     
     draw_health_bar(sm->character);
+    draw_state_indicator(sm->character);
     return 0;
 }
 BINDABLE(draw_stickman, stickman_t)
@@ -138,6 +139,7 @@ int free_stickman(stickman_t* sm)
     character_t* c = sm->character;
     
     free_health_bar(&c->health_bar);
+    free_state_indicator(&c->state_indicator);
     free_program(&sm->hit_effect);
     free_program(&sm->parry_effect);
     free_object(&sm->obj);
@@ -159,7 +161,8 @@ void make_stickman(character_t* c, character_t* other, direction_t direction)
     c->draw = ref_bind_draw_stickman(sm);
     c->free = ref_bind_free_stickman(sm);
     
-    make_heath_bar(&sm->character->health_bar, direction);
+    make_heath_bar(&c->health_bar, direction);
+    make_state_indicator(&c->state_indicator);
     load_shader_program(&sm->hit_effect, screenspace_vert, blast_frag);
     load_shader_program(&sm->parry_effect, particles_vert, color_frag);
     
