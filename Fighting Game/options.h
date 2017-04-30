@@ -17,4 +17,7 @@
 //Enable dodge/block button
 #define DODGE 1
 
+//Enable cancelling
+#define CANCELLING 1
+
 #endif /* options_h */

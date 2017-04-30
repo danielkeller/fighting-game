@@ -62,9 +62,9 @@ int stickman_actions(stickman_t* sm)
                 goto_state(c, hi_block);
             break;
         case swing_1:
-            if (SHIFT_FLAG(c->attack_button))
+            if (CANCELLING && SHIFT_FLAG(c->attack_button))
                 goto_state(c, top);
-            if (SHIFT_FLAG(c->dodge_button) && can_dodge)
+            if (CANCELLING && SHIFT_FLAG(c->dodge_button) && can_dodge)
                 goto_state(c, hi_block);
             break;
         case swing_2:
@@ -80,14 +80,23 @@ int stickman_actions(stickman_t* sm)
                 goto_state(c, lo_block_1);
             break;
         case swingup_1:
-            if (SHIFT_FLAG(c->attack_button))
+            if (CANCELLING && SHIFT_FLAG(c->attack_button))
                 goto_state(c, bottom);
-            if (SHIFT_FLAG(c->dodge_button) && can_dodge)
+            if (CANCELLING && SHIFT_FLAG(c->dodge_button) && can_dodge)
                 goto_state(c, lo_block_1);
             break;
         case swingup_2:
             attack(c, &up_attack);
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .5));
+            break;
+            
+        case lo_block_3:
+            if (CANCELLING && SHIFT_FLAG(c->attack_button))
+                goto_state(c, swing_1);
+            break;
+        case block:
+            if (CANCELLING && SHIFT_FLAG(c->attack_button))
+                goto_state(c, swing_1);
             break;
             
         default:
