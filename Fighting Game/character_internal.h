@@ -24,7 +24,7 @@ typedef struct attack {
 } attack_t;
 
 void goto_state(character_t *c, int state);
-void next_state(character_t *c, int state);
+void next_state(character_t *c);
 
 void move_character(character_t* c);
 void attack(character_t* attacker, attack_t* attack);

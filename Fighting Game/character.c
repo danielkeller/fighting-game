@@ -17,10 +17,10 @@ void goto_state(character_t *c, int state)
     c->anim_start = game_time.frame;
 }
 
-void next_state(character_t *c, int state)
+void next_state(character_t *c)
 {
     if (game_time.frame - c->anim_start >= c->states[c->prev.state].frames)
-        goto_state(c, state);
+        goto_state(c, c->states[c->prev.state].next_state);
 }
 
 void move_character(character_t* c)
