@@ -129,7 +129,6 @@ void make_heath_bar(health_bar_t* hb, direction_t direction)
 {
     hb->last_health = 100;
     hb->last_health_change_time = 0;
-    make_box(&hb->obj);
     load_shader_program(&hb->program, simple_vert, health_bar_frag);
     hb->health_unif = glGetUniformLocation(hb->program.program, "health");
     hb->last_health_unif = glGetUniformLocation(hb->program.program, "last_health");
@@ -167,6 +166,5 @@ void draw_health_bar(character_t *c)
 
 void free_health_bar(health_bar_t* hb)
 {
-    free_object(&hb->obj);
     free_program(&hb->program);
 }

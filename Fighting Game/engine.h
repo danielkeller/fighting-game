@@ -67,7 +67,6 @@ typedef struct fbo
     GLuint fbos[2], default_fb;
     GLuint texes[2];
     size_t cur;
-    object_t quad;
     program_t quad_shader;
 } fbo_t;
 

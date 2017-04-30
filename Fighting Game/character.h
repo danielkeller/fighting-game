@@ -58,7 +58,6 @@ typedef struct state
 } state_t;
 
 typedef struct health_bar {
-    object_t obj;
     program_t program;
     GLint health_unif, last_health_unif, time_since_change_unif;
     int health, last_health;

@@ -29,7 +29,6 @@ void make_fbo(fbo_t* fbo)
     }
     glBindFramebuffer(GL_FRAMEBUFFER, fbo->default_fb);
     
-    make_box(&fbo->quad);
     load_shader_program(&fbo->quad_shader, screenspace_vert, blit_frag);
 }
 
@@ -93,8 +92,8 @@ void prepare_fbo(fbo_t* fbo)
 void do_blit(fbo_t* fbo)
 {
     glUseProgram(fbo->quad_shader.program);
-    glBindVertexArray(fbo->quad.vertexArrayObject);
-    glDrawArrays(GL_TRIANGLES, 0, fbo->quad.numVertecies);
+    glBindVertexArray(box.vertexArrayObject);
+    glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
 }
 
 void swap_fbo(fbo_t* fbo)
