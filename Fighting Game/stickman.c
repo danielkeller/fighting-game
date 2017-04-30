@@ -106,6 +106,12 @@ int stickman_actions(stickman_t* sm)
     next_state(c);
     anim_obj_keys(&sm->obj, &stickman_anims[c->next.state]);
     
+    glUseProgram(sm->program.program);
+    if (DODGE && !can_dodge)
+        glUniform3f(sm->color_unif, 1., .8, .8);
+    else
+        glUniform3f(sm->color_unif, 1., 1., 1.);
+        
     //This effect is annoying
     //if (c->other->prev.attack_result & KNOCKED)
     //    goto_state(c, bottom);
