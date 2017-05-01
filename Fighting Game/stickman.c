@@ -20,25 +20,25 @@ static const float block_dist = .3;
 //either both attacks land or neither.
 
 //            frames  next  fwd_speed rev_speed balance   hi        lo
-static const state_t states[] = {
-    [top]       = {1, top,       speed, speed, {10, {8,  MIDDLE}, {1,  WEAK}}},
-    [bottom]    = {1, bottom,    speed, speed, {8,  {0,  WEAK},   {8,  MIDDLE}}},
-    [swing_1]   = {4, swing_2,   .025,  0,     {6,  {10, HEAVY},  {1,  WEAK}}},
-    [swing_2]   = {3, bottom,    .025,  0,     {6,  {10, HEAVY},  {1,  WEAK}}},
-    [swingup_1] = {5, swingup_2, .02,   0,     {12, {0,  WEAK},   {10, HEAVY}}},
-    [swingup_2] = {4, top,       .02,   0,     {12, {0,  WEAK},   {10, HEAVY}}},
+static const struct state states[] = {
+    [top]       = {1, top,       speed, speed, {10, {{8,  MIDDLE}, {1,  WEAK}}}},
+    [bottom]    = {1, bottom,    speed, speed, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
+    [swing_1]   = {4, swing_2,   .025,  0,     {6,  {{10, HEAVY},  {1,  WEAK}}}},
+    [swing_2]   = {3, bottom,    .025,  0,     {6,  {{10, HEAVY},  {1,  WEAK}}}},
+    [swingup_1] = {5, swingup_2, .02,   0,     {12, {{0,  WEAK},   {10, HEAVY}}}},
+    [swingup_2] = {4, top,       .02,   0,     {12, {{0,  WEAK},   {10, HEAVY}}}},
     
-    [hi_block]   = {2, block,      0, block_dist/2., {5, {1, WEAK}, {1, WEAK}}},
-    [lo_block_1] = {1, lo_block_2, 0, block_dist/3., {5, {1, WEAK}, {1, WEAK}}},
-    [lo_block_2] = {1, lo_block_3, 0, block_dist/3., {5, {1, WEAK}, {1, WEAK}}},
-    [lo_block_3] = {1, block,      0, block_dist/3., {5, {1, WEAK}, {1, WEAK}}},
-    [block]      = {6, unblock,    0, 0, {10, {20, HEAVY}, {20, HEAVY}}},
-    [unblock]    = {3, top,        0, 0, {10, {1, WEAK}, {1, WEAK}}},
+    [hi_block]   = {2, block,      0, block_dist/2., {5, {{1, WEAK}, {1, WEAK}}}},
+    [lo_block_1] = {1, lo_block_2, 0, block_dist/3., {5, {{1, WEAK}, {1, WEAK}}}},
+    [lo_block_2] = {1, lo_block_3, 0, block_dist/3., {5, {{1, WEAK}, {1, WEAK}}}},
+    [lo_block_3] = {1, block,      0, block_dist/3., {5, {{1, WEAK}, {1, WEAK}}}},
+    [block]      = {6, unblock,    0, 0, {10, {{20, HEAVY}, {20, HEAVY}}}},
+    [unblock]    = {3, top,        0, 0, {10, {{1, WEAK}, {1, WEAK}}}},
 };
 
-static attack_t
-down_attack = {2, T(hi), .6, 20, 20, MIDDLE},
-up_attack   = {1, T(lo), .6, 10, 30, MIDDLE};
+static struct attack
+down_attack = {2, HI, .6, 20, 20, MIDDLE},
+up_attack   = {1, LO, .6, 10, 30, MIDDLE};
 
 //Note that new actions are considered to start epsilon after the previous frame,
 //as opposed to on the start of the next frame. (the previous frame is stored in anim_start)
@@ -46,7 +46,7 @@ up_attack   = {1, T(lo), .6, 10, 30, MIDDLE};
 //       _____#-----=-----=.....@
 // anim_start ^  +1 ^  +2 ^
 // where '=' are calls to _actions() in the '-' state
-int stickman_actions(stickman_t* sm)
+int stickman_actions(struct stickman* sm)
 {
     character_t* c = sm->character;
     
@@ -118,10 +118,10 @@ int stickman_actions(stickman_t* sm)
     
     return 0;
 }
-BINDABLE(stickman_actions, stickman_t)
+BINDABLE(stickman_actions, struct stickman)
 
 //'frame' is also the number of the previous frame here.
-int draw_stickman(stickman_t* sm)
+int draw_stickman(struct stickman* sm)
 {
     glUseProgram(sm->program.program);
     set_character_draw_state(sm->character, &sm->program);
@@ -132,9 +132,9 @@ int draw_stickman(stickman_t* sm)
     draw_state_indicator(sm->character);
     return 0;
 }
-BINDABLE(draw_stickman, stickman_t)
+BINDABLE(draw_stickman, struct stickman)
 
-int free_stickman(stickman_t* sm)
+int free_stickman(struct stickman* sm)
 {
     character_t* c = sm->character;
     
@@ -148,11 +148,11 @@ int free_stickman(stickman_t* sm)
     free(sm);
     return 0;
 }
-BINDABLE(free_stickman, stickman_t)
+BINDABLE(free_stickman, struct stickman)
 
-void make_stickman(character_t* c, character_t* other, direction_t direction)
+void make_stickman(character_t* c, character_t* other, enum direction direction)
 {
-    stickman_t* sm = malloc(sizeof(stickman_t));
+    struct stickman* sm = malloc(sizeof(struct stickman));
     
     sm->character = c;
     sm->character->other = other;
@@ -175,7 +175,7 @@ void make_stickman(character_t* c, character_t* other, direction_t direction)
     c->speed = speed;
     c->dodge = dodge;
     c->hitbox_width = stickman_hitbox_width;
-    c->prev = c->next = (character_state_t){
+    c->prev = c->next = (struct character_state){
         .ground_pos = -1.f,
         .health = 100,
         .advancing = 0,

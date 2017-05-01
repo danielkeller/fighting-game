@@ -19,7 +19,7 @@ static const GLfloat box_verts[] = {
 };
 
 
-void make_object(object_t* obj, const float* verts, GLsizei verts_sz, GLsizei stride)
+void make_object(struct object* obj, const float* verts, GLsizei verts_sz, GLsizei stride)
 {
     if (stride == 0) stride = sizeof(float)*2;
     
@@ -37,12 +37,12 @@ void make_object(object_t* obj, const float* verts, GLsizei verts_sz, GLsizei st
     obj->stride = stride;
 }
 
-void make_box(object_t* obj)
+void make_box(struct object* obj)
 {
     make_object(obj, box_verts, sizeof(box_verts), 0);
 }
 
-void make_anim_obj(object_t* obj, const float* verts, GLsizei verts_sz, GLsizei stride)
+void make_anim_obj(struct object* obj, const float* verts, GLsizei verts_sz, GLsizei stride)
 {
     make_object(obj, verts, verts_sz, stride);
     
@@ -52,7 +52,7 @@ void make_anim_obj(object_t* obj, const float* verts, GLsizei verts_sz, GLsizei 
     glEnableVertexAttribArray(DERIV_TO_ATTRIB);
 }
 
-void anim_obj_keys(object_t* obj, const anim_step_t* step)
+void anim_obj_keys(struct object* obj, const struct anim_step* step)
 {
     assert(obj->stride > step->d_from && obj->stride > step->d_to
            && obj->stride > step->p_from && obj->stride > step->p_to
@@ -70,7 +70,7 @@ void anim_obj_keys(object_t* obj, const anim_step_t* step)
                           obj->stride, (char*)NULL + step->d_to);
 }
 
-void free_object(object_t* obj)
+void free_object(struct object* obj)
 {
     glDeleteVertexArrays(1, &obj->vertexArrayObject);
     glDeleteBuffers(1, &obj->vertexBufferObject);

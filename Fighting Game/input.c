@@ -32,13 +32,11 @@ int joy_left = -1, joy_right = -1;
 
 void joystick_callback(int joy, int event)
 {
-    if (event == GLFW_CONNECTED)
-    {
+    if (event == GLFW_CONNECTED) {
         if (joy_left == -1) joy_left = joy;
         if (joy_right == -1) joy_right = joy;
     }
-    else if (event == GLFW_DISCONNECTED)
-    {
+    else if (event == GLFW_DISCONNECTED) {
         if (joy_left == joy) joy_left = -1;
         if (joy_right == joy) joy_right = -1;
     }
@@ -49,12 +47,9 @@ void init_input(GLFWwindow* window)
     glfwSetKeyCallback(window, key_callback);
     glfwSetJoystickCallback(joystick_callback);
     
-    for (int j = 0; j <= GLFW_JOYSTICK_LAST; ++j)
-    {
-        if (glfwJoystickPresent(j))
-        {
-            if (joy_left != -1)
-            {
+    for (int j = 0; j <= GLFW_JOYSTICK_LAST; ++j) {
+        if (glfwJoystickPresent(j)) {
+            if (joy_left != -1) {
                 joy_right = j;
                 return;
             }

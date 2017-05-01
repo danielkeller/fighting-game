@@ -22,11 +22,11 @@ extern Mat3 eye3;
 Mat3 affine(float theta, float x, float y);
 
 //*** Object
-void make_box(object_t*);
-void make_object(object_t*, const float* verts, GLsizei verts_sz, GLsizei stride);
-void make_anim_obj(object_t*, const float* verts, GLsizei verts_sz, GLsizei stride);
-void anim_obj_keys(object_t*, const anim_step_t* step);
-void free_object(object_t*);
+void make_box(struct object*);
+void make_object(struct object*, const float* verts, GLsizei verts_sz, GLsizei stride);
+void make_anim_obj(struct object*, const float* verts, GLsizei verts_sz, GLsizei stride);
+void anim_obj_keys(struct object*, const struct anim_step* step);
+void free_object(struct object*);
 
 //*** Shader
 #define POSITION_ATTRIB 0
@@ -50,8 +50,8 @@ struct shader {
 
 #include "shaders.h"
 
-void load_shader_program(program_t*, shader_t vert, shader_t frag);
-void free_program(program_t*);
+void load_shader_program(struct program*, shader_t vert, shader_t frag);
+void free_program(struct program*);
 
 #ifdef DEBUG
 //This assumes the program objects don't move around in memory
@@ -67,7 +67,7 @@ typedef struct fbo
     GLuint fbos[2], default_fb;
     GLuint texes[2];
     size_t cur;
-    program_t quad_shader;
+    struct program quad_shader;
 } fbo_t;
 
 //Note: fbo_window_size must be called before the fbo can be used
@@ -96,22 +96,22 @@ static const usec_t tick_length = 40000ll;
 //4 FPS
 static const usec_t frame_limit = 250000ll;
 
-typedef struct game_time {
+struct game_time {
     unsigned long long frame;
     float alpha;
     int multiplier;
     usec_t last_render, last_frame_length, current_time, unsimulated_time;
-} game_time_t;
+};
 
-void init_game_time(game_time_t*);
+void init_game_time(struct game_time*);
 
 usec_t get_time(void);
 
 //Update the game_time for one physics tick, and return 1 if we should simulate
-int phys_tick(game_time_t*);
+int phys_tick(struct game_time*);
 //Update the game_time for one render tick, and return the leftover time as a fraction
 //of the tick length; [0,1).
-void render_tick(game_time_t*);
+void render_tick(struct game_time*);
 
 //*** Effects
 #define MAX_EFFECTS 128
@@ -132,8 +132,8 @@ void free_effects(effects_t*);
 //*** Globals
 extern Mat3 camera;
 extern fbo_t fbo;
-extern game_time_t game_time;
-extern object_t box;
+extern struct game_time game_time;
+extern struct object box;
 extern effects_t effects;
 
 void calculate_camera(float width_px, float height_px);

@@ -14,11 +14,13 @@
 
 static const char* window_title = "Fighting Game";
 
-void error_callback(int error, const char* description) {
+void error_callback(int error, const char* description)
+{
     printf("%s\n", description);
 }
 
-GLFWwindow* init_window(void) {
+GLFWwindow* init_window(void)
+{
     glfwSetErrorCallback(error_callback);
     if (!glfwInit())
         die("Could not initialize glfw");
@@ -51,13 +53,11 @@ static int xpos, ypos, width, height;
 
 void toggle_fullscreen(GLFWwindow* window)
 {
-    if (glfwGetWindowMonitor(window))
-    {
+    if (glfwGetWindowMonitor(window)) {
         glfwSetWindowMonitor(window, NULL, xpos, ypos, width, height, 0);
         glfwSetWindowTitle(window, window_title);
     }
-    else
-    {
+    else {
         glfwGetWindowPos(window, &xpos, &ypos);
         glfwGetWindowSize(window, &width, &height);
         

@@ -1,5 +1,5 @@
 #include "stickman.h"
-const anim_step_t stickman_anims[] = {
+const struct anim_step stickman_anims[] = {
 {.p_from = 0, .p_to = 0, .d_from = 64, .d_to = 64},
 {.p_from = 16, .p_to = 16, .d_from = 80, .d_to = 80},
 {.p_from = 16, .p_to = 24, .d_from = 88, .d_to = 96},

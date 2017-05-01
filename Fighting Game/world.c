@@ -16,8 +16,8 @@ Mat3 camera = {{
 }};
 
 fbo_t fbo;
-game_time_t game_time;
-object_t box;
+struct game_time game_time;
+struct object box;
 effects_t effects;
 
 void calculate_camera(float win_width, float win_height)

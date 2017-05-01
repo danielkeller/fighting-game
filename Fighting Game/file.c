@@ -47,8 +47,7 @@ void* poll_watch(watch_t kq)
         die(strerror(errno));
     else if (ret == 0)
         return NULL;
-    else
-    {
+    else {
         if (ev.fflags & NOTE_DELETE) //Atomic save
             rewatch_deleted(kq, (int)ev.ident, ev.udata);
         return ev.udata;

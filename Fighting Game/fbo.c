@@ -42,8 +42,7 @@ void free_fbo(fbo_t* fbo)
 
 void check_fbo_status(void)
 {
-    switch (glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER))
-    {
+    switch (glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER)) {
         FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT)
         FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT)
         FBO_ERROR_CASE(GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER)
@@ -64,8 +63,7 @@ void fbo_window_size(fbo_t* fbo, GLsizei width, GLsizei height)
     
     glDeleteTextures(2, fbo->texes);
     glGenTextures(2, fbo->texes);
-    for (size_t i = 0; i < 2; ++i)
-    {
+    for (size_t i = 0; i < 2; ++i) {
         glBindTexture(GL_TEXTURE_RECTANGLE, fbo->texes[i]);
         //https://www.opengl.org/wiki/Common_Mistakes#Creating_a_complete_texture
         glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

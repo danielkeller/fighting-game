@@ -13,28 +13,28 @@
 
 typedef long long usec_t;
 
-typedef struct object
+struct object
 {
     GLuint vertexArrayObject;
     GLuint vertexBufferObject;
     GLsizei numVertecies;
     GLsizei stride;
-} object_t;
+};
 
-typedef struct anim_step {
+struct anim_step {
     GLsizei p_from, p_to; //position
     GLsizei d_from, d_to; //derivative
-} anim_step_t;
+};
 
 typedef struct shader* shader_t;
 
-typedef struct program
+struct program
 {
     GLuint program;
     GLint transform, camera, time, pos_alpha;
     
     shader_t vert, frag;
-} program_t;
+};
 
 #define SHIFT_FLAG(f) ((f) ? (f)--, 1 : 0)
 

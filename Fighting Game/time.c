@@ -18,7 +18,7 @@ usec_t get_time()
     return time_mCount / freq_kHz;
 }
 
-void init_game_time(game_time_t* gt)
+void init_game_time(struct game_time* gt)
 {
     gt->frame = 0;
     gt->current_time = gt->unsimulated_time = 0;
@@ -29,7 +29,7 @@ void init_game_time(game_time_t* gt)
 
 //The "Fix Your Timestep" algorithm
 
-int phys_tick(game_time_t *gt)
+int phys_tick(struct game_time *gt)
 {
     if (gt->unsimulated_time < tick_length)
         return 0;
@@ -39,7 +39,7 @@ int phys_tick(game_time_t *gt)
     return 1;
 }
 
-void render_tick(game_time_t *gt)
+void render_tick(struct game_time *gt)
 {
     usec_t now = get_time();
     usec_t frame_time = (now - gt->last_render) / gt->multiplier;

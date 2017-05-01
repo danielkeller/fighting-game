@@ -1,5 +1,5 @@
 #include "test.h"
-const anim_step_t test_anims[] = {
+const struct anim_step test_anims[] = {
 {.p_from = 16, .p_to = 0, .d_from = 24, .d_to = 32},
 };
 float test_verts[60] = {

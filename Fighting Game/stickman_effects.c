@@ -10,7 +10,7 @@
 #include "engine.h"
 
 typedef struct hit_effect {
-    stickman_t* attacker;
+    struct stickman* attacker;
     usec_t start_time;
     GLint origin_unif, direction_unif;
     float x;
@@ -35,7 +35,7 @@ int draw_hit_effect(hit_effect_t* he)
 
 BINDABLE(draw_hit_effect, hit_effect_t)
 
-bound_t make_hit_effect(stickman_t* sm)
+bound_t make_hit_effect(struct stickman* sm)
 {
     hit_effect_t he;
     he.attacker = sm;
@@ -47,7 +47,7 @@ bound_t make_hit_effect(stickman_t* sm)
 }
 
 typedef struct parry_effect {
-    stickman_t* attacker;
+    struct stickman* attacker;
     usec_t start_time;
     GLint color_unif, direction_unif, init_vel_unif;
     Mat3 position;
@@ -55,7 +55,7 @@ typedef struct parry_effect {
 
 int draw_parry_effect(parry_effect_t* pe)
 {
-    program_t* program = &pe->attacker->parry_effect;
+    struct program* program = &pe->attacker->parry_effect;
     usec_t elapsed = game_time.current_time - pe->start_time;
     glUseProgram(program->program);
     
@@ -75,7 +75,7 @@ int draw_parry_effect(parry_effect_t* pe)
 
 BINDABLE(draw_parry_effect, parry_effect_t)
 
-bound_t make_parry_effect(stickman_t* sm, float y)
+bound_t make_parry_effect(struct stickman* sm, float y)
 {
     parry_effect_t pe;
     pe.attacker = sm;

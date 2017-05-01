@@ -56,18 +56,14 @@ int step_character(character_t* c, int move_button, int dodge_button, int attack
 //The attack is resolved against the previous state. This
 //is so the character which is updated first doesn't have
 //an advantage.
-void attack(character_t* attacker, attack_t* attack)
+void attack(character_t* attacker, struct attack* attack)
 {
     character_t* victim = attacker->other;
     
     if (game_time.frame - attacker->anim_start != attack->frame)
         return;
     
-    //I suppose this kind of defeats the purpose of the T thing
-    if (attack->target == T(hi))
-        attacker->state_indicator.top_attack = attack->force;
-    else
-        attacker->state_indicator.bot_attack = attack->force;
+    attacker->state_indicator.attack[attack->target] = attack->force;
     attacker->state_indicator.last_attack_time = game_time.current_time;
     
     if (-victim->prev.ground_pos - attacker->prev.ground_pos > attack->range) {
@@ -75,12 +71,11 @@ void attack(character_t* attacker, attack_t* attack)
         return;
     }
     
-    strike_point_t* target = &victim->prev.fight_state.hi + attack->target;
+    struct strike_point* target = &victim->prev.fight_state.strike_points[attack->target];
     
     int knockback = attack->knock - victim->prev.fight_state.balance;
     
-    if (attack->force > target->block) //Attack lands
-    {
+    if (attack->force > target->block) { //Attack lands
         int damage = attack->damage - target->defense;
         
         victim->next.health -= damage;
@@ -92,8 +87,7 @@ void attack(character_t* attacker, attack_t* attack)
     else
         attacker->next.attack_result |= PARRIED;
     
-    if (attack->force >= target->block && knockback > 0)
-    {
+    if (attack->force >= target->block && knockback > 0) {
         victim->next.ground_pos -= .02*knockback;
         if (victim->next.ground_pos < -1.)
             victim->next.ground_pos = -1.;
@@ -102,7 +96,7 @@ void attack(character_t* attacker, attack_t* attack)
     }
 }
 
-void set_character_draw_state(character_t* c, program_t* program)
+void set_character_draw_state(character_t* c, struct program* program)
 {
     glUniform1f(program->time, (float)game_time.current_time / 1000000.f);
     glUniformMatrix3fv(program->camera, 1, GL_FALSE, camera.d);
@@ -133,7 +127,12 @@ void free_character(character_t* c)
     CALL_BOUND(c->free);
 }
 
-void make_heath_bar(health_bar_t* hb, direction_t direction)
+character_t* alloc_character()
+{
+    return malloc(sizeof(character_t));
+}
+
+void make_heath_bar(struct health_bar* hb, enum direction direction)
 {
     hb->last_health = 100;
     hb->last_health_change_time = 0;
@@ -154,7 +153,7 @@ void make_heath_bar(health_bar_t* hb, direction_t direction)
 
 void draw_health_bar(character_t *c)
 {
-    health_bar_t* hb = &c->health_bar;
+    struct health_bar* hb = &c->health_bar;
     
     if (c->next.health != hb->health) {
         hb->last_health_change_time = game_time.current_time;
@@ -172,27 +171,27 @@ void draw_health_bar(character_t *c)
     glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
 }
 
-void free_health_bar(health_bar_t* hb)
+void free_health_bar(struct health_bar* hb)
 {
     free_program(&hb->program);
 }
 
-void make_state_indicator(state_indicator_t* si)
+void make_state_indicator(struct state_indicator* si)
 {
     load_shader_program(&si->program, simple_vert, state_indicator_frag);
     si->top_unif = glGetUniformLocation(si->program.program, "top");
     si->bot_unif = glGetUniformLocation(si->program.program, "bottom");
     si->top_attack_unif = glGetUniformLocation(si->program.program, "top_attack");
     si->bot_attack_unif = glGetUniformLocation(si->program.program, "bottom_attack");
-    si->top_attack = si->bot_attack = 0;
+    si->attack[HI] = si->attack[LO] = 0;
 }
 
 void draw_state_indicator(character_t* c)
 {
-    state_indicator_t* si = &c->state_indicator;
+    struct state_indicator* si = &c->state_indicator;
     
     if (game_time.current_time - si->last_attack_time > 200000ll)
-        c->state_indicator.top_attack = c->state_indicator.bot_attack = 0;
+        si->attack[HI] = si->attack[LO] = 0;
     
     glUseProgram(si->program.program);
     glUniformMatrix3fv(si->program.camera, 1, GL_FALSE, camera.d);
@@ -203,16 +202,16 @@ void draw_state_indicator(character_t* c)
         (c->ground_pos + .1)*c->direction, .2, 1}};
     glUniformMatrix3fv(si->program.transform, 1, GL_FALSE, transform.d);
     
-    glUniform1i(si->top_unif, c->next.fight_state.hi.block);
-    glUniform1i(si->bot_unif, c->next.fight_state.lo.block);
-    glUniform1i(si->top_attack_unif, si->top_attack);
-    glUniform1i(si->bot_attack_unif, si->bot_attack);
+    glUniform1i(si->top_unif, c->next.fight_state.strike_points[0].block);
+    glUniform1i(si->bot_unif, c->next.fight_state.strike_points[1].block);
+    glUniform1i(si->top_attack_unif, si->attack[HI]);
+    glUniform1i(si->bot_attack_unif, si->attack[LO]);
     
     glBindVertexArray(box.vertexArrayObject);
     glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
 }
 
-void free_state_indicator(state_indicator_t* si)
+void free_state_indicator(struct state_indicator* si)
 {
     free_program(&si->program);
 }

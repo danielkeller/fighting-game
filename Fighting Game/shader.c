@@ -17,8 +17,8 @@
 static watch_t shader_watch = -1;
 
 //Does no bounds checking
-void add_program(program_t* program);
-void remove_program(program_t* program);
+void add_program(struct program* program);
+void remove_program(struct program* program);
 #endif
 
 void load_shader(shader_t shader);
@@ -47,8 +47,7 @@ void compile_shader(shader_t shader_data)
     
     GLint status;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-    if (!status) //compile failed
-    {
+    if (!status) { //compile failed
         GLint infoLogLength;
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
         GLchar* infoLog = malloc(infoLogLength);
@@ -64,7 +63,7 @@ void compile_shader(shader_t shader_data)
         shader_data->shader = shader;
 }
 
-void link_shader_program(program_t* prog)
+void link_shader_program(struct program* prog)
 {
     //create our empty program
     GLuint program = glCreateProgram();
@@ -91,8 +90,7 @@ void link_shader_program(program_t* prog)
     //check for linker errors
     GLint status;
     glGetProgramiv(program, GL_LINK_STATUS, &status);
-    if (!status)
-    {
+    if (!status) {
         GLint infoLogLength;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
         GLchar* infoLog = malloc(infoLogLength);
@@ -137,7 +135,7 @@ void load_shader(shader_t shader)
 //Right now the way shader types are specified is redundant, both in the file extention
 //and the positions of the arguments. The extra info in the file extension could be
 //useful in the future, if geometry shaders (for instance) are needed.
-void load_shader_program(program_t* prog, shader_t vert, shader_t frag)
+void load_shader_program(struct program* prog, shader_t vert, shader_t frag)
 {
     prog->vert = vert, prog->frag = frag;
     
@@ -153,7 +151,7 @@ void load_shader_program(program_t* prog, shader_t vert, shader_t frag)
         die("Could not link shader program");
 }
 
-void free_program(program_t* prog)
+void free_program(struct program* prog)
 {
 #ifdef DEBUG
     remove_program(prog);
@@ -162,16 +160,16 @@ void free_program(program_t* prog)
 }
 
 #ifdef DEBUG
-static program_t* all_programs[1024] = {0};
+static struct program* all_programs[1024] = {0};
 
-void add_program(program_t* program)
+void add_program(struct program* program)
 {
     size_t i = 0;
     while (all_programs[i]) ++i;
     all_programs[i] = program;
 }
 
-void remove_program(program_t* program)
+void remove_program(struct program* program)
 {
     size_t i = 0;
     while (all_programs[i] != program) ++i;
@@ -180,7 +178,7 @@ void remove_program(program_t* program)
         all_programs[i] = all_programs[i+1];
 }
 
-void update_program(program_t* program);
+void update_program(struct program* program);
 
 void poll_shader_changes()
 {
@@ -212,10 +210,10 @@ void poll_shader_changes()
     printf("Updated %d programs.\n", updated);
 }
 
-void update_program(program_t* program)
+void update_program(struct program* program)
 {
     //Try re-linking the program with the new shaders
-    program_t new_program = *program;
+    struct program new_program = *program;
     link_shader_program(&new_program);
     
     if (!new_program.program)
@@ -232,8 +230,7 @@ void update_program(program_t* program)
     GLint old_size, new_size, old_location;
     GLenum old_type, new_type;
     
-    for (GLint new_location = 0; new_location < n_unifs; new_location++)
-    {
+    for (GLint new_location = 0; new_location < n_unifs; new_location++) {
         glGetActiveUniform(new_program.program, (GLuint)new_location, buf_size, NULL, &new_size, &new_type, name);
         
         old_location = glGetUniformLocation(program->program, name);
@@ -249,15 +246,13 @@ void update_program(program_t* program)
             continue;
         
         #define COPY_UNIF(glty, type, elems, suffix) \
-            if (new_type == glty) \
-            { \
+            if (new_type == glty) { \
                 type val[elems*new_size]; \
                 glGetUniform##suffix##v(program->program, old_location, val); \
                 glUniform##elems##suffix##v(new_location, new_size, val); \
             }
         #define COPY_UNIF_MAT(glty, type, rows, suffix) \
-            if (new_type == glty) \
-            { \
+            if (new_type == glty) { \
                 type val[rows*rows*new_size]; \
                 glGetUniform##suffix##v(program->program, old_location, val); \
                 glUniformMatrix##rows##suffix##v(new_location, new_size, GL_FALSE, val); \

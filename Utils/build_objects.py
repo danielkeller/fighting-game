@@ -74,7 +74,7 @@ for path in files():
             h_f.write('static const GLsizei %s_stride = %d;\n' % (id(mesh_name), stride))
             
             if anims[mesh_name]:
-                h_f.write('extern const anim_step_t %s_anims[];\n' % id(mesh_name))
+                h_f.write('extern const struct anim_step %s_anims[];\n' % id(mesh_name))
                 
                 h_f.write('enum state_names {\n')
                 for name, keys in anims[mesh_name].iteritems():
@@ -99,7 +99,7 @@ for path in files():
                         d_offsets[name][key] = offset * el_sz
                         offset += 1
 
-                c_f.write('const anim_step_t %s_anims[] = {\n' % id(mesh_name))
+                c_f.write('const struct anim_step %s_anims[] = {\n' % id(mesh_name))
 
                 for name, keys in anims[mesh_name].iteritems():
                     for i in xrange(len(keys)-1):

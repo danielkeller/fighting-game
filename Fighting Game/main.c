@@ -21,7 +21,8 @@ float camera_[] = {
     -1., -1., 1.
 };
 
-int main (int argc, char* argv[]) {
+int main (int argc, char* argv[])
+{
     GLFWwindow* window = init_window();
     init_input(window);
     
@@ -35,18 +36,18 @@ int main (int argc, char* argv[]) {
     usec_t last_fps = get_time();
     */
     
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         init_game_time(&game_time);
         
-        character_t left, right;
-        make_stickman(&left, &right, RIGHT),
-        make_stickman(&right, &left, LEFT);
+        character_t
+            *left = alloc_character(),
+            *right = alloc_character();
+        make_stickman(left, right, RIGHT),
+        make_stickman(right, left, LEFT);
         
         key_right = key_left = (key_events_t){0};
         
-        while (!glfwWindowShouldClose(window))
-        {
+        while (!glfwWindowShouldClose(window)) {
             //usec_t frame_work_time = get_time() - game_time.last_render;
             
             //render_tick must be called immediately after the frame appears
@@ -71,14 +72,14 @@ int main (int argc, char* argv[]) {
                 poll_input();
                 
                 int both_alive
-                = step_character(&left, key_left.move, SHIFT_FLAG(key_left.dodge), SHIFT_FLAG(key_left.attack))
-                & step_character(&right, key_right.move, SHIFT_FLAG(key_right.dodge), SHIFT_FLAG(key_right.attack));
+                = step_character(left, key_left.move, SHIFT_FLAG(key_left.dodge), SHIFT_FLAG(key_left.attack))
+                & step_character(right, key_right.move, SHIFT_FLAG(key_right.dodge), SHIFT_FLAG(key_right.attack));
                 
                 if (!both_alive)
                     goto game_over;
                 
-                character_actions(&left);
-                character_actions(&right);
+                character_actions(left);
+                character_actions(right);
             }
             
             int width, height;
@@ -90,8 +91,8 @@ int main (int argc, char* argv[]) {
             
             prepare_fbo(&fbo);
             
-            draw_character(&left);
-            draw_character(&right);
+            draw_character(left);
+            draw_character(right);
             draw_effects(&effects);
             
             blit_fbo(&fbo);
@@ -100,13 +101,13 @@ int main (int argc, char* argv[]) {
     game_over:
         
         //Step the characters one more time so prev == next and they actually stop
-        step_character(&left, 0, 0, 0);
-        step_character(&right, 0, 0, 0);
+        step_character(left, 0, 0, 0);
+        step_character(right, 0, 0, 0);
         
-        object_t game_over_text;
+        struct object game_over_text;
         make_object(&game_over_text, game_over_verts, sizeof(game_over_verts), 0);
         
-        program_t game_over_shader;
+        struct program game_over_shader;
         load_shader_program(&game_over_shader, simple_vert, color_frag);
         GLint color_unif = glGetUniformLocation(game_over_shader.program, "main_color");
         glUniform3f(color_unif, 1., 0., 0.);
@@ -114,16 +115,15 @@ int main (int argc, char* argv[]) {
         glUniformMatrix3fv(game_over_shader.transform, 1, GL_FALSE, eye3.d);
         
         while (!glfwWindowShouldClose(window) &&
-               !(glfwGetKey(window, GLFW_KEY_ENTER) || (key_left.start && key_right.start)))
-        {
+               !(glfwGetKey(window, GLFW_KEY_ENTER) || (key_left.start && key_right.start))) {
             game_time.multiplier += 1;
             render_tick(&game_time);
             while (phys_tick(&game_time))
                 ;
             
             prepare_fbo(&fbo);
-            draw_character(&left);
-            draw_character(&right);
+            draw_character(left);
+            draw_character(right);
             draw_effects(&effects);
             
             glUseProgram(game_over_shader.program);
@@ -141,8 +141,8 @@ int main (int argc, char* argv[]) {
         free_object(&game_over_text);
         free_program(&game_over_shader);
         
-        free_character(&left);
-        free_character(&right);
+        free_character(left);
+        free_character(right);
     }
     
     free_object(&box);
