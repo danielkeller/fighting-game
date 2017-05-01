@@ -15,12 +15,6 @@
 #include "input.h"
 #include <math.h>
 
-float camera_[] = {
-    2., 0., 0.,
-    0., 2., 0.,
-    -1., -1., 1.
-};
-
 int main (int argc, char* argv[])
 {
     GLFWwindow* window = init_window();

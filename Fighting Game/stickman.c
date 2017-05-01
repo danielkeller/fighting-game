@@ -19,26 +19,31 @@ static const float block_dist = .3;
 //first player. After the midpoint, it goes to the second. If it is at the midpoint
 //either both attacks land or neither.
 
+//To make dodging make sense, the player must be stationary or slow during attacks
+
 //            frames  next  fwd_speed rev_speed balance   hi        lo
 static const struct state states[] = {
-    [top]       = {1, top,       speed, speed, {10, {{8,  MIDDLE}, {1,  WEAK}}}},
+    [top]       = {1, top,       speed, speed, {10, {{8,  MIDDLE}, {0,  WEAK}}}},
     [bottom]    = {1, bottom,    speed, speed, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
-    [swing_1]   = {4, swing_2,   .025,  0,     {6,  {{10, HEAVY},  {1,  WEAK}}}},
-    [swing_2]   = {3, bottom,    .025,  0,     {6,  {{10, HEAVY},  {1,  WEAK}}}},
-    [swingup_1] = {5, swingup_2, .02,   0,     {12, {{0,  WEAK},   {10, HEAVY}}}},
-    [swingup_2] = {4, top,       .02,   0,     {12, {{0,  WEAK},   {10, HEAVY}}}},
+    [swing_1]   = {4, swing_2,   0,     0,     {6,  {{10, HEAVY},  {0,  WEAK}}}},
+    [swing_2]   = {3, bottom,    0,     0,     {6,  {{10, HEAVY},  {0,  WEAK}}}},
+    [swingup_1] = {5, swingup_2, 0,     0,     {12, {{0,  WEAK},   {10, HEAVY}}}},
+    [swingup_2] = {4, top,       0,     0,     {12, {{0,  WEAK},   {10, HEAVY}}}},
     
-    [hi_block]   = {2, block,      0, block_dist/2., {5, {{1, WEAK}, {1, WEAK}}}},
-    [lo_block_1] = {1, lo_block_2, 0, block_dist/3., {5, {{1, WEAK}, {1, WEAK}}}},
-    [lo_block_2] = {1, lo_block_3, 0, block_dist/3., {5, {{1, WEAK}, {1, WEAK}}}},
-    [lo_block_3] = {1, block,      0, block_dist/3., {5, {{1, WEAK}, {1, WEAK}}}},
+    [hi_block]   = {2, block,      0, block_dist/2., {5, {{0, WEAK}, {0, WEAK}}}},
+    [lo_block_1] = {1, lo_block_2, 0, block_dist/3., {5, {{0, WEAK}, {0, WEAK}}}},
+    [lo_block_2] = {1, lo_block_3, 0, block_dist/3., {5, {{0, WEAK}, {0, WEAK}}}},
+    [lo_block_3] = {1, block,      0, block_dist/3., {5, {{0, WEAK}, {0, WEAK}}}},
     [block]      = {6, unblock,    0, 0, {10, {{20, HEAVY}, {20, HEAVY}}}},
-    [unblock]    = {3, top,        0, 0, {10, {{1, WEAK}, {1, WEAK}}}},
+    [unblock]    = {3, top,        0, 0, {10, {{0, WEAK}, {0, WEAK}}}},
 };
+
+//Attacks can be in cancellable states, but *only* on the last frame. Otherwise
+//the player can cancel the action after the attack comes out.
 
 static struct attack
 down_attack = {2, HI, .6, 20, 20, MIDDLE},
-up_attack   = {1, LO, .6, 10, 30, MIDDLE};
+up_attack   = {5, LO, .6, 10, 30, MIDDLE};
 
 //Note that new actions are considered to start epsilon after the previous frame,
 //as opposed to on the start of the next frame. (the previous frame is stored in anim_start)
@@ -70,7 +75,7 @@ int stickman_actions(struct stickman* sm)
         case swing_2:
             attack(c, &down_attack);
             if (c->next.attack_result & LANDED)  push_effect(&effects, make_hit_effect(sm));
-            if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, 1.));
+            if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .6));
             break;
             
         case bottom:
@@ -84,17 +89,20 @@ int stickman_actions(struct stickman* sm)
                 goto_state(c, bottom);
             if (CANCELLING && SHIFT_FLAG(c->dodge_button) && can_dodge)
                 goto_state(c, lo_block_1);
-            break;
-        case swingup_2:
+        //    break;
+        //case swingup_2:
             attack(c, &up_attack);
-            if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .5));
+            if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .7));
             break;
-            
+        /*
+        // the problem with this cancel is that cancelling into swingup looks awkard,
+        // and cancelling into swing is probably OP
         case lo_block_3:
             if (CANCELLING && SHIFT_FLAG(c->attack_button))
                 goto_state(c, swing_1);
             break;
-        case block:
+         */
+        case hi_block:
             if (CANCELLING && SHIFT_FLAG(c->attack_button))
                 goto_state(c, swing_1);
             break;
@@ -185,4 +193,6 @@ void make_stickman(character_t* c, character_t* other, enum direction direction)
     c->dodge_button = c->attack_button = 0;
     
     goto_state(c, top);
+    //Set the initial vertex attrib pointers
+    anim_obj_keys(&sm->obj, &stickman_anims[c->next.state]);
 }
