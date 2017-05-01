@@ -7,6 +7,7 @@
 //
 
 #include "input.h"
+#include "engine.h"
 #include "window.h"
 
 key_events_t key_left, key_right, joy_left_prev, joy_right_prev;
@@ -26,6 +27,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_COMMA) key_right.dodge++;
     
     if (key == GLFW_KEY_F) toggle_fullscreen(window);
+    if (key == GLFW_KEY_S)
+        game_time.multiplier = game_time.multiplier == 1 ? 3 : 1;
 }
 
 int joy_left = -1, joy_right = -1;
@@ -34,11 +37,11 @@ void joystick_callback(int joy, int event)
 {
     if (event == GLFW_CONNECTED) {
         if (joy_left == -1) joy_left = joy;
-        if (joy_right == -1) joy_right = joy;
+        else if (joy_right == -1) joy_right = joy;
     }
     else if (event == GLFW_DISCONNECTED) {
         if (joy_left == joy) joy_left = -1;
-        if (joy_right == joy) joy_right = -1;
+        else if (joy_right == joy) joy_right = -1;
     }
 }
 
@@ -73,6 +76,7 @@ void poll_input()
         */
         
         key_left.start = axes[9];
+        key_left.move = axes[7];
         if (joy_left_prev.dodge != axes[1]) key_left.dodge += axes[1];
         if (joy_left_prev.attack != axes[2]) key_left.attack += axes[2];
         joy_left_prev.dodge = axes[1];
@@ -81,6 +85,7 @@ void poll_input()
     if (joy_right != -1) {
         const unsigned char* axes = glfwGetJoystickButtons(joy_right,  &count);
         key_right.start = axes[9];
+        key_right.move = axes[7];
         if (joy_right_prev.dodge != axes[1]) key_right.dodge += axes[1];
         if (joy_right_prev.attack != axes[2]) key_right.attack += axes[2];
         joy_right_prev.dodge = axes[1];

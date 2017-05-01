@@ -132,7 +132,7 @@ int main (int argc, char* argv[])
             
             blit_fbo(&fbo);
             glfwSwapBuffers(window);
-            glfwPollEvents();
+            poll_input();
             poll_shader_changes();
         }
         
