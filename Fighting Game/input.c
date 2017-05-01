@@ -27,8 +27,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_COMMA) key_right.dodge++;
     
     if (key == GLFW_KEY_F) toggle_fullscreen(window);
-    if (key == GLFW_KEY_S)
-        game_time.multiplier = game_time.multiplier == 1 ? 3 : 1;
+    if (key == GLFW_KEY_S) game_time.slowmo = !game_time.slowmo;
 }
 
 int joy_left = -1, joy_right = -1;

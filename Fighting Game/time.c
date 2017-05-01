@@ -43,6 +43,7 @@ void render_tick(struct game_time *gt)
 {
     usec_t now = get_time();
     usec_t frame_time = (now - gt->last_render) / gt->multiplier;
+    if (gt->slowmo) frame_time /= 3;
     if (frame_time > frame_limit) frame_time = frame_limit;
     
     gt->last_render = now;

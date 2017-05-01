@@ -99,6 +99,7 @@ static const usec_t frame_limit = 250000ll;
 struct game_time {
     unsigned long long frame;
     float alpha;
+    int slowmo;
     int multiplier;
     usec_t last_render, last_frame_length, current_time, unsimulated_time;
 };
