@@ -11,6 +11,7 @@
 #include "engine.h"
 
 static const float speed = .015;
+static const float rev_speed = RETREAT * speed;
 static const float dodge = .08;
 static const float block_dist = .3;
 
@@ -23,12 +24,12 @@ static const float block_dist = .3;
 
 //            frames  next  fwd_speed rev_speed balance   hi        lo
 static const struct state states[] = {
-    [top]       = {1, top,       speed, speed, {10, {{8,  MIDDLE}, {0,  WEAK}}}},
-    [bottom]    = {1, bottom,    speed, speed, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
-    [swing_1]   = {4, swing_2,   0,     0,     {6,  {{10, HEAVY},  {0,  WEAK}}}},
-    [swing_2]   = {3, bottom,    0,     0,     {6,  {{10, HEAVY},  {0,  WEAK}}}},
-    [swingup_1] = {5, swingup_2, 0,     0,     {12, {{0,  WEAK},   {10, HEAVY}}}},
-    [swingup_2] = {4, top,       0,     0,     {12, {{0,  WEAK},   {10, HEAVY}}}},
+    [top]       = {1, top,       speed, rev_speed, {10, {{8,  MIDDLE}, {0,  WEAK}}}},
+    [bottom]    = {1, bottom,    speed, rev_speed, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
+    [swing_1]   = {4, swing_2,   0,     0,         {6,  {{10, HEAVY},  {0,  WEAK}}}},
+    [swing_2]   = {3, bottom,    0,     0,         {6,  {{10, HEAVY},  {0,  WEAK}}}},
+    [swingup_1] = {5, swingup_2, 0,     0,         {12, {{0,  WEAK},   {10, HEAVY}}}},
+    [swingup_2] = {4, top,       0,     0,         {12, {{0,  WEAK},   {10, HEAVY}}}},
     
 #define BLOCKED                                {10, {{20, HEAVY},  {20, HEAVY}}}
     [hi_block]   = {2, block,      0, block_dist/2., BLOCKED},

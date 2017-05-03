@@ -20,4 +20,7 @@
 //Enable cancelling
 #define CANCELLING 1
 
+//Enable retreat when attack is not pushed
+#define RETREAT 0
+
 #endif /* options_h */
