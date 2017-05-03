@@ -30,12 +30,13 @@ static const struct state states[] = {
     [swingup_1] = {5, swingup_2, 0,     0,     {12, {{0,  WEAK},   {10, HEAVY}}}},
     [swingup_2] = {4, top,       0,     0,     {12, {{0,  WEAK},   {10, HEAVY}}}},
     
-    [hi_block]   = {2, block,      0, block_dist/2., {5, {{0, WEAK}, {0, WEAK}}}},
-    [lo_block_1] = {1, lo_block_2, 0, block_dist/3., {5, {{0, WEAK}, {0, WEAK}}}},
-    [lo_block_2] = {1, lo_block_3, 0, block_dist/3., {5, {{0, WEAK}, {0, WEAK}}}},
-    [lo_block_3] = {1, block,      0, block_dist/3., {5, {{0, WEAK}, {0, WEAK}}}},
-    [block]      = {6, unblock,    0, 0, {10, {{20, HEAVY}, {20, HEAVY}}}},
-    [unblock]    = {3, top,        0, 0, {10, {{0, WEAK}, {0, WEAK}}}},
+#define BLOCKED                                {10, {{20, HEAVY},  {20, HEAVY}}}
+    [hi_block]   = {2, block,      0, block_dist/2., BLOCKED},
+    [lo_block_1] = {1, lo_block_2, 0, block_dist/3., BLOCKED},
+    [lo_block_2] = {1, lo_block_3, 0, block_dist/3., BLOCKED},
+    [lo_block_3] = {1, block,      0, block_dist/3., BLOCKED},
+    [block]      = {6, unblock,    0, 0,             BLOCKED},
+    [unblock]    = {3, top,        0, 0,       {10, {{0, WEAK},    {0, WEAK}}}},
 };
 
 //Attacks can be in cancellable states, but *only* on the last frame. Otherwise
@@ -89,8 +90,6 @@ int stickman_actions(struct stickman* sm)
                 goto_state(c, bottom);
             if (CANCELLING && SHIFT_FLAG(c->dodge_button) && can_dodge)
                 goto_state(c, lo_block_1);
-        //    break;
-        //case swingup_2:
             attack(c, &up_attack);
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .7));
             break;
@@ -137,7 +136,8 @@ int draw_stickman(struct stickman* sm)
     glDrawArrays(GL_TRIANGLES, 0, sm->obj.numVertecies);
     
     draw_health_bar(sm->character);
-    draw_state_indicator(sm->character);
+    if (learning_mode)
+        draw_state_indicator(sm->character);
     return 0;
 }
 BINDABLE(draw_stickman, struct stickman)
@@ -179,20 +179,20 @@ void make_stickman(character_t* c, character_t* other, enum direction direction)
     sm->color_unif = glGetUniformLocation(sm->program.program, "main_color");
     glUniform3f(sm->color_unif, 1., 1., 1.);
     
+    c->direction = direction;
     c->states = states;
     c->speed = speed;
     c->dodge = dodge;
     c->hitbox_width = stickman_hitbox_width;
-    c->prev = c->next = (struct character_state){
+    c->next = (struct character_state){
         .ground_pos = -1.f,
         .health = 100,
         .advancing = 0,
     };
-    
-    c->direction = direction;
-    c->dodge_button = c->attack_button = 0;
-    
+    c->move_button = c->attack_button = c->dodge_button = 0;
     goto_state(c, top);
-    //Set the initial vertex attrib pointers
-    anim_obj_keys(&sm->obj, &stickman_anims[c->next.state]);
+    
+    //Do nothing for one frame so the state is consistent
+    step_character(c, 0, 0, 0);
+    stickman_actions(sm);
 }

@@ -19,6 +19,7 @@ fbo_t fbo;
 struct game_time game_time;
 struct object box;
 effects_t effects;
+int learning_mode = 0;
 
 void calculate_camera(float win_width, float win_height)
 {

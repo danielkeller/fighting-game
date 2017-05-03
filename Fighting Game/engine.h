@@ -92,6 +92,7 @@ void free_fbo(fbo_t* fbo);
 
 //*** Time
 //25 FPS
+//Note that human reaction time is about 6.5 - 7.5 frames.
 static const usec_t tick_length = 40000ll;
 //4 FPS
 static const usec_t frame_limit = 250000ll;
@@ -99,7 +100,6 @@ static const usec_t frame_limit = 250000ll;
 struct game_time {
     unsigned long long frame;
     float alpha;
-    int slowmo;
     int multiplier;
     usec_t last_render, last_frame_length, current_time, unsimulated_time;
 };
@@ -136,6 +136,7 @@ extern fbo_t fbo;
 extern struct game_time game_time;
 extern struct object box;
 extern effects_t effects;
+extern int learning_mode;
 
 void calculate_camera(float width_px, float height_px);
 
