@@ -31,13 +31,17 @@ static const struct state states[] = {
     [swingup_1] = {5, swingup_2, 0,     0,         {12, {{0,  WEAK},   {10, HEAVY}}}},
     [swingup_2] = {4, top,       0,     0,         {12, {{0,  WEAK},   {10, HEAVY}}}},
     
-#define BLOCKED                                {10, {{20, HEAVY},  {20, HEAVY}}}
-    [hi_block]   = {2, block,      0, block_dist/2., BLOCKED},
-    [lo_block_1] = {1, lo_block_2, 0, block_dist/3., BLOCKED},
-    [lo_block_2] = {1, lo_block_3, 0, block_dist/3., BLOCKED},
-    [lo_block_3] = {1, block,      0, block_dist/3., BLOCKED},
-    [block]      = {6, unblock,    0, 0,             BLOCKED},
-    [unblock]    = {3, top,        0, 0,       {10, {{0, WEAK},    {0, WEAK}}}},
+#define BLOCKED                                    {10, {{20, HEAVY},  {20, HEAVY}}}
+#define UNBLOCKED                                  {6,  {{0, WEAK},    {0, WEAK}}}
+    [hi_block]   =   {2, block,        0, block_dist/2., BLOCKED},
+    [lo_block_1] =   {1, lo_block_2,   0, block_dist/3., BLOCKED},
+    [lo_block_2] =   {1, lo_block_3,   0, block_dist/3., BLOCKED},
+    [lo_block_3] =   {1, block,        0, block_dist/3., BLOCKED},
+    [block]      =   {6, hi_unblock,   0, 0,             BLOCKED},
+    [hi_unblock] =   {4, top,          0, 0,             UNBLOCKED},
+    [lo_unblock_1] = {1, lo_unblock_2, 0, 0,             UNBLOCKED},
+    [lo_unblock_2] = {1, lo_unblock_3, 0, 0,             UNBLOCKED},
+    [lo_unblock_3] = {1, bottom,       0, 0,             UNBLOCKED},
 };
 
 //Attacks can be in cancellable states, but *only* on the last frame. Otherwise
@@ -60,6 +64,9 @@ int stickman_actions(struct stickman* sm)
     move_character(c);
     
     int can_dodge = DODGE && (!SCOOCH || c->prev.ground_pos > -1. + block_dist || c->prev.advancing);
+    int is_last_frame = game_time.frame - c->anim_start >= states[c->prev.state].frames;
+    
+    //Remember not to call SHIFT_FLAG until we're really ready to use the input
     
     switch (c->prev.state) {
         case top:
@@ -105,6 +112,11 @@ int stickman_actions(struct stickman* sm)
         case hi_block:
             if (CANCELLING && SHIFT_FLAG(c->attack_button))
                 goto_state(c, swing_1);
+            break;
+            
+        case block:
+            if (is_last_frame && SHIFT_FLAG(c->attack_button))
+                goto_state(c, lo_unblock_1);
             break;
             
         default:
