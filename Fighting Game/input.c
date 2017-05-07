@@ -6,25 +6,35 @@
 //  Copyright © 2017 Daniel Keller. All rights reserved.
 //
 
-#include "input.h"
 #include "engine.h"
 #include "window.h"
 
-key_events_t key_left, key_right, joy_left_prev, joy_right_prev;
+void update_button(struct button* to, struct button* from)
+{
+    to->down = from->down;
+    to->pressed += from->pressed;
+    from->pressed = 0;
+}
+
+struct key_events key_left, key_right;
+
+//State should be pressed=1 or released=0
+void binding(struct button* button, int state)
+{
+    if (state && !button->down) ++button->pressed;
+    button->down = state;
+}
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (action == GLFW_REPEAT) return;
     
-    if (key == GLFW_KEY_C) key_left.move = action;
-    if (key == GLFW_KEY_SLASH) key_right.move = action;
-    
-    //Robust key-down detection
-    if (action != GLFW_PRESS) return;
-    if (key == GLFW_KEY_X) key_left.attack++;
-    if (key == GLFW_KEY_PERIOD) key_right.attack++;
-    if (key == GLFW_KEY_Z) key_left.dodge++;
-    if (key == GLFW_KEY_COMMA) key_right.dodge++;
+    if (key == GLFW_KEY_C)      binding(&key_left.move, action);
+    if (key == GLFW_KEY_SLASH)  binding(&key_right.move, action);
+    if (key == GLFW_KEY_X)      binding(&key_left.attack, action);
+    if (key == GLFW_KEY_PERIOD) binding(&key_right.attack, action);
+    if (key == GLFW_KEY_Z)      binding(&key_left.dodge, action);
+    if (key == GLFW_KEY_COMMA)  binding(&key_right.dodge, action);
     
     if (key == GLFW_KEY_F) toggle_fullscreen(window);
     if (key == GLFW_KEY_L) learning_mode = !learning_mode;
@@ -74,20 +84,16 @@ void poll_input()
         printf("\n");
         */
         
-        key_left.start = axes[9];
-        key_left.move = axes[7];
-        if (joy_left_prev.dodge != axes[1]) key_left.dodge += axes[1];
-        if (joy_left_prev.attack != axes[2]) key_left.attack += axes[2];
-        joy_left_prev.dodge = axes[1];
-        joy_left_prev.attack = axes[2];
+                 key_left.start = axes[9];
+        binding(&key_left.move,   axes[7]);
+        binding(&key_left.dodge,  axes[1]);
+        binding(&key_left.attack, axes[2]);
     }
     if (joy_right != -1) {
         const unsigned char* axes = glfwGetJoystickButtons(joy_right,  &count);
-        key_right.start = axes[9];
-        key_right.move = axes[7];
-        if (joy_right_prev.dodge != axes[1]) key_right.dodge += axes[1];
-        if (joy_right_prev.attack != axes[2]) key_right.attack += axes[2];
-        joy_right_prev.dodge = axes[1];
-        joy_right_prev.attack = axes[2];
+                 key_right.start = axes[9];
+        binding(&key_right.move,   axes[7]);
+        binding(&key_right.dodge,  axes[1]);
+        binding(&key_right.attack, axes[2]);
     }
 }

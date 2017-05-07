@@ -12,7 +12,6 @@
 
 static const float speed = .015;
 static const float rev_speed = RETREAT * speed;
-static const float dodge = .08;
 static const float block_dist = .3;
 
 //For attacks that give defense/momentum buffs, used symmetrically:
@@ -63,23 +62,24 @@ int stickman_actions(struct stickman* sm)
     
     move_character(c);
     
-    int can_dodge = DODGE && (!SCOOCH || c->prev.ground_pos > -1. + block_dist || c->prev.advancing);
+    int can_dodge = DODGE && (c->prev.ground_pos > -1. + block_dist || c->prev.advancing);
+    int can_cancel = CANCELLING && game_time.frame - c->anim_start <= 3;
     int is_last_frame = game_time.frame - c->anim_start >= states[c->prev.state].frames;
     
     //Remember not to call SHIFT_FLAG until we're really ready to use the input
     
     switch (c->prev.state) {
         case top:
-            if (SHIFT_FLAG(c->attack_button))
-                goto_state(c, swing_1);
-            if (SHIFT_FLAG(c->dodge_button) && can_dodge)
+            if (can_dodge && shift_button_press(&c->dodge_button))
                 goto_state(c, hi_block);
+            else if (shift_button_press(&c->attack_button))
+                goto_state(c, swing_1);
             break;
         case swing_1:
-            if (CANCELLING && SHIFT_FLAG(c->attack_button))
-                goto_state(c, top);
-            if (CANCELLING && SHIFT_FLAG(c->dodge_button) && can_dodge)
+            if (can_cancel && can_dodge && shift_button_press(&c->dodge_button))
                 goto_state(c, hi_block);
+            else if (can_cancel && !c->attack_button.down)
+                goto_state(c, top);
             break;
         case swing_2:
             attack(c, &down_attack);
@@ -88,34 +88,32 @@ int stickman_actions(struct stickman* sm)
             break;
             
         case bottom:
-            if (SHIFT_FLAG(c->attack_button))
-                goto_state(c, swingup_1);
-            if (SHIFT_FLAG(c->dodge_button) && can_dodge)
+            if (can_dodge && shift_button_press(&c->dodge_button))
                 goto_state(c, lo_block_1);
+            else if (shift_button_press(&c->attack_button))
+                goto_state(c, swingup_1);
             break;
         case swingup_1:
-            if (CANCELLING && SHIFT_FLAG(c->attack_button))
-                goto_state(c, bottom);
-            if (CANCELLING && SHIFT_FLAG(c->dodge_button) && can_dodge)
+            if (can_cancel && can_dodge && shift_button_press(&c->dodge_button))
                 goto_state(c, lo_block_1);
+            else if (can_cancel && !c->attack_button.down)
+                goto_state(c, bottom);
             attack(c, &up_attack);
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .7));
             break;
-        /*
-        // the problem with this cancel is that cancelling into swingup looks awkard,
-        // and cancelling into swing is probably OP
+        
         case lo_block_3:
-            if (CANCELLING && SHIFT_FLAG(c->attack_button))
-                goto_state(c, swing_1);
+            if (can_cancel && !c->dodge_button.down)
+                goto_state(c, lo_unblock_1);
             break;
-         */
+        
         case hi_block:
-            if (CANCELLING && SHIFT_FLAG(c->attack_button))
-                goto_state(c, swing_1);
+            if (can_cancel && !c->dodge_button.down)
+                goto_state(c, hi_unblock);
             break;
             
         case block:
-            if (is_last_frame && SHIFT_FLAG(c->attack_button))
+            if (is_last_frame && shift_button_press(&c->attack_button))
                 goto_state(c, lo_unblock_1);
             break;
             
@@ -194,18 +192,16 @@ void make_stickman(character_t* c, character_t* other, enum direction direction)
     
     c->direction = direction;
     c->states = states;
-    c->speed = speed;
-    c->dodge = dodge;
     c->hitbox_width = stickman_hitbox_width;
     c->next = (struct character_state){
         .ground_pos = -1.f,
         .health = 100,
         .advancing = 0,
     };
-    c->move_button = c->attack_button = c->dodge_button = 0;
+    c->move_button = c->attack_button = c->dodge_button = (struct button){0};
     goto_state(c, top);
     
     //Do nothing for one frame so the state is consistent
-    step_character(c, 0, 0, 0);
+    step_character(c, &(struct button){0}, &(struct button){0}, &(struct button){0});
     stickman_actions(sm);
 }

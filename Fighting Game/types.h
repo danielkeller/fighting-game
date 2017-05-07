@@ -36,6 +36,8 @@ struct program
     shader_t vert, frag;
 };
 
-#define SHIFT_FLAG(f) ((f) ? (f)--, 1 : 0)
+struct button {
+    int down, pressed;
+};
 
 #endif /* types_h */

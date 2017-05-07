@@ -10,6 +10,13 @@
 #include "engine.h"
 #include <math.h>
 
+int shift_button_press(struct button* b)
+{
+    int ret = b->pressed != 0;
+    b->pressed = 0;
+    return ret;
+}
+
 //This overrides next_state because it updates anim_start
 void goto_state(character_t *c, int state)
 {
@@ -26,15 +33,9 @@ void next_state(character_t *c)
 
 void move_character(character_t* c)
 {
-    float move_amt = 0;
-#if SCOOCH
-    move_amt = c->prev.advancing
+    float move_amt = c->prev.advancing
         ? c->states[c->prev.state].fwd_speed
-        : c->states[c->prev.state].rev_speed;
-#else
-    move_amt = c->move_button == c->prev.advancing ? c->speed : c->dodge;
-#endif
-    move_amt *= c->move_button ? 1. : -1.;
+        : c->states[c->prev.state].rev_speed * -1.;
     c->next.ground_pos += move_amt;
     
     //using next may not be fair here, but using prev causes weird oscillations
@@ -43,13 +44,14 @@ void move_character(character_t* c)
     c->next.ground_pos = fmin(fmax(c->next.ground_pos, -1), fwd_limit);
 }
 
-int step_character(character_t* c, int move_button, int dodge_button, int attack_button)
+int step_character(character_t* c, struct button *move, struct button *dodge, struct button *attack)
 {
     c->prev = c->next;
     c->next.attack_result = 0;
-    c->next.advancing = c->move_button = move_button;
-    c->attack_button |= attack_button;
-    c->dodge_button |= dodge_button;
+    update_button(&c->move_button,   move);
+    update_button(&c->attack_button, attack);
+    update_button(&c->dodge_button,  dodge);
+    c->next.advancing = move->down;
     return c->prev.health > 0;
 }
 

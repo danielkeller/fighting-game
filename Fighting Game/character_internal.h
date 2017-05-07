@@ -75,14 +75,13 @@ typedef struct character {
     
     const struct state* states;
     float hitbox_width;
-    float speed, dodge;
     
     enum direction direction;
     struct character* other;
     struct health_bar health_bar;
     struct state_indicator state_indicator;
     
-    int move_button, attack_button, dodge_button;
+    struct button move_button, attack_button, dodge_button;
     long long anim_start;
     struct character_state prev, next;
     float ground_pos;
@@ -98,6 +97,8 @@ struct attack {
     int damage, knock;
     enum force force;
 };
+
+int shift_button_press(struct button*);
 
 void goto_state(character_t *c, int state);
 void next_state(character_t *c);

@@ -10,6 +10,7 @@
 #define character_h
 
 typedef struct character character_t;
+struct button;
 
 enum direction {
     LEFT = -1,
@@ -17,7 +18,7 @@ enum direction {
 };
 
 character_t* alloc_character();
-int step_character(character_t*, int move_button, int dodge_button, int attack_button);
+int step_character(character_t*, struct button *move, struct button *dodge, struct button *attack);
 void character_actions(character_t*);
 void draw_character(character_t*);
 //Must clear effects after calling this

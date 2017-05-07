@@ -12,7 +12,6 @@
 #include "engine.h"
 #include "objects/game over.h"
 #include "character.h"
-#include "input.h"
 #include <math.h>
 
 int main (int argc, char* argv[])
@@ -39,7 +38,7 @@ int main (int argc, char* argv[])
         make_stickman(left, right, RIGHT),
         make_stickman(right, left, LEFT);
         
-        key_right = key_left = (key_events_t){0};
+        key_right = key_left = (struct key_events){{0}};
         
         while (!glfwWindowShouldClose(window)) {
             //usec_t frame_work_time = get_time() - game_time.last_render;
@@ -66,8 +65,8 @@ int main (int argc, char* argv[])
                 poll_input();
                 
                 int both_alive
-                = step_character(left, key_left.move, SHIFT_FLAG(key_left.dodge), SHIFT_FLAG(key_left.attack))
-                & step_character(right, key_right.move, SHIFT_FLAG(key_right.dodge), SHIFT_FLAG(key_right.attack));
+                = step_character(left,  &key_left.move,  &key_left.dodge,  &key_left.attack)
+                & step_character(right, &key_right.move, &key_right.dodge, &key_right.attack);
                 
                 if (!both_alive)
                     goto game_over;
@@ -95,8 +94,8 @@ int main (int argc, char* argv[])
     game_over:
         
         //Step the characters one more time so prev == next and they actually stop
-        step_character(left, 0, 0, 0);
-        step_character(right, 0, 0, 0);
+        step_character(left, &(struct button){0}, &(struct button){0}, &(struct button){0});
+        step_character(right, &(struct button){0}, &(struct button){0}, &(struct button){0});
         
         struct object game_over_text;
         make_object(&game_over_text, game_over_verts, sizeof(game_over_verts), 0);

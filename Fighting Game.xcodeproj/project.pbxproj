@@ -106,7 +106,6 @@
 		37E3B5661EAF8834004DBE36 /* game over.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "game over.c"; path = "objects/game over.c"; sourceTree = "<group>"; };
 		37E3B5671EAF8834004DBE36 /* game over.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "game over.h"; path = "objects/game over.h"; sourceTree = "<group>"; };
 		37E3B56B1EAFA283004DBE36 /* input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = input.c; sourceTree = "<group>"; };
-		37E3B56C1EAFA283004DBE36 /* input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = input.h; sourceTree = "<group>"; };
 		37EA382A1E9F726E00848254 /* health bar.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = "health bar.frag"; path = "shaders/health bar.frag"; sourceTree = "<group>"; };
 		37EA382C1E9F986900848254 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
 		37EA382D1E9F986900848254 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = file.c; sourceTree = "<group>"; };
@@ -156,7 +155,6 @@
 				371FF0AE1EA5FE81003274FE /* effects.c */,
 				37421AD31CB3066D0027B7D4 /* window.h */,
 				37421AD21CB3066D0027B7D4 /* window.c */,
-				37E3B56C1EAFA283004DBE36 /* input.h */,
 				37E3B56B1EAFA283004DBE36 /* input.c */,
 			);
 			name = engine;

@@ -61,8 +61,7 @@ inline void poll_shader_changes() {}
 #endif
 
 //*** FBO
-typedef struct fbo
-{
+typedef struct fbo {
     GLsizei width, height;
     GLuint fbos[2], default_fb;
     GLuint texes[2];
@@ -130,6 +129,18 @@ void clear_effects(effects_t*);
 void draw_effects(effects_t*);
 void free_effects(effects_t*);
 
+//*** Input
+struct GLFWwindow;
+void init_input(struct GLFWwindow* window);
+void poll_input();
+
+struct key_events {
+    struct button move, attack, dodge;
+    int start;
+};
+
+void update_button(struct button* to, struct button* from);
+
 //*** Globals
 extern Mat3 camera;
 extern fbo_t fbo;
@@ -137,6 +148,7 @@ extern struct game_time game_time;
 extern struct object box;
 extern effects_t effects;
 extern int learning_mode;
+extern struct key_events key_left, key_right;
 
 void calculate_camera(float width_px, float height_px);
 
