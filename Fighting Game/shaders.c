@@ -278,6 +278,16 @@ static struct shader lib_vert_struct = {
 "float inv_alpha = 1. - alpha;\n"
 "return a*inv_alpha + b*alpha + inv_alpha*alpha*(x*inv_alpha + y*alpha);\n"
 "}\n"
+"vec2 spline(vec2 a, vec2 da, vec2 b, vec2 db, float alpha, out vec2 deriv)\n"
+"{\n"
+"vec2 x = da - (b - a),\n"
+"y = -db + (b - a);\n"
+"float inv_alpha = 1. - alpha,\n"
+"d_alpha1 = 2. - 3.*alpha,\n"
+"d_alpha2 = 1. - 2.*alpha;\n"
+"deriv = b - a + d_alpha2*x + d_alpha1*(y*alpha - x*alpha);\n"
+"return a*inv_alpha + b*alpha + inv_alpha*alpha*(x*inv_alpha + y*alpha);\n"
+"}\n"
 };
 shader_t lib_vert = &lib_vert_struct;
 
