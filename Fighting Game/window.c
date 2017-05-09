@@ -8,6 +8,7 @@
 
 #include "window.h"
 #include "error.h"
+#include "options.h"
 
 #include "gl_core_3_3.h"
 #include <stdio.h>
@@ -40,7 +41,7 @@ GLFWwindow* init_window(void)
     
     glfwMakeContextCurrent(window);
     //set vsync
-    glfwSwapInterval(1);
+    glfwSwapInterval(!PROFILE);
     
     //glClearColor(1.f, 0.f, 1.f, 1.f);
     //glCullFace(GL_BACK);

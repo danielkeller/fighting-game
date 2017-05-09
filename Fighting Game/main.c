@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 
+#include "options.h"
 #include "window.h"
 #include "engine.h"
 #include "objects/game over.h"
@@ -23,11 +24,11 @@ int main (int argc, char* argv[])
     make_fbo(&fbo);
     make_effects(&effects);
     
-    /*
+#if PROFILE
     uint64_t load_total = 0;
     int64_t frame_count = 0;
     usec_t last_fps = get_time();
-    */
+#endif
     
     while (!glfwWindowShouldClose(window)) {
         init_game_time(&game_time);
@@ -41,13 +42,16 @@ int main (int argc, char* argv[])
         key_right = key_left = (struct key_events){{0}};
         
         while (!glfwWindowShouldClose(window)) {
-            //usec_t frame_work_time = get_time() - game_time.last_render;
+#if PROFILE
+            usec_t frame_work_time = get_time() - game_time.last_render;
+#endif
             
             //render_tick must be called immediately after the frame appears
             //onscreen for the algorithm to work.
             glfwSwapBuffers(window);
             render_tick(&game_time);
-            /*
+            
+#if PROFILE
             ++frame_count;
             load_total += (frame_work_time * 100ull) / game_time.last_frame_length;
             usec_t elapsed = get_time() - last_fps;
@@ -59,7 +63,7 @@ int main (int argc, char* argv[])
                 frame_count = 0;
                 last_fps += elapsed;
             }
-            */
+#endif
             
             while (phys_tick(&game_time)) {
                 poll_input();

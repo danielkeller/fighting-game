@@ -20,4 +20,7 @@
 //Enable retreat when attack is not pushed
 #define RETREAT 0
 
+//Disable vsync and print the fps
+#define PROFILE 0
+
 #endif /* options_h */
