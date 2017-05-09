@@ -36,6 +36,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_Z)      binding(&key_left.dodge, action);
     if (key == GLFW_KEY_COMMA)  binding(&key_right.dodge, action);
     
+    if (action == GLFW_RELEASE) return;
     if (key == GLFW_KEY_F) toggle_fullscreen(window);
     if (key == GLFW_KEY_L) learning_mode = !learning_mode;
 }

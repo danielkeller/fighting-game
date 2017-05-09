@@ -33,7 +33,7 @@ with open(output_path_c, 'w') as output_c, open(output_path_h, 'w') as output_h:
         with open(in_path) as source:
             for line in source.read().splitlines():
                 line = line.strip()
-                if line:
-                    output_c.write('"%s\\n"\n' % line)
+                #if line:
+                output_c.write('"%s\\n"\n' % line)
         output_c.write('};\n')
         output_c.write('shader_t %s = &%s_struct;\n\n' % (name, name))
