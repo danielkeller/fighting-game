@@ -122,7 +122,7 @@ int stickman_actions(struct stickman* sm)
     }
     
     next_state(c);
-    anim_obj_keys(&sm->obj, &stickman_anims[c->next.state]);
+    anim_obj_keys(&sm->torso, &stickman_torso_anims[c->next.state]);
     
     glUseProgram(sm->program.program);
     if (DODGE && !can_dodge)
@@ -142,9 +142,14 @@ BINDABLE(stickman_actions, struct stickman)
 int draw_stickman(struct stickman* sm)
 {
     glUseProgram(sm->program.program);
+    
     set_character_draw_state(sm->character, &sm->program);
-    glBindVertexArray(sm->obj.vertexArrayObject);
-    glDrawArrays(GL_TRIANGLES, 0, sm->obj.numVertecies);
+    glBindVertexArray(sm->torso.vertexArrayObject);
+    glDrawArrays(GL_TRIANGLES, 0, sm->torso.numVertecies);
+    
+    set_character_legs_draw_state(sm->character, &sm->program, .32);
+    glBindVertexArray(sm->legs.vertexArrayObject);
+    glDrawArrays(GL_TRIANGLES, 0, sm->legs.numVertecies);
     
     draw_health_bar(sm->character);
     if (learning_mode)
@@ -161,7 +166,8 @@ int free_stickman(struct stickman* sm)
     free_state_indicator(&c->state_indicator);
     free_program(&sm->hit_effect);
     free_program(&sm->parry_effect);
-    free_object(&sm->obj);
+    free_object(&sm->torso);
+    free_object(&sm->legs);
     free_program(&sm->program);
     
     free(sm);
@@ -185,7 +191,9 @@ void make_stickman(character_t* c, character_t* other, enum direction direction)
     load_shader_program(&sm->hit_effect, screenspace_vert, blast_frag);
     load_shader_program(&sm->parry_effect, particles_vert, color_frag);
     
-    make_anim_obj(&sm->obj, stickman_verts, sizeof(stickman_verts), stickman_stride);
+    make_anim_obj(&sm->torso, stickman_torso_mesh);
+    make_anim_obj(&sm->legs, stickman_legs_mesh);
+    anim_obj_keys(&sm->legs, &stickman_legs_anims[0]);
     load_shader_program(&sm->program, anim_vert, color_frag);
     sm->color_unif = glGetUniformLocation(sm->program.program, "main_color");
     glUniform3f(sm->color_unif, 1., 1., 1.);

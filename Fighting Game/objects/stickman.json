@@ -1,13 +1,16 @@
 {
-"stickman": {
-    "top": ["Basis", "Basis"],
-    "swing": ["Basis", "DS Mid", "DS Bot"],
-    "bottom": ["DS Bot", "DS Bot"],
-    "swingup": ["DS Bot", "DS Mid", "Basis"],
-    "hi_block": ["Basis", "Block"],
-    "lo_block": ["DS Bot", "Twirl 1", "Twirl 2", "Twirl Block"],
-    "block": ["Block", "Block"],
-    "hi_unblock": ["Block", "Basis"],
-    "lo_unblock": ["Twirl Block", "Twirl 2", "Twirl 1", "DS Bot"]
-}
+    "torso": {
+        "top": ["Basis", "Basis"],
+        "swing": ["Basis", "DS Mid", "DS Bot"],
+        "bottom": ["DS Bot", "DS Bot"],
+        "swingup": ["DS Bot", "DS Mid", "Basis"],
+        "hi_block": ["Basis", "Block"],
+        "lo_block": ["DS Bot", "Twirl 1", "Twirl 2", "Twirl Block"],
+        "block": ["Block", "Block"],
+        "hi_unblock": ["Block", "Basis"],
+        "lo_unblock": ["Twirl Block", "Twirl 2", "Twirl 1", "DS Bot"]
+    },
+    "legs": {
+        "walk": ["A", "B"]
+    }
 }

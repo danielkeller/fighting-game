@@ -102,7 +102,7 @@ int main (int argc, char* argv[])
         step_character(right, &(struct button){0}, &(struct button){0}, &(struct button){0});
         
         struct object game_over_text;
-        make_object(&game_over_text, game_over_verts, sizeof(game_over_verts), 0);
+        make_object(&game_over_text, game_over_text_mesh);
         
         struct program game_over_shader;
         load_shader_program(&game_over_shader, simple_vert, color_frag);

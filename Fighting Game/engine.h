@@ -22,9 +22,15 @@ extern Mat3 eye3;
 Mat3 affine(float theta, float x, float y);
 
 //*** Object
+struct mesh {
+    GLsizei size;
+    GLsizei stride;
+    float* verts;
+};
+
 void make_box(struct object*);
-void make_object(struct object*, const float* verts, GLsizei verts_sz, GLsizei stride);
-void make_anim_obj(struct object*, const float* verts, GLsizei verts_sz, GLsizei stride);
+void make_object(struct object*, mesh_t mesh);
+void make_anim_obj(struct object*, mesh_t mesh);
 void anim_obj_keys(struct object*, const struct anim_step* step);
 void free_object(struct object*);
 

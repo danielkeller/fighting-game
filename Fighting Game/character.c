@@ -116,6 +116,23 @@ void set_character_draw_state(character_t* c, struct program* program)
     glUniform1f(program->pos_alpha, anim_alpha);
 }
 
+
+void set_character_legs_draw_state(character_t* c, struct program* program, float step_length)
+{
+    Mat3 pos = affine(0., c->ground_pos * c->direction, 0.);
+    pos.d[0] = c->direction;
+    glUniform1f(program->time, (float)game_time.current_time / 1000000.f);
+    glUniformMatrix3fv(program->camera, 1, GL_FALSE, camera.d);
+    glUniformMatrix3fv(program->transform, 1, GL_FALSE, pos.d);
+    
+    float ground_pos = c->prev.ground_pos * (1. - game_time.alpha)
+    + c->next.ground_pos * game_time.alpha;
+    
+    //Add one so the numerator is positive
+    float alpha = fmod(ground_pos+1., step_length) / step_length;
+    glUniform1f(program->pos_alpha, alpha);
+}
+
 void character_actions(character_t* c)
 {
     CALL_BOUND(c->actions);

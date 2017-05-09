@@ -9,18 +9,22 @@
 #include "engine.h"
 #include <assert.h>
 
-static const GLfloat box_verts[] = {
-    0.f, 0.f,
-    0.f, 1.f,
-    1.f, 1.f,
-    0.f, 0.f,
-    1.f, 1.f,
-    1.f, 0.f
+static struct mesh box_mesh = {
+    .size = 12*sizeof(float),
+    .stride = 0,
+    .verts = (float[]){
+        0.f, 0.f,
+        0.f, 1.f,
+        1.f, 1.f,
+        0.f, 0.f,
+        1.f, 1.f,
+        1.f, 0.f
+    }
 };
 
-
-void make_object(struct object* obj, const float* verts, GLsizei verts_sz, GLsizei stride)
+void make_object(struct object* obj, mesh_t mesh)
 {
+    GLsizei stride = mesh->stride;
     if (stride == 0) stride = sizeof(float)*2;
     
     glGenVertexArrays(1, &obj->vertexArrayObject);
@@ -28,23 +32,23 @@ void make_object(struct object* obj, const float* verts, GLsizei verts_sz, GLsiz
     
     glGenBuffers(1, &obj->vertexBufferObject);
     glBindBuffer(GL_ARRAY_BUFFER, obj->vertexBufferObject);
-    glBufferData(GL_ARRAY_BUFFER, verts_sz, verts, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, mesh->size, mesh->verts, GL_STATIC_DRAW);
     
     glEnableVertexAttribArray(POSITION_ATTRIB);
     glVertexAttribPointer(POSITION_ATTRIB, 2, GL_FLOAT, GL_FALSE, stride, NULL);
     
-    obj->numVertecies = verts_sz / stride;
+    obj->numVertecies = mesh->size / stride;
     obj->stride = stride;
 }
 
 void make_box(struct object* obj)
 {
-    make_object(obj, box_verts, sizeof(box_verts), 0);
+    make_object(obj, &box_mesh);
 }
 
-void make_anim_obj(struct object* obj, const float* verts, GLsizei verts_sz, GLsizei stride)
+void make_anim_obj(struct object* obj, mesh_t mesh)
 {
-    make_object(obj, verts, verts_sz, stride);
+    make_object(obj, mesh);
     
     glEnableVertexAttribArray(POS_FROM_ATTRIB);
     glEnableVertexAttribArray(POS_TO_ATTRIB);

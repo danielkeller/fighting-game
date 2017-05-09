@@ -1,4 +1,4 @@
-import os, re
+import os, sys, re
 import json, pickle
 import numpy
 from scipy import linalg
@@ -42,42 +42,55 @@ for path in files():
     except IOError:
         anims = {mesh_name: {} for mesh_name in meshes}
 
-    for mesh_name, mesh in meshes.iteritems():
-        n_verts = len(mesh.itervalues().next())
-        n_keys = len(mesh)
-        n_derivs = sum(len(anim) for anim in anims[mesh_name].itervalues())
-        n_floats = (n_keys + n_derivs) * n_verts * 2
-        el_sz = 2 * 4 # 2d floats
-        stride = (n_keys + n_derivs) * el_sz
+
+    with open(path + '.c', 'w') as c_f, open(path + '.h', 'w') as h_f:
+        filename = os.path.basename(path)
         
-        derivs = {}
+        h_f.write('#include "types.h"\n')
+        c_f.write('#include "{}"\n'.format(filename + '.h'))
+        c_f.write('#include "engine.h"\n')
+
+        for mesh_name, mesh in meshes.iteritems():
+            if mesh_name not in anims:
+                print 'Did not find animation data for mesh "{}" in "{}.json"'.format(mesh_name, filename)
+                anims[mesh_name] = {}
         
-        for key in mesh:
-            mesh[key] = numpy.array(mesh[key]).T
+            n_verts = len(mesh.itervalues().next())
+            n_keys = len(mesh)
+            n_derivs = sum(len(anim) for anim in anims[mesh_name].itervalues())
+            n_floats = (n_keys + n_derivs) * n_verts * 2
+            n_bytes = n_floats * 4
+            el_sz = 2 * 4 # 2d floats
+            stride = (n_keys + n_derivs) * el_sz
+        
+            derivs = {}
+        
+            for key in mesh:
+                mesh[key] = numpy.array(mesh[key]).T
 
-        #Solve for the derivatives
-        for name, keys in anims[mesh_name].iteritems():
-            bx = numpy.array([mesh[key][0] for key in keys])
-            by = numpy.array([mesh[key][1] for key in keys])
-            #Dx.shape == (len(keys), n_verts)
-            Dx = derivatives(bx)
-            Dy = derivatives(by)
-            derivs[name] = (Dx, Dy)
+            #Solve for the derivatives
+            for name, keys in anims[mesh_name].iteritems():
+                bx = numpy.array([mesh[key][0] for key in keys])
+                by = numpy.array([mesh[key][1] for key in keys])
+                #Dx.shape == (len(keys), n_verts)
+                Dx = derivatives(bx)
+                Dy = derivatives(by)
+                derivs[name] = (Dx, Dy)
 
-        #Attributes are interleaved because according to
-        #https://www.khronos.org/opengl/wiki/Vertex_Specification#Interleaved_attributes
-        #this is better
+            #Attributes are interleaved because according to
+            #https://www.khronos.org/opengl/wiki/Vertex_Specification#Interleaved_attributes
+            #this is better
+            
+            ident = id(filename, mesh_name)
 
-        with open(path + '.c', 'w') as c_f, open(path + '.h', 'w') as h_f:
-            h_f.write('#include "types.h"\n')
-            c_f.write('#include "{}"\n'.format(os.path.basename(path) + '.h'))
-            h_f.write('static const GLsizei %s_stride = %d;\n' % (id(mesh_name), stride))
+            h_f.write('extern const mesh_t %s_mesh;\n' % ident)
             
             if anims[mesh_name]:
-                h_f.write('extern const struct anim_step %s_anims[];\n' % id(mesh_name))
+                h_f.write('extern const struct anim_step %s_anims[];\n' % ident)
                 
-                h_f.write('enum state_names {\n')
+                h_f.write('enum %s_state_names {\n' % ident)
                 for name, keys in anims[mesh_name].iteritems():
+                    h_f.write('    ')
                     if len(keys) == 2:
                         h_f.write('%s, ' % name)
                     else:
@@ -99,7 +112,7 @@ for path in files():
                         d_offsets[name][key] = offset * el_sz
                         offset += 1
 
-                c_f.write('const struct anim_step %s_anims[] = {\n' % id(mesh_name))
+                c_f.write('const struct anim_step %s_anims[] = {\n' % ident)
 
                 for name, keys in anims[mesh_name].iteritems():
                     for i in xrange(len(keys)-1):
@@ -109,18 +122,20 @@ for path in files():
                             d_offsets[name][keys[i]], d_offsets[name][keys[i+1]],))
 
                 c_f.write('};\n')
-    
-            h_f.write('extern float %s_verts[%d];\n' % (id(mesh_name), n_floats))
-            
-            c_f.write('float %s_verts[%d] = {\n' % (id(mesh_name), n_floats))
+
+            c_f.write('const struct mesh %s_struct = {\n' % ident)
+            c_f.write('.size = %d,\n' % n_bytes)
+            c_f.write('.stride = %d,\n' % stride)
+            c_f.write('.verts = (float[]){\n')
 
             for i in xrange(n_verts):
                 for key in mesh:
-                    c_f.write('{}, {},\n'.format(mesh[key][0][i], mesh[key][1][i]))
+                    c_f.write('{}f, {}f,\n'.format(mesh[key][0][i], mesh[key][1][i]))
                 
                 for name, keys in anims[mesh_name].iteritems():
                      Dx, Dy = derivs[name]
                      for j in xrange(len(keys)):
-                         c_f.write('{}, {},\n'.format(Dx[j][i], Dy[j][i]))
+                         c_f.write('{}f, {}f,\n'.format(Dx[j][i], Dy[j][i]))
             
-            c_f.write('};\n\n')
+            c_f.write('}};\n')
+            c_f.write('const mesh_t %s_mesh = &%s_struct;\n\n' % (ident, ident))

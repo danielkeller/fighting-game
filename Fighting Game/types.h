@@ -13,6 +13,8 @@
 
 typedef long long usec_t;
 
+typedef const struct mesh* mesh_t;
+
 struct object
 {
     GLuint vertexArrayObject;
