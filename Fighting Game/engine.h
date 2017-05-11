@@ -140,14 +140,10 @@ struct GLFWwindow;
 void init_input(struct GLFWwindow* window);
 void poll_input();
 
-struct key_events {
-    struct button move, attack, dodge;
-    int start;
-};
-
-void update_button(struct button* to, struct button* from);
+void update_key_events(struct key_events* to, struct key_events* from);
 
 //*** Globals
+extern struct key_events no_key_events;
 extern Mat3 camera;
 extern fbo_t fbo;
 extern struct game_time game_time;

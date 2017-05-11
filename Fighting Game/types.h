@@ -42,4 +42,9 @@ struct button {
     int down, pressed;
 };
 
+struct key_events {
+    struct button move, attack, special, dodge;
+    int start;
+};
+
 #endif /* types_h */

@@ -16,6 +16,14 @@ void update_button(struct button* to, struct button* from)
     from->pressed = 0;
 }
 
+void update_key_events(struct key_events* to, struct key_events* from)
+{
+    update_button(&to->attack, &from->attack);
+    update_button(&to->dodge, &from->dodge);
+    update_button(&to->move, &from->move);
+    update_button(&to->special, &from->special);
+}
+
 struct key_events key_left, key_right;
 
 //State should be pressed=1 or released=0
@@ -35,6 +43,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_PERIOD) binding(&key_right.attack, action);
     if (key == GLFW_KEY_Z)      binding(&key_left.dodge, action);
     if (key == GLFW_KEY_COMMA)  binding(&key_right.dodge, action);
+    if (key == GLFW_KEY_S)      binding(&key_left.special, action);
+    if (key == GLFW_KEY_L)      binding(&key_right.special, action);
     
     if (action == GLFW_RELEASE) return;
     if (key == GLFW_KEY_F) toggle_fullscreen(window);

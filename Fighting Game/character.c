@@ -44,14 +44,12 @@ void move_character(character_t* c)
     c->next.ground_pos = fmin(fmax(c->next.ground_pos, -1), fwd_limit);
 }
 
-int step_character(character_t* c, struct button *move, struct button *dodge, struct button *attack)
+int step_character(character_t* c, struct key_events* events)
 {
     c->prev = c->next;
     c->next.attack_result = 0;
-    update_button(&c->move_button,   move);
-    update_button(&c->attack_button, attack);
-    update_button(&c->dodge_button,  dodge);
-    c->next.advancing = move->down;
+    update_key_events(&c->buttons, events);
+    c->next.advancing = c->buttons.move.down;
     return c->prev.health > 0;
 }
 

@@ -69,8 +69,8 @@ int main (int argc, char* argv[])
                 poll_input();
                 
                 int both_alive
-                = step_character(left,  &key_left.move,  &key_left.dodge,  &key_left.attack)
-                & step_character(right, &key_right.move, &key_right.dodge, &key_right.attack);
+                = step_character(left,  &key_left)
+                & step_character(right, &key_right);
                 
                 if (!both_alive)
                     goto game_over;
@@ -98,8 +98,8 @@ int main (int argc, char* argv[])
     game_over:
         
         //Step the characters one more time so prev == next and they actually stop
-        step_character(left, &(struct button){0}, &(struct button){0}, &(struct button){0});
-        step_character(right, &(struct button){0}, &(struct button){0}, &(struct button){0});
+        step_character(left, &no_key_events);
+        step_character(right, &no_key_events);
         
         struct object game_over_text;
         make_object(&game_over_text, game_over_text_mesh);

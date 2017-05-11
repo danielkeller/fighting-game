@@ -81,7 +81,7 @@ typedef struct character {
     struct health_bar health_bar;
     struct state_indicator state_indicator;
     
-    struct button move_button, attack_button, dodge_button;
+    struct key_events buttons;
     long long anim_start;
     struct character_state prev, next;
     float ground_pos;
