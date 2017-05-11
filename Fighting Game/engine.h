@@ -143,14 +143,17 @@ void poll_input();
 void update_key_events(struct key_events* to, struct key_events* from);
 
 //*** Globals
+//Read-only
 extern struct key_events no_key_events;
-extern Mat3 camera;
-extern fbo_t fbo;
-extern struct game_time game_time;
 extern struct object box;
-extern effects_t effects;
+extern Mat3 camera;
+//One-directional data flow
+extern struct game_time game_time;
 extern int learning_mode;
 extern struct key_events key_left, key_right;
+extern effects_t effects;
+//N-directional data flow
+extern fbo_t fbo;
 
 void calculate_camera(float width_px, float height_px);
 

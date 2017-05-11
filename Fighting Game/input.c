@@ -48,7 +48,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     
     if (action == GLFW_RELEASE) return;
     if (key == GLFW_KEY_F) toggle_fullscreen(window);
-    if (key == GLFW_KEY_L) learning_mode = !learning_mode;
+    if (key == GLFW_KEY_P) learning_mode = !learning_mode;
 }
 
 int joy_left = -1, joy_right = -1;
