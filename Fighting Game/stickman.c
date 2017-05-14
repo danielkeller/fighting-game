@@ -31,13 +31,19 @@ static const struct state states[] = {
     [swingup_2] = {4, top,       0,     0,         {20, {{0,  WEAK},   {10, HEAVY}}}},
     
 #define UNSTEADY                                   {4,  {{0, WEAK},    {0, WEAK}}}
-    [lift_1]        = {5, lift_2,      0,         0,             UNSTEADY},
-    [lift_2]        = {5, overhead,    0,         0,             UNSTEADY},
+    [lift_1]        = {4, lift_2,      0,         0,             UNSTEADY},
+    [lift_2]        = {6, overhead,    0,         0,             UNSTEADY},
+    [unlift_1]      = {5, unlift_2,    0,         0,             UNSTEADY},
+    [unlift_2]      = {4, top,         0,         0,             UNSTEADY},
     [overhead]      = {1, overhead,    speed*.75, rev_speed*.75, UNSTEADY},
     [big_swing_1]   = {3, big_swing_2, 0,         0,             UNSTEADY},
     [big_swing_2]   = {1, big_swing_3, 0,         0,             UNSTEADY},
     [big_swing_3]   = {1, big_swing_4, 0,         0, {5,  {{10, HEAVY},  {0,  WEAK}}}},
     [big_swing_4]   = {2, bottom,      0,         0, {5,  {{10, HEAVY},  {0,  WEAK}}}},
+    
+    [lunge]   = {4, forward, speed*20./4., 0,             {10, {{8,  WEAK}, {8,  WEAK}}}},
+    [forward] = {1, forward, speed*.75,    rev_speed*.75, {10, {{8,  WEAK}, {8,  WEAK}}}},
+    [unlunge] = {4, bottom,  0,            block_dist/4,  {10, {{8,  WEAK}, {8,  WEAK}}}},
     
 #define BLOCKED                                    {10, {{20, HEAVY},  {20, HEAVY}}}
 #define UNBLOCKED                                  {10,  {{0, WEAK},    {0, WEAK}}}
@@ -59,7 +65,8 @@ static struct attack
 //          frame target range damage knock force
 down_attack     = {2, HI, .6, 14, 15, MIDDLE},
 up_attack       = {5, LO, .6, 10, 30, MIDDLE},
-overhead_attack = {1, HI, .6, 20, 20, HEAVY};
+overhead_attack = {1, HI, .6, 20, 20, HEAVY},
+lunge_attack    = {4, LO, .8, 10, 0,  MIDDLE};
 
 //Note that new actions are considered to start epsilon after the previous frame,
 //as opposed to on the start of the next frame. (the previous frame is stored in anim_start)
@@ -77,7 +84,7 @@ int stickman_actions(struct stickman* sm)
     int can_cancel = CANCELLING && game_time.frame - c->anim_start <= 3;
     int is_last_frame = game_time.frame - c->anim_start >= states[c->prev.state].frames;
     
-    //Remember not to call SHIFT_FLAG until we're really ready to use the input
+    //Remember not to call shift_button_press until we're really ready to use the input
     
     switch (c->prev.state) {
         case top:
@@ -104,6 +111,8 @@ int stickman_actions(struct stickman* sm)
                 goto_state(c, lo_block_1);
             else if (shift_button_press(&c->buttons.attack))
                 goto_state(c, swingup_1);
+            else if (shift_button_press(&c->buttons.special))
+                goto_state(c, lunge);
             break;
         case swingup_1:
             if (can_cancel && can_dodge && shift_button_press(&c->buttons.dodge))
@@ -121,6 +130,8 @@ int stickman_actions(struct stickman* sm)
         case overhead:
             if (shift_button_press(&c->buttons.attack))
                 goto_state(c, big_swing_1);
+            else if (shift_button_press(&c->buttons.special) || c->buttons.dodge.down)
+                goto_state(c, unlift_1);
             break;
         case big_swing_1:
             if (can_cancel && !c->buttons.attack.down)
@@ -131,7 +142,16 @@ int stickman_actions(struct stickman* sm)
             if (c->next.attack_result & LANDED)  push_effect(&effects, make_hit_effect(sm));
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .7));
             break;
+            
+        case lunge:
+            attack(c, &lunge_attack);
+            break;
         
+        case forward:
+            if (shift_button_press(&c->buttons.special) || c->buttons.dodge.down)
+                goto_state(c, unlunge);
+            break;
+            
         case lo_block_3:
             if (can_cancel && !c->buttons.dodge.down)
                 goto_state(c, lo_unblock_1);

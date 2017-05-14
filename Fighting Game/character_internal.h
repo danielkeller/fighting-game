@@ -126,7 +126,7 @@ struct stickman {
     struct program hit_effect, parry_effect;
 };
 
-static const float stickman_hitbox_width = .25;
+static const float stickman_hitbox_width = .15;
 
 typedef struct bound bound_t;
 bound_t make_hit_effect(struct stickman* sm);
