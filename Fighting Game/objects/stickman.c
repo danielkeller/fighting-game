@@ -1,9 +1,7 @@
 #include "stickman.h"
 #include "engine.h"
-const struct anim_step stickman_legs_anims[] = {
-{.p_from = 0, .p_to = 8, .d_from = 16, .d_to = 24},
-};
-const struct mesh stickman_legs_struct = {
+const struct anim_step legs_walk = {.p_from = 0, .p_to = 8, .d_from = 16, .d_to = 24};
+const mesh_t stickman_legs_mesh = &(struct mesh){
 .size = 384,
 .stride = 32,
 .verts = (float[]){
@@ -56,38 +54,34 @@ const struct mesh stickman_legs_struct = {
 -0.316627860069f, 0.0f,
 -0.316627860069f, 0.0f,
 }};
-const mesh_t stickman_legs_mesh = &stickman_legs_struct;
-
-const struct anim_step stickman_torso_anims[] = {
-{.p_from = 56, .p_to = 64, .d_from = 80, .d_to = 88},
-{.p_from = 64, .p_to = 16, .d_from = 88, .d_to = 96},
-{.p_from = 16, .p_to = 40, .d_from = 96, .d_to = 104},
-{.p_from = 40, .p_to = 0, .d_from = 104, .d_to = 112},
-{.p_from = 8, .p_to = 24, .d_from = 120, .d_to = 128},
-{.p_from = 24, .p_to = 32, .d_from = 128, .d_to = 136},
-{.p_from = 32, .p_to = 0, .d_from = 136, .d_to = 144},
-{.p_from = 72, .p_to = 16, .d_from = 152, .d_to = 160},
-{.p_from = 0, .p_to = 0, .d_from = 176, .d_to = 176},
-{.p_from = 16, .p_to = 16, .d_from = 192, .d_to = 192},
-{.p_from = 16, .p_to = 72, .d_from = 200, .d_to = 208},
-{.p_from = 48, .p_to = 0, .d_from = 216, .d_to = 224},
-{.p_from = 0, .p_to = 48, .d_from = 232, .d_to = 240},
-{.p_from = 16, .p_to = 64, .d_from = 248, .d_to = 256},
-{.p_from = 64, .p_to = 56, .d_from = 256, .d_to = 264},
-{.p_from = 56, .p_to = 56, .d_from = 280, .d_to = 280},
-{.p_from = 72, .p_to = 72, .d_from = 296, .d_to = 296},
-{.p_from = 16, .p_to = 40, .d_from = 304, .d_to = 312},
-{.p_from = 40, .p_to = 0, .d_from = 312, .d_to = 320},
-{.p_from = 48, .p_to = 48, .d_from = 336, .d_to = 336},
-{.p_from = 56, .p_to = 64, .d_from = 344, .d_to = 352},
-{.p_from = 64, .p_to = 16, .d_from = 352, .d_to = 360},
-{.p_from = 0, .p_to = 32, .d_from = 368, .d_to = 376},
-{.p_from = 32, .p_to = 24, .d_from = 376, .d_to = 384},
-{.p_from = 24, .p_to = 8, .d_from = 384, .d_to = 392},
-{.p_from = 0, .p_to = 40, .d_from = 400, .d_to = 408},
-{.p_from = 40, .p_to = 16, .d_from = 408, .d_to = 416},
-};
-const struct mesh stickman_torso_struct = {
+const struct anim_step torso_big_swing_1 = {.p_from = 56, .p_to = 64, .d_from = 80, .d_to = 88};
+const struct anim_step torso_big_swing_2 = {.p_from = 64, .p_to = 16, .d_from = 88, .d_to = 96};
+const struct anim_step torso_big_swing_3 = {.p_from = 16, .p_to = 40, .d_from = 96, .d_to = 104};
+const struct anim_step torso_big_swing_4 = {.p_from = 40, .p_to = 0, .d_from = 104, .d_to = 112};
+const struct anim_step torso_lo_unblock_1 = {.p_from = 8, .p_to = 24, .d_from = 120, .d_to = 128};
+const struct anim_step torso_lo_unblock_2 = {.p_from = 24, .p_to = 32, .d_from = 128, .d_to = 136};
+const struct anim_step torso_lo_unblock_3 = {.p_from = 32, .p_to = 0, .d_from = 136, .d_to = 144};
+const struct anim_step torso_hi_unblock = {.p_from = 72, .p_to = 16, .d_from = 152, .d_to = 160};
+const struct anim_step torso_bottom = {.p_from = 0, .p_to = 0, .d_from = 176, .d_to = 176};
+const struct anim_step torso_top = {.p_from = 16, .p_to = 16, .d_from = 192, .d_to = 192};
+const struct anim_step torso_hi_block = {.p_from = 16, .p_to = 72, .d_from = 200, .d_to = 208};
+const struct anim_step torso_unlunge = {.p_from = 48, .p_to = 0, .d_from = 216, .d_to = 224};
+const struct anim_step torso_lunge = {.p_from = 0, .p_to = 48, .d_from = 232, .d_to = 240};
+const struct anim_step torso_lift_1 = {.p_from = 16, .p_to = 64, .d_from = 248, .d_to = 256};
+const struct anim_step torso_lift_2 = {.p_from = 64, .p_to = 56, .d_from = 256, .d_to = 264};
+const struct anim_step torso_overhead = {.p_from = 56, .p_to = 56, .d_from = 280, .d_to = 280};
+const struct anim_step torso_block = {.p_from = 72, .p_to = 72, .d_from = 296, .d_to = 296};
+const struct anim_step torso_swing_1 = {.p_from = 16, .p_to = 40, .d_from = 304, .d_to = 312};
+const struct anim_step torso_swing_2 = {.p_from = 40, .p_to = 0, .d_from = 312, .d_to = 320};
+const struct anim_step torso_forward = {.p_from = 48, .p_to = 48, .d_from = 336, .d_to = 336};
+const struct anim_step torso_unlift_1 = {.p_from = 56, .p_to = 64, .d_from = 344, .d_to = 352};
+const struct anim_step torso_unlift_2 = {.p_from = 64, .p_to = 16, .d_from = 352, .d_to = 360};
+const struct anim_step torso_lo_block_1 = {.p_from = 0, .p_to = 32, .d_from = 368, .d_to = 376};
+const struct anim_step torso_lo_block_2 = {.p_from = 32, .p_to = 24, .d_from = 376, .d_to = 384};
+const struct anim_step torso_lo_block_3 = {.p_from = 24, .p_to = 8, .d_from = 384, .d_to = 392};
+const struct anim_step torso_swingup_1 = {.p_from = 0, .p_to = 40, .d_from = 400, .d_to = 408};
+const struct anim_step torso_swingup_2 = {.p_from = 40, .p_to = 16, .d_from = 408, .d_to = 416};
+const mesh_t stickman_torso_mesh = &(struct mesh){
 .size = 27984,
 .stride = 424,
 .verts = (float[]){
@@ -3590,5 +3584,3 @@ const struct mesh stickman_torso_struct = {
 0.0f, 0.0f,
 0.0f, 0.0f,
 }};
-const mesh_t stickman_torso_mesh = &stickman_torso_struct;
-

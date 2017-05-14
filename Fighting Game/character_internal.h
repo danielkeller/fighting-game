@@ -98,6 +98,19 @@ struct attack {
     enum force force;
 };
 
+struct anim_sequence_step {
+    int num_frames;
+    const struct anim_step* anim_step;
+};
+
+#define MAX_ANIMS_PER_STATE 4
+#define REVERSED 1
+
+struct anim_sequence {
+    struct anim_sequence_step steps[MAX_ANIMS_PER_STATE];
+    int reversed;
+};
+
 int shift_button_press(struct button*);
 
 void goto_state(character_t *c, int state);
@@ -106,7 +119,7 @@ void next_state(character_t *c);
 void move_character(character_t* c);
 void attack(character_t* attacker, struct attack* attack);
 
-void set_character_draw_state(character_t* c, struct program* program);
+void set_character_draw_state(character_t* c, struct program*, struct object*, const struct anim_sequence* current_sequence);
 void set_character_legs_draw_state(character_t* c, struct program* program, float step_length);
 
 void make_heath_bar(struct health_bar* hb, enum direction direction);

@@ -1,6 +1,6 @@
 #include "game over.h"
 #include "engine.h"
-const struct mesh game_over_text_struct = {
+const mesh_t game_over_text_mesh = &(struct mesh){
 .size = 7800,
 .stride = 8,
 .verts = (float[]){
@@ -980,5 +980,3 @@ const struct mesh game_over_text_struct = {
 0.871252298355f, 0.0f,
 0.871252298355f, 0.0957422852516f,
 }};
-const mesh_t game_over_text_mesh = &game_over_text_struct;
-

@@ -1,9 +1,7 @@
 #include "test.h"
 #include "engine.h"
-const struct anim_step test_test_anims[] = {
-{.p_from = 16, .p_to = 0, .d_from = 24, .d_to = 32},
-};
-const struct mesh test_test_struct = {
+const struct anim_step test_test = {.p_from = 16, .p_to = 0, .d_from = 24, .d_to = 32};
+const mesh_t test_test_mesh = &(struct mesh){
 .size = 240,
 .stride = 40,
 .verts = (float[]){
@@ -38,5 +36,3 @@ const struct mesh test_test_struct = {
 0.0f, 0.0f,
 0.0f, 0.0f,
 }};
-const mesh_t test_test_mesh = &test_test_struct;
-

@@ -14,6 +14,37 @@ static const float speed = .015;
 static const float rev_speed = RETREAT * speed;
 static const float block_dist = .3;
 
+enum stickman_states {
+    top, bottom, overhead, forward, block,
+    swing, swingup,
+    lift, unlift, big_swing_1, big_swing_2,
+    lunge, unlunge,
+    hi_block, lo_block, hi_unblock, lo_unblock,
+};
+
+static const struct anim_sequence torso_sequences[] = {
+    [top] = {{{1, &torso_top}}},
+    [bottom] = {{{1, &torso_bottom}}},
+    [swing] = {{{4, &torso_swing_1}, {3, &torso_swing_2}}},
+    [swingup] = {{{5, &torso_swingup_1}, {4, &torso_swingup_2}}},
+    
+    [lift] = {{{4, &torso_lift_1}, {6, &torso_lift_2}}},
+    [overhead] = {{{1, &torso_overhead}}},
+    [unlift] = {{{5, &torso_unlift_1}, {4, &torso_unlift_2}}},
+    [big_swing_1] = {{{3, &torso_big_swing_1}, {1, &torso_big_swing_2}}},
+    [big_swing_2] = {{{1, &torso_big_swing_3}, {2, &torso_big_swing_4}}},
+    
+    [lunge] = {{{4, &torso_lunge}}},
+    [forward] = {{{1, &torso_forward}}},
+    [unlunge] = {{{4, &torso_unlunge}}},
+    
+    [block] = {{{6, &torso_block}}},
+    [hi_block] = {{{2, &torso_hi_block}}},
+    [lo_block] = {{{1, &torso_lo_block_1}, {1, &torso_lo_block_2}, {1, &torso_lo_block_3}}},
+    [hi_unblock] = {{{4, &torso_hi_unblock}}},
+    [lo_unblock] = {{{1, &torso_lo_unblock_1}, {1, &torso_lo_unblock_2}, {1, &torso_lo_unblock_3}}}
+};
+
 //For attacks that give defense/momentum buffs, used symmetrically:
 //If the attack is before the midpoint of the animation, advantage goes to the
 //first player. After the midpoint, it goes to the second. If it is at the midpoint
@@ -23,39 +54,29 @@ static const float block_dist = .3;
 
 //            frames  next  fwd_speed rev_speed    balance   hi        lo
 static const struct state states[] = {
-    [top]       = {1, top,       speed, rev_speed, {10, {{8,  MIDDLE}, {0,  WEAK}}}},
-    [bottom]    = {1, bottom,    speed, rev_speed, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
-    [swing_1]   = {4, swing_2,   0,     0,         {5,  {{10, HEAVY},  {0,  WEAK}}}},
-    [swing_2]   = {3, bottom,    0,     0,         {5,  {{10, HEAVY},  {0,  WEAK}}}},
-    [swingup_1] = {5, swingup_2, 0,     0,         {20, {{0,  WEAK},   {10, HEAVY}}}},
-    [swingup_2] = {4, top,       0,     0,         {20, {{0,  WEAK},   {10, HEAVY}}}},
+    [top]     = {1, top,    speed, rev_speed, {10, {{8,  MIDDLE}, {0,  WEAK}}}},
+    [bottom]  = {1, bottom, speed, rev_speed, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
+    [swing]   = {7, bottom, 0,     0,         {5,  {{10, HEAVY},  {0,  WEAK}}}},
+    [swingup] = {9, top,    0,     0,         {20, {{0,  WEAK},   {10, HEAVY}}}},
     
-#define UNSTEADY                                   {4,  {{0, WEAK},    {0, WEAK}}}
-    [lift_1]        = {4, lift_2,      0,         0,             UNSTEADY},
-    [lift_2]        = {6, overhead,    0,         0,             UNSTEADY},
-    [unlift_1]      = {5, unlift_2,    0,         0,             UNSTEADY},
-    [unlift_2]      = {4, top,         0,         0,             UNSTEADY},
-    [overhead]      = {1, overhead,    speed*.75, rev_speed*.75, UNSTEADY},
-    [big_swing_1]   = {3, big_swing_2, 0,         0,             UNSTEADY},
-    [big_swing_2]   = {1, big_swing_3, 0,         0,             UNSTEADY},
-    [big_swing_3]   = {1, big_swing_4, 0,         0, {5,  {{10, HEAVY},  {0,  WEAK}}}},
-    [big_swing_4]   = {2, bottom,      0,         0, {5,  {{10, HEAVY},  {0,  WEAK}}}},
+#define UNSTEADY                              {4,  {{0, WEAK},    {0, WEAK}}}
+    [lift]        = {10, overhead,    0,         0,             UNSTEADY},
+    [unlift]      = {9,  top,         0,         0,             UNSTEADY},
+    [overhead]    = {1,  overhead,    speed*.75, rev_speed*.75, UNSTEADY},
+    [big_swing_1] = {4,  big_swing_2, 0,         0,             UNSTEADY},
+    [big_swing_2] = {3,  bottom,      0,         0, {5,  {{10, HEAVY},  {0,  WEAK}}}},
     
     [lunge]   = {4, forward, speed*20./4., 0,             {10, {{8,  WEAK}, {8,  WEAK}}}},
     [forward] = {1, forward, speed*.75,    rev_speed*.75, {10, {{8,  WEAK}, {8,  WEAK}}}},
     [unlunge] = {4, bottom,  0,            block_dist/4,  {10, {{8,  WEAK}, {8,  WEAK}}}},
     
-#define BLOCKED                                    {10, {{20, HEAVY},  {20, HEAVY}}}
-#define UNBLOCKED                                  {10,  {{0, WEAK},    {0, WEAK}}}
-    [hi_block]   =   {2, block,        0, block_dist/2., BLOCKED},
-    [lo_block_1] =   {1, lo_block_2,   0, block_dist/3., BLOCKED},
-    [lo_block_2] =   {1, lo_block_3,   0, block_dist/3., BLOCKED},
-    [lo_block_3] =   {1, block,        0, block_dist/3., BLOCKED},
-    [block]      =   {6, hi_unblock,   0, 0,             BLOCKED},
-    [hi_unblock] =   {4, top,          0, 0,             UNBLOCKED},
-    [lo_unblock_1] = {1, lo_unblock_2, 0, 0,             UNBLOCKED},
-    [lo_unblock_2] = {1, lo_unblock_3, 0, 0,             UNBLOCKED},
-    [lo_unblock_3] = {1, bottom,       0, 0,             UNBLOCKED},
+#define BLOCKED                               {10, {{20, HEAVY},  {20, HEAVY}}}
+#define UNBLOCKED                             {10,  {{0, WEAK},    {0, WEAK}}}
+    [hi_block]   = {2, block,      0, block_dist/2., BLOCKED},
+    [lo_block]   = {3, block,      0, block_dist/3., BLOCKED},
+    [block]      = {6, hi_unblock, 0, 0,             BLOCKED},
+    [hi_unblock] = {4, top,        0, 0,             UNBLOCKED},
+    [lo_unblock] = {3, bottom,     0, 0,             UNBLOCKED},
 };
 
 //Attacks can be in cancellable states, but *only* on the last frame. Otherwise
@@ -63,7 +84,7 @@ static const struct state states[] = {
 
 static struct attack
 //          frame target range damage knock force
-down_attack     = {2, HI, .6, 14, 15, MIDDLE},
+down_attack     = {6, HI, .6, 14, 15, MIDDLE},
 up_attack       = {5, LO, .6, 10, 30, MIDDLE},
 overhead_attack = {1, HI, .6, 20, 20, HEAVY},
 lunge_attack    = {4, LO, .8, 10, 0,  MIDDLE};
@@ -80,7 +101,6 @@ int stickman_actions(struct stickman* sm)
     
     move_character(c);
     
-    int can_dodge = DODGE && (c->prev.ground_pos > -1. + block_dist || c->prev.advancing);
     int can_cancel = CANCELLING && game_time.frame - c->anim_start <= 3;
     int is_last_frame = game_time.frame - c->anim_start >= states[c->prev.state].frames;
     
@@ -88,42 +108,40 @@ int stickman_actions(struct stickman* sm)
     
     switch (c->prev.state) {
         case top:
-            if (can_dodge && shift_button_press(&c->buttons.dodge))
+            if (shift_button_press(&c->buttons.dodge))
                 goto_state(c, hi_block);
             else if (shift_button_press(&c->buttons.attack))
-                goto_state(c, swing_1);
+                goto_state(c, swing);
             else if (shift_button_press(&c->buttons.special))
-                goto_state(c, lift_1);
+                goto_state(c, lift);
             break;
-        case swing_1:
-            if (can_cancel && can_dodge && shift_button_press(&c->buttons.dodge))
+        case swing:
+            if (can_cancel && shift_button_press(&c->buttons.dodge))
                 goto_state(c, hi_block);
             else if (can_cancel && !c->buttons.attack.down)
                 goto_state(c, top);
-            break;
-        case swing_2:
             attack(c, &down_attack);
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .6));
             break;
             
         case bottom:
-            if (can_dodge && shift_button_press(&c->buttons.dodge))
-                goto_state(c, lo_block_1);
+            if (shift_button_press(&c->buttons.dodge))
+                goto_state(c, lo_block);
             else if (shift_button_press(&c->buttons.attack))
-                goto_state(c, swingup_1);
+                goto_state(c, swingup);
             else if (shift_button_press(&c->buttons.special))
                 goto_state(c, lunge);
             break;
-        case swingup_1:
-            if (can_cancel && can_dodge && shift_button_press(&c->buttons.dodge))
-                goto_state(c, lo_block_1);
+        case swingup:
+            if (can_cancel && shift_button_press(&c->buttons.dodge))
+                goto_state(c, lo_block);
             else if (can_cancel && !c->buttons.attack.down)
                 goto_state(c, bottom);
             attack(c, &up_attack);
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .7));
             break;
             
-        case lift_1:
+        case lift:
             if (can_cancel && !c->buttons.special.down)
                 goto_state(c, top);
             break;
@@ -131,13 +149,13 @@ int stickman_actions(struct stickman* sm)
             if (shift_button_press(&c->buttons.attack))
                 goto_state(c, big_swing_1);
             else if (shift_button_press(&c->buttons.special) || c->buttons.dodge.down)
-                goto_state(c, unlift_1);
+                goto_state(c, unlift);
             break;
         case big_swing_1:
             if (can_cancel && !c->buttons.attack.down)
                 goto_state(c, top);
             break;
-        case big_swing_3:
+        case big_swing_2:
             attack(c, &overhead_attack);
             if (c->next.attack_result & LANDED)  push_effect(&effects, make_hit_effect(sm));
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .7));
@@ -152,9 +170,9 @@ int stickman_actions(struct stickman* sm)
                 goto_state(c, unlunge);
             break;
             
-        case lo_block_3:
+        case lo_block:
             if (can_cancel && !c->buttons.dodge.down)
-                goto_state(c, lo_unblock_1);
+                goto_state(c, lo_unblock);
             break;
         
         case hi_block:
@@ -164,7 +182,7 @@ int stickman_actions(struct stickman* sm)
             
         case block:
             if (is_last_frame && shift_button_press(&c->buttons.attack))
-                goto_state(c, lo_unblock_1);
+                goto_state(c, lo_unblock);
             break;
             
         default:
@@ -172,13 +190,6 @@ int stickman_actions(struct stickman* sm)
     }
     
     next_state(c);
-    anim_obj_keys(&sm->torso, &stickman_torso_anims[c->next.state]);
-    
-    glUseProgram(sm->program.program);
-    if (DODGE && !can_dodge)
-        glUniform3f(sm->color_unif, 1., .8, .8);
-    else
-        glUniform3f(sm->color_unif, 1., 1., 1.);
         
     //This effect is annoying
     //if (c->other->prev.attack_result & KNOCKED)
@@ -193,7 +204,7 @@ int draw_stickman(struct stickman* sm)
 {
     glUseProgram(sm->program.program);
     
-    set_character_draw_state(sm->character, &sm->program);
+    set_character_draw_state(sm->character, &sm->program, &sm->torso, &torso_sequences[sm->character->next.state]);
     glBindVertexArray(sm->torso.vertexArrayObject);
     glDrawArrays(GL_TRIANGLES, 0, sm->torso.numVertecies);
     
@@ -243,7 +254,7 @@ void make_stickman(character_t* c, character_t* other, enum direction direction)
     
     make_anim_obj(&sm->torso, stickman_torso_mesh);
     make_anim_obj(&sm->legs, stickman_legs_mesh);
-    anim_obj_keys(&sm->legs, &stickman_legs_anims[0]);
+    anim_obj_keys(&sm->legs, &legs_walk);
     load_shader_program(&sm->program, anim_vert, color_frag);
     sm->color_unif = glGetUniformLocation(sm->program.program, "main_color");
     glUniform3f(sm->color_unif, 1., 1., 1.);

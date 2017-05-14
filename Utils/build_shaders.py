@@ -21,7 +21,7 @@ with open(output_path_c, 'w') as output_c, open(output_path_h, 'w') as output_h:
         name = re.sub('[^a-zA-Z0-9]', '_', os.path.basename(in_path))
         type = types[os.path.splitext(in_path)[1]]
         output_h.write('extern shader_t %s;\n' % name)
-        output_c.write('static struct shader %s_struct = {\n.shader = 0,\n' % name)
+        output_c.write('shader_t %s = &(struct shader){\n.shader = 0,\n' % name)
         
         output_c.write('#ifdef DEBUG\n')
         output_c.write('.fname = "%s",\n' % in_path)
@@ -36,4 +36,3 @@ with open(output_path_c, 'w') as output_c, open(output_path_h, 'w') as output_h:
                 #if line:
                 output_c.write('"%s\\n"\n' % line)
         output_c.write('};\n')
-        output_c.write('shader_t %s = &%s_struct;\n\n' % (name, name))

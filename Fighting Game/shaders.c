@@ -1,5 +1,5 @@
 #include "engine.h"
-static struct shader anim_vert_struct = {
+shader_t anim_vert = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/anim.vert",
@@ -24,9 +24,7 @@ static struct shader anim_vert_struct = {
 "posFrag = (transform * vec3(position, 1)).xy;\n"
 "}\n"
 };
-shader_t anim_vert = &anim_vert_struct;
-
-static struct shader blast_frag_struct = {
+shader_t blast_frag = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/blast.frag",
@@ -51,9 +49,7 @@ static struct shader blast_frag_struct = {
 "color = texture(framebuffer, gl_FragCoord.xy + displacement);\n"
 "}\n"
 };
-shader_t blast_frag = &blast_frag_struct;
-
-static struct shader blit_frag_struct = {
+shader_t blit_frag = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/blit.frag",
@@ -72,9 +68,7 @@ static struct shader blit_frag_struct = {
 "color = texture(framebuffer, gl_FragCoord.xy);\n"
 "}\n"
 };
-shader_t blit_frag = &blit_frag_struct;
-
-static struct shader chevron_frag_struct = {
+shader_t chevron_frag = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/chevron.frag",
@@ -102,9 +96,7 @@ static struct shader chevron_frag_struct = {
 "color += vec4(1,0,0,1);\n"
 "}\n"
 };
-shader_t chevron_frag = &chevron_frag_struct;
-
-static struct shader chevron_hit_frag_struct = {
+shader_t chevron_hit_frag = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/chevron_hit.frag",
@@ -149,9 +141,7 @@ static struct shader chevron_hit_frag_struct = {
 "color = color*(1-draw_color.a) + draw_color;\n"
 "}\n"
 };
-shader_t chevron_hit_frag = &chevron_hit_frag_struct;
-
-static struct shader color_frag_struct = {
+shader_t color_frag = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/color.frag",
@@ -175,9 +165,7 @@ static struct shader color_frag_struct = {
 "color = vec4(main_color, 1);\n"
 "}\n"
 };
-shader_t color_frag = &color_frag_struct;
-
-static struct shader health_bar_frag_struct = {
+shader_t health_bar_frag = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/health bar.frag",
@@ -202,9 +190,7 @@ static struct shader health_bar_frag_struct = {
 "color = vec4(0, 0, 0, 0);\n"
 "}\n"
 };
-shader_t health_bar_frag = &health_bar_frag_struct;
-
-static struct shader lib_frag_struct = {
+shader_t lib_frag = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/lib.frag",
@@ -296,9 +282,7 @@ static struct shader lib_frag_struct = {
 "return 40.0 * (n.x + n.y + n.z);\n"
 "}\n"
 };
-shader_t lib_frag = &lib_frag_struct;
-
-static struct shader lib_vert_struct = {
+shader_t lib_vert = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/lib.vert",
@@ -326,9 +310,7 @@ static struct shader lib_vert_struct = {
 "return a*inv_alpha + b*alpha + inv_alpha*alpha*(x*inv_alpha + y*alpha);\n"
 "}\n"
 };
-shader_t lib_vert = &lib_vert_struct;
-
-static struct shader particles_vert_struct = {
+shader_t particles_vert = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/particles.vert",
@@ -371,9 +353,7 @@ static struct shader particles_vert_struct = {
 "\n"
 "}\n"
 };
-shader_t particles_vert = &particles_vert_struct;
-
-static struct shader screenspace_vert_struct = {
+shader_t screenspace_vert = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/screenspace.vert",
@@ -391,9 +371,7 @@ static struct shader screenspace_vert_struct = {
 "posFrag = position*2-1;\n"
 "}\n"
 };
-shader_t screenspace_vert = &screenspace_vert_struct;
-
-static struct shader simple_vert_struct = {
+shader_t simple_vert = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/simple.vert",
@@ -417,9 +395,7 @@ static struct shader simple_vert_struct = {
 "uv = position;\n"
 "}\n"
 };
-shader_t simple_vert = &simple_vert_struct;
-
-static struct shader state_indicator_frag_struct = {
+shader_t state_indicator_frag = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/state_indicator.frag",
@@ -450,9 +426,7 @@ static struct shader state_indicator_frag_struct = {
 "}\n"
 "}\n"
 };
-shader_t state_indicator_frag = &state_indicator_frag_struct;
-
-static struct shader waves_frag_struct = {
+shader_t waves_frag = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
 .fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/waves.frag",
@@ -486,5 +460,3 @@ static struct shader waves_frag_struct = {
 "color = dest * (1 - src_a) + vec4(src*src_a, src_a);\n"
 "}\n"
 };
-shader_t waves_frag = &waves_frag_struct;
-

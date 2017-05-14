@@ -85,20 +85,7 @@ for path in files():
 
             h_f.write('extern const mesh_t %s_mesh;\n' % ident)
             
-            if anims[mesh_name]:
-                h_f.write('extern const struct anim_step %s_anims[];\n' % ident)
-                
-                h_f.write('enum %s_state_names {\n' % ident)
-                for name, keys in anims[mesh_name].iteritems():
-                    h_f.write('    ')
-                    if len(keys) == 2:
-                        h_f.write('%s, ' % name)
-                    else:
-                        for i in xrange(len(keys)-1):
-                            h_f.write('%s_%d, ' % (name, i+1))
-                    h_f.write('\n')
-                h_f.write('};\n')
-                
+            if anims[mesh_name]:                
                 p_offsets, d_offsets = {}, {}
                 
                 offset = 0
@@ -112,18 +99,17 @@ for path in files():
                         d_offsets[name][key] = offset * el_sz
                         offset += 1
 
-                c_f.write('const struct anim_step %s_anims[] = {\n' % ident)
-
                 for name, keys in anims[mesh_name].iteritems():
                     for i in xrange(len(keys)-1):
-                        step_name = id(mesh_name, name, keys[i], keys[i+1])
-                        c_f.write('{.p_from = %d, .p_to = %d, .d_from = %d, .d_to = %d},\n' % (
+                        step_name = id(mesh_name, name) if len(keys) == 2 else id(mesh_name, name, str(i+1))
+                        h_f.write('extern const struct anim_step %s;\n' % step_name)
+                        c_f.write('const struct anim_step %s = ' % step_name)
+                        
+                        c_f.write('{.p_from = %d, .p_to = %d, .d_from = %d, .d_to = %d};\n' % (
                             p_offsets[keys[i]], p_offsets[keys[i+1]],
                             d_offsets[name][keys[i]], d_offsets[name][keys[i+1]],))
 
-                c_f.write('};\n')
-
-            c_f.write('const struct mesh %s_struct = {\n' % ident)
+            c_f.write('const mesh_t %s_mesh = &(struct mesh){\n' % ident)
             c_f.write('.size = %d,\n' % n_bytes)
             c_f.write('.stride = %d,\n' % stride)
             c_f.write('.verts = (float[]){\n')
@@ -138,4 +124,3 @@ for path in files():
                          c_f.write('{}f, {}f,\n'.format(Dx[j][i], Dy[j][i]))
             
             c_f.write('}};\n')
-            c_f.write('const mesh_t %s_mesh = &%s_struct;\n\n' % (ident, ident))

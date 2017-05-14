@@ -1,26 +1,31 @@
 #include "types.h"
 extern const mesh_t stickman_legs_mesh;
-extern const struct anim_step stickman_legs_anims[];
-enum stickman_legs_state_names {
-    walk, 
-};
+extern const struct anim_step legs_walk;
 extern const mesh_t stickman_torso_mesh;
-extern const struct anim_step stickman_torso_anims[];
-enum stickman_torso_state_names {
-    big_swing_1, big_swing_2, big_swing_3, big_swing_4, 
-    lo_unblock_1, lo_unblock_2, lo_unblock_3, 
-    hi_unblock, 
-    bottom, 
-    top, 
-    hi_block, 
-    unlunge, 
-    lunge, 
-    lift_1, lift_2, 
-    overhead, 
-    block, 
-    swing_1, swing_2, 
-    forward, 
-    unlift_1, unlift_2, 
-    lo_block_1, lo_block_2, lo_block_3, 
-    swingup_1, swingup_2, 
-};
+extern const struct anim_step torso_big_swing_1;
+extern const struct anim_step torso_big_swing_2;
+extern const struct anim_step torso_big_swing_3;
+extern const struct anim_step torso_big_swing_4;
+extern const struct anim_step torso_lo_unblock_1;
+extern const struct anim_step torso_lo_unblock_2;
+extern const struct anim_step torso_lo_unblock_3;
+extern const struct anim_step torso_hi_unblock;
+extern const struct anim_step torso_bottom;
+extern const struct anim_step torso_top;
+extern const struct anim_step torso_hi_block;
+extern const struct anim_step torso_unlunge;
+extern const struct anim_step torso_lunge;
+extern const struct anim_step torso_lift_1;
+extern const struct anim_step torso_lift_2;
+extern const struct anim_step torso_overhead;
+extern const struct anim_step torso_block;
+extern const struct anim_step torso_swing_1;
+extern const struct anim_step torso_swing_2;
+extern const struct anim_step torso_forward;
+extern const struct anim_step torso_unlift_1;
+extern const struct anim_step torso_unlift_2;
+extern const struct anim_step torso_lo_block_1;
+extern const struct anim_step torso_lo_block_2;
+extern const struct anim_step torso_lo_block_3;
+extern const struct anim_step torso_swingup_1;
+extern const struct anim_step torso_swingup_2;
