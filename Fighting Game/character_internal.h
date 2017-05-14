@@ -103,11 +103,12 @@ struct anim_sequence_step {
     const struct anim_step* anim_step;
 };
 
-#define MAX_ANIMS_PER_STATE 4
+#define MAX_ANIMS_PER_STATE 3
 #define REVERSED 1
 
 struct anim_sequence {
-    struct anim_sequence_step steps[MAX_ANIMS_PER_STATE];
+    //The extra one is needed to detect the end
+    struct anim_sequence_step steps[MAX_ANIMS_PER_STATE+1];
     int reversed;
 };
 

@@ -23,26 +23,26 @@ enum stickman_states {
 };
 
 static const struct anim_sequence torso_sequences[] = {
-    [top] = {{{1, &torso_top}}},
-    [bottom] = {{{1, &torso_bottom}}},
+    [top] = {{{1, &torso_null_Top}}},
+    [bottom] = {{{1, &torso_null_Bottom}}},
     [swing] = {{{4, &torso_swing_1}, {3, &torso_swing_2}}},
-    [swingup] = {{{5, &torso_swingup_1}, {4, &torso_swingup_2}}},
+    [swingup] = {{{5, &torso_swing_2}, {4, &torso_swing_1}}, REVERSED},
     
     [lift] = {{{4, &torso_lift_1}, {6, &torso_lift_2}}},
-    [overhead] = {{{1, &torso_overhead}}},
-    [unlift] = {{{5, &torso_unlift_1}, {4, &torso_unlift_2}}},
+    [overhead] = {{{1, &torso_null_Overhead}}},
+    [unlift] = {{{5, &torso_lift_2}, {4, &torso_lift_1}}, REVERSED},
     [big_swing_1] = {{{3, &torso_big_swing_1}, {1, &torso_big_swing_2}}},
     [big_swing_2] = {{{1, &torso_big_swing_3}, {2, &torso_big_swing_4}}},
     
     [lunge] = {{{4, &torso_lunge}}},
-    [forward] = {{{1, &torso_forward}}},
-    [unlunge] = {{{4, &torso_unlunge}}},
+    [forward] = {{{1, &torso_null_Forward}}},
+    [unlunge] = {{{4, &torso_lunge}}, REVERSED},
     
-    [block] = {{{6, &torso_block}}},
+    [block] = {{{6, &torso_null_Block}}},
     [hi_block] = {{{2, &torso_hi_block}}},
     [lo_block] = {{{1, &torso_lo_block_1}, {1, &torso_lo_block_2}, {1, &torso_lo_block_3}}},
-    [hi_unblock] = {{{4, &torso_hi_unblock}}},
-    [lo_unblock] = {{{1, &torso_lo_unblock_1}, {1, &torso_lo_unblock_2}, {1, &torso_lo_unblock_3}}}
+    [hi_unblock] = {{{4, &torso_hi_block}}, REVERSED},
+    [lo_unblock] = {{{1, &torso_lo_block_3}, {1, &torso_lo_block_2}, {1, &torso_lo_block_1}}, REVERSED}
 };
 
 //For attacks that give defense/momentum buffs, used symmetrically:

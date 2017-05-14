@@ -107,13 +107,25 @@ void set_character_draw_state(character_t* c,
     unsigned long long step_frames = game_time.frame - c->anim_start;
     //For each step where we have completed all the frames...
     for (; step_frames >= sequence->steps[step].num_frames; ++step) {
-        assert(sequence->steps[step].num_frames > 0 && "Off the end of the animation");
+        if (sequence->steps[step+1].num_frames == 0) //Off the end of the animation
+            break;
         //...subtract length of completed step
         step_frames -= sequence->steps[step].num_frames;
     }
     //Now step_frames is the number of completed frames into the step
     
     anim_obj_keys(object, sequence->steps[step].anim_step);
+    
+    float anim_alpha = ((float)step_frames + game_time.alpha)
+        / (float)sequence->steps[step].num_frames;
+    
+    //In case we're off the end
+    anim_alpha = fminf(anim_alpha, 1.);
+    
+    if (sequence->reversed)
+        anim_alpha = 1. - anim_alpha;
+    
+    glUniform1f(program->pos_alpha, anim_alpha);
     
     glUniform1f(program->time, (float)game_time.current_time / 1000000.f);
     glUniformMatrix3fv(program->camera, 1, GL_FALSE, camera.d);
@@ -124,11 +136,6 @@ void set_character_draw_state(character_t* c,
     Mat3 pos = affine(0., c->ground_pos * c->direction, 0.);
     pos.d[0] = c->direction;
     glUniformMatrix3fv(program->transform, 1, GL_FALSE, pos.d);
-    
-    //next state determines which animation is drawn
-    float anim_alpha = ((float)step_frames + game_time.alpha)
-        / (float)sequence->steps[step].num_frames;
-    glUniform1f(program->pos_alpha, anim_alpha);
 }
 
 

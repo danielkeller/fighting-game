@@ -55,18 +55,17 @@ for path in files():
                 print 'Did not find animation data for mesh "{}" in "{}.json"'.format(mesh_name, filename)
                 anims[mesh_name] = {}
         
-            n_verts = len(mesh.itervalues().next())
-            n_keys = len(mesh)
-            n_derivs = sum(len(anim) for anim in anims[mesh_name].itervalues())
-            n_floats = (n_keys + n_derivs) * n_verts * 2
-            n_bytes = n_floats * 4
-            el_sz = 2 * 4 # 2d floats
-            stride = (n_keys + n_derivs) * el_sz
-        
             derivs = {}
         
             for key in mesh:
                 mesh[key] = numpy.array(mesh[key]).T
+            
+            for _, keys in anims[mesh_name].iteritems():
+                for key in keys:
+                    if key not in mesh:
+                        print 'Error in "{}.json": No key named "{}" in mesh "{}.mesh"'.format(filename, key, filename)
+                        print 'Keys are: {}'.format(', '.join('"{}"'.format(key) for key in mesh))
+                        sys.exit(1)
 
             #Solve for the derivatives
             for name, keys in anims[mesh_name].iteritems():
@@ -82,6 +81,7 @@ for path in files():
             #this is better
             
             ident = id(filename, mesh_name)
+            el_sz = 2 * 4 # 2d floats
 
             h_f.write('extern const mesh_t %s_mesh;\n' % ident)
             
@@ -93,11 +93,16 @@ for path in files():
                     p_offsets[key] = offset * el_sz
                     offset += 1
 
+                null_d_offset = offset * el_sz
+                offset += 1
+
                 for name, keys in anims[mesh_name].iteritems():
                     d_offsets[name] = {}
                     for key in keys:
                         d_offsets[name][key] = offset * el_sz
                         offset += 1
+
+                n_offsets = offset
 
                 for name, keys in anims[mesh_name].iteritems():
                     for i in xrange(len(keys)-1):
@@ -108,6 +113,21 @@ for path in files():
                         c_f.write('{.p_from = %d, .p_to = %d, .d_from = %d, .d_to = %d};\n' % (
                             p_offsets[keys[i]], p_offsets[keys[i+1]],
                             d_offsets[name][keys[i]], d_offsets[name][keys[i+1]],))
+                            
+                #Write a stationary animation for every shape key (it's free!)
+                for key in mesh:
+                    h_f.write('extern const struct anim_step %s;\n' % id(mesh_name, 'null', key))
+                    c_f.write('const struct anim_step %s = ' % id(mesh_name, 'null', key))
+            
+                    c_f.write('{.p_from = %d, .p_to = %d, .d_from = %d, .d_to = %d};\n' % (
+                        p_offsets[key], p_offsets[key], null_d_offset, null_d_offset,))
+            else:
+                n_keys = len(mesh)
+                n_offsets = n_keys
+
+            _, n_verts = mesh.itervalues().next().shape
+            stride = n_offsets * el_sz
+            n_bytes = stride * n_verts
 
             c_f.write('const mesh_t %s_mesh = &(struct mesh){\n' % ident)
             c_f.write('.size = %d,\n' % n_bytes)
@@ -117,6 +137,9 @@ for path in files():
             for i in xrange(n_verts):
                 for key in mesh:
                     c_f.write('{}f, {}f,\n'.format(mesh[key][0][i], mesh[key][1][i]))
+            
+                if anims[mesh_name]:
+                    c_f.write('0.f, 0.f,\n')
                 
                 for name, keys in anims[mesh_name].iteritems():
                      Dx, Dy = derivs[name]
