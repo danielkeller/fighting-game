@@ -151,6 +151,11 @@ int stickman_actions(struct stickman* sm)
             else if (shift_button_press(&c->buttons.special) || c->buttons.dodge.down)
                 goto_state(c, unlift);
             break;
+        case unlift:
+            //don't dodge if the player let go of the button
+            if (!c->buttons.dodge.down)
+                shift_button_press(&c->buttons.dodge);
+            break;
         case big_swing_1:
             if (can_cancel && !c->buttons.attack.down)
                 goto_state(c, top);
@@ -163,11 +168,17 @@ int stickman_actions(struct stickman* sm)
             
         case lunge:
             attack(c, &lunge_attack);
+            if (can_cancel && !c->buttons.special.down)
+                goto_state(c, bottom);
             break;
-        
         case forward:
-            if (shift_button_press(&c->buttons.special) || c->buttons.dodge.down)
+            if (shift_button_press(&c->buttons.special) || shift_button_press(&c->buttons.attack) || c->buttons.dodge.down)
                 goto_state(c, unlunge);
+            break;
+        case unlunge:
+            //don't dodge if the player let go of the button
+            if (!c->buttons.dodge.down)
+                shift_button_press(&c->buttons.dodge);
             break;
             
         case lo_block:
