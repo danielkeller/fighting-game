@@ -18,7 +18,8 @@ enum stickman_states {
     top, bottom, overhead, forward, block,
     swing, swingup,
     lift, unlift, big_swing_1, big_swing_2,
-    lunge, unlunge,
+    lunge, unlunge, forward_pause,
+    poke, drop,
     hi_block, lo_block, hi_unblock, lo_unblock,
 };
 
@@ -30,19 +31,22 @@ static const struct anim_sequence torso_sequences[] = {
     
     [lift] = {{{4, &torso_lift_1}, {6, &torso_lift_2}}},
     [overhead] = {{{1, &torso_null_Overhead}}},
-    [unlift] = {{{5, &torso_lift_2}, {4, &torso_lift_1}}, REVERSED},
+    [unlift] = {{{2, &torso_lift_2}, {4, &torso_lift_1}}, REVERSED},
     [big_swing_1] = {{{3, &torso_big_swing_1}, {1, &torso_big_swing_2}}},
-    [big_swing_2] = {{{1, &torso_big_swing_3}, {2, &torso_big_swing_4}}},
+    [big_swing_2] = {{{1, &torso_big_swing_3}, {3, &torso_big_swing_4}}},
     
     [lunge] = {{{4, &torso_lunge}}},
+    [forward_pause] = {{{1, &torso_null_Forward}}},
     [forward] = {{{1, &torso_null_Forward}}},
-    [unlunge] = {{{4, &torso_lunge}}, REVERSED},
+    [unlunge] = {{{5, &torso_lunge}}, REVERSED},
+    [poke] = {{{2, &torso_poke_1}, {2, &torso_poke_2}}},
+    [drop] = {{{4, &torso_drop_1}, {8, &torso_drop_2}, {6, &torso_drop_3}, {6, &torso_drop_4}, {6, &torso_drop_5}}},
     
     [block] = {{{6, &torso_null_Block}}},
-    [hi_block] = {{{2, &torso_hi_block}}},
-    [lo_block] = {{{1, &torso_lo_block_1}, {1, &torso_lo_block_2}, {1, &torso_lo_block_3}}},
-    [hi_unblock] = {{{4, &torso_hi_block}}, REVERSED},
-    [lo_unblock] = {{{1, &torso_lo_block_3}, {1, &torso_lo_block_2}, {1, &torso_lo_block_1}}, REVERSED}
+    [hi_block] = {{{3, &torso_hi_block}}},
+    [lo_block] = {{{2, &torso_lo_block_1}, {1, &torso_lo_block_2}, {2, &torso_lo_block_3}}},
+    [hi_unblock] = {{{5, &torso_hi_block}}, REVERSED},
+    [lo_unblock] = {{{2, &torso_lo_block_3}, {1, &torso_lo_block_2}, {2, &torso_lo_block_1}}, REVERSED}
 };
 
 //For attacks that give defense/momentum buffs, used symmetrically:
@@ -61,33 +65,39 @@ static const struct state states[] = {
     
 #define UNSTEADY                              {4,  {{0, WEAK},    {0, WEAK}}}
     [lift]        = {10, overhead,    0,         0,             UNSTEADY},
-    [unlift]      = {9,  top,         0,         0,             UNSTEADY},
+    [unlift]      = {6,  top,         0,         0,             UNSTEADY},
     [overhead]    = {1,  overhead,    speed*.75, rev_speed*.75, UNSTEADY},
     [big_swing_1] = {4,  big_swing_2, 0,         0,             UNSTEADY},
-    [big_swing_2] = {3,  bottom,      0,         0, {5,  {{10, HEAVY},  {0,  WEAK}}}},
+    [big_swing_2] = {4,  bottom,      0,         0, {5,  {{10, HEAVY},  {0,  WEAK}}}},
     
-    [lunge]   = {4, forward, speed*20./4., 0,             {10, {{8,  WEAK}, {8,  WEAK}}}},
-    [forward] = {1, forward, speed*.75,    rev_speed*.75, {10, {{8,  WEAK}, {8,  WEAK}}}},
-    [unlunge] = {4, bottom,  0,            block_dist/4,  {10, {{8,  WEAK}, {8,  WEAK}}}},
+#define REACHING                              {10, {{8,  WEAK}, {8,  WEAK}}}
+    [lunge]         = {4,  forward_pause, speed*20./4., 0,             REACHING},
+    [forward_pause] = {6,  forward,       0,            0,             REACHING},
+    [forward]       = {1,  forward,       speed*.75,    rev_speed*.75, REACHING},
+    [poke]          = {4,  forward_pause, 0,            0,             REACHING},
+    [unlunge]       = {5,  bottom,        0,            block_dist/5., REACHING},
+    //Knockback would look weird here
+    [drop]          = {30, top,           0,            0, {50,  {{0, WEAK},    {0, WEAK}}}},
     
 #define BLOCKED                               {10, {{20, HEAVY},  {20, HEAVY}}}
 #define UNBLOCKED                             {10,  {{0, WEAK},    {0, WEAK}}}
-    [hi_block]   = {2, block,      0, block_dist/2., BLOCKED},
-    [lo_block]   = {3, block,      0, block_dist/3., BLOCKED},
+    [hi_block]   = {3, block,      0, block_dist/2., BLOCKED},
+    [lo_block]   = {5, block,      0, block_dist/3., BLOCKED},
     [block]      = {6, hi_unblock, 0, 0,             BLOCKED},
-    [hi_unblock] = {4, top,        0, 0,             UNBLOCKED},
-    [lo_unblock] = {3, bottom,     0, 0,             UNBLOCKED},
+    [hi_unblock] = {5, top,        0, 0,             UNBLOCKED},
+    [lo_unblock] = {5, bottom,     0, 0,             UNBLOCKED},
 };
 
 //Attacks can be in cancellable states, but *only* on the last frame. Otherwise
 //the player can cancel the action after the attack comes out.
 
 static struct attack
-//          frame target range damage knock force
-down_attack     = {6, HI, .6, 14, 15, MIDDLE},
-up_attack       = {5, LO, .6, 10, 30, MIDDLE},
-overhead_attack = {1, HI, .6, 20, 20, HEAVY},
-lunge_attack    = {4, LO, .8, 10, 0,  MIDDLE};
+//          frame target min- range damage knock force
+down_attack     = {6, HI, .2, .6, 14, 15, MIDDLE},
+up_attack       = {5, LO, .2, .6, 10, 30, MIDDLE},
+overhead_attack = {1, HI, .2, .6, 20, 20, HEAVY},
+lunge_attack    = {4, LO, .4, .8, 10, 0,  MIDDLE},
+poke_attack     = {2, LO, .7, .8, 8,  0,  LIGHT};
 
 //Note that new actions are considered to start epsilon after the previous frame,
 //as opposed to on the start of the next frame. (the previous frame is stored in anim_start)
@@ -167,13 +177,21 @@ int stickman_actions(struct stickman* sm)
             break;
             
         case lunge:
+            //Lunge isn't cancellable, otherwise it would be a "run" technique
             attack(c, &lunge_attack);
-            if (can_cancel && !c->buttons.special.down)
-                goto_state(c, bottom);
             break;
         case forward:
-            if (shift_button_press(&c->buttons.special) || shift_button_press(&c->buttons.attack) || c->buttons.dodge.down)
+            if (shift_button_press(&c->buttons.special) || c->buttons.dodge.down)
                 goto_state(c, unlunge);
+            else if (shift_button_press(&c->buttons.attack))
+                goto_state(c, poke);
+            //fall thru
+        case forward_pause:
+            if (c->other->prev.attack_result & KNOCKED)
+                goto_state(c, drop);
+            break;
+        case poke:
+            attack(c, &poke_attack);
             break;
         case unlunge:
             //don't dodge if the player let go of the button

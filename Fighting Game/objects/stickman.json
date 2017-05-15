@@ -5,7 +5,9 @@
         "big_swing": ["Overhead", "Over Mid", "Top", "Swing mid", "Bottom"],
         "lunge": ["Bottom", "Forward"],
         "hi_block": ["Top", "Block"],
-        "lo_block": ["Bottom", "Twirl 1", "Twirl 2", "Twirl Block"]
+        "lo_block": ["Bottom", "Twirl 1", "Twirl 2", "Twirl Block"],
+        "poke": ["Forward", "Poke", "Forward"],
+        "drop": ["Forward", "Drop 1", "Drop 2", "Drop 3", "Drop 4", "Top"]
     },
     "legs": {
         "walk": ["A", "B"]

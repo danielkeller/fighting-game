@@ -67,7 +67,8 @@ void attack(character_t* attacker, struct attack* attack)
     attacker->state_indicator.attack[attack->target] = attack->force;
     attacker->state_indicator.last_attack_time = game_time.current_time;
     
-    if (-victim->prev.ground_pos - attacker->prev.ground_pos > attack->range) {
+    if (-victim->prev.ground_pos - attacker->prev.ground_pos > attack->range
+        || -victim->prev.ground_pos - attacker->prev.ground_pos < attack->min_range) {
         attacker->next.attack_result |= WHIFFED;
         return;
     }

@@ -93,7 +93,7 @@ struct attack {
     //To put an attack on a state transition, put it at the end of the previous state.
     int frame;
     enum strike_position target;
-    float range;
+    float min_range, range;
     int damage, knock;
     enum force force;
 };
@@ -103,7 +103,7 @@ struct anim_sequence_step {
     const struct anim_step* anim_step;
 };
 
-#define MAX_ANIMS_PER_STATE 3
+#define MAX_ANIMS_PER_STATE 5
 #define REVERSED 1
 
 struct anim_sequence {
