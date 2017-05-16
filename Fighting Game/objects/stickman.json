@@ -1,8 +1,9 @@
 {
     "torso": {
-        "swing": ["Top", "Swing mid", "Bottom"],
+        "swing": ["Top", "Swing 1", "Swing mid", "Bottom"],
+        "swingup": ["Bottom", "Swing mid", "Top"],
         "lift": ["Top", "Over Mid", "Overhead"],
-        "big_swing": ["Overhead", "Over Mid", "Top", "Swing mid", "Bottom"],
+        "big_swing": ["Overhead", "Over Mid", "Swing 1", "Swing mid", "Bottom"],
         "lunge": ["Bottom", "Forward"],
         "hi_block": ["Top", "Block"],
         "lo_block": ["Bottom", "Twirl 1", "Twirl 2", "Twirl Block"],

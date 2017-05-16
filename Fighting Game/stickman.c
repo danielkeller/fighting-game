@@ -26,8 +26,8 @@ enum stickman_states {
 static const struct anim_sequence torso_sequences[] = {
     [top] = {{{1, &torso_null_Top}}},
     [bottom] = {{{1, &torso_null_Bottom}}},
-    [swing] = {{{4, &torso_swing_1}, {3, &torso_swing_2}}},
-    [swingup] = {{{5, &torso_swing_2}, {4, &torso_swing_1}}, REVERSED},
+    [swing] = {{{3, &torso_swing_1}, {2, &torso_swing_2}, {2, &torso_swing_3}}},
+    [swingup] = {{{5, &torso_swingup_1}, {4, &torso_swingup_2}}},
     
     [lift] = {{{4, &torso_lift_1}, {6, &torso_lift_2}}},
     [overhead] = {{{1, &torso_null_Overhead}}},
@@ -187,7 +187,7 @@ int stickman_actions(struct stickman* sm)
                 goto_state(c, poke);
             //fall thru
         case forward_pause:
-            if (c->other->prev.attack_result & KNOCKED)
+            if (c->other->prev.attack_result & (KNOCKED | LANDED))
                 goto_state(c, drop);
             break;
         case poke:
