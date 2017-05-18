@@ -96,9 +96,11 @@ void blit_fbo(fbo_t* fbo);
 void free_fbo(fbo_t* fbo);
 
 //*** Time
-//24 FPS
+//25 FPS
 //Note that human reaction time is about 6.5 - 7.5 frames.
-static const usec_t tick_length = 41667ll;
+static const usec_t tick_length = 40000ll;
+//24 FPS
+//static const usec_t tick_length = 41667ll;
 //4 FPS
 static const usec_t frame_limit = 250000ll;
 
