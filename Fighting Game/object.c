@@ -10,8 +10,7 @@
 #include <assert.h>
 
 static struct mesh box_mesh = {
-    .size = 12*sizeof(float),
-    .stride = 0,
+    .size = 6,
     .verts = (float[]){
         0.f, 0.f,
         0.f, 1.f,
@@ -22,22 +21,25 @@ static struct mesh box_mesh = {
     }
 };
 
-void make_object(struct object* obj, mesh_t mesh)
+void make_object_base(struct object* obj, GLsizei n_verts, GLsizei stride, const void* verts)
 {
-    GLsizei stride = mesh->stride;
-    if (stride == 0) stride = sizeof(float)*2;
+    obj->numVertecies = n_verts;
     
     glGenVertexArrays(1, &obj->vertexArrayObject);
     glBindVertexArray(obj->vertexArrayObject);
     
     glGenBuffers(1, &obj->vertexBufferObject);
     glBindBuffer(GL_ARRAY_BUFFER, obj->vertexBufferObject);
-    glBufferData(GL_ARRAY_BUFFER, mesh->size, mesh->verts, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, n_verts * stride, verts, GL_STATIC_DRAW);
+}
+
+void make_object(struct object* obj, mesh_t mesh)
+{
+    GLsizei stride = sizeof(float)*2;
+    make_object_base(obj, mesh->size, stride, mesh->verts);
     
     glEnableVertexAttribArray(POSITION_ATTRIB);
     glVertexAttribPointer(POSITION_ATTRIB, 2, GL_FLOAT, GL_FALSE, stride, NULL);
-    
-    obj->numVertecies = mesh->size / stride;
 }
 
 void make_box(struct object* obj)
@@ -49,26 +51,18 @@ void make_box(struct object* obj)
 
 void make_anim_obj(struct object* obj, anim_mesh_t mesh)
 {
-    glGenVertexArrays(1, &obj->vertexArrayObject);
-    glBindVertexArray(obj->vertexArrayObject);
-    
-    const GLsizei stride = sizeof(struct vert);
-    
-    glGenBuffers(1, &obj->vertexBufferObject);
-    glBindBuffer(GL_ARRAY_BUFFER, obj->vertexBufferObject);
-    glBufferData(GL_ARRAY_BUFFER, mesh->size * stride, mesh->verts, GL_STATIC_DRAW);
+    const GLsizei stride = sizeof(struct anim_vert);
+    make_object_base(obj, mesh->size, stride, mesh->verts);
     
     glEnableVertexAttribArray(POSITION_ATTRIB);
     glEnableVertexAttribArray(BONE_ATTRIB);
     glEnableVertexAttribArray(PARENT_ATTRIB);
     glEnableVertexAttribArray(WEIGHT_ATTRIB);
     
-    glVertexAttribPointer(POSITION_ATTRIB, 2, GL_FLOAT, GL_FALSE, stride, STRUCT_OFFS(vert, x));
-    glVertexAttribIPointer(BONE_ATTRIB, 1, GL_UNSIGNED_BYTE, stride, STRUCT_OFFS(vert, bone));
-    glVertexAttribIPointer(PARENT_ATTRIB, 1, GL_UNSIGNED_BYTE, stride, STRUCT_OFFS(vert, parent));
-    glVertexAttribPointer(WEIGHT_ATTRIB, 1, GL_UNSIGNED_BYTE, GL_TRUE, stride, STRUCT_OFFS(vert, weight));
-    
-    obj->numVertecies = mesh->size;
+    glVertexAttribPointer(POSITION_ATTRIB, 2, GL_FLOAT, GL_FALSE, stride, STRUCT_OFFS(anim_vert, x));
+    glVertexAttribIPointer(BONE_ATTRIB, 1, GL_UNSIGNED_BYTE, stride, STRUCT_OFFS(anim_vert, bone));
+    glVertexAttribIPointer(PARENT_ATTRIB, 1, GL_UNSIGNED_BYTE, stride, STRUCT_OFFS(anim_vert, parent));
+    glVertexAttribPointer(WEIGHT_ATTRIB, 1, GL_UNSIGNED_BYTE, GL_TRUE, stride, STRUCT_OFFS(anim_vert, weight));
 }
 
 void free_object(struct object* obj)

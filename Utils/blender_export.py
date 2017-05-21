@@ -4,45 +4,145 @@ bl_info = {
     "version": (1, 0),
     "blender": (2, 75, 0),
     "location": "File > Export",
-    "description": "Export .mesh file for fighting game",
+    "description": "Export .c file for fighting game",
     "warning": "",
     "wiki_url": "",  
     "tracker_url": "",  
     "category": "Import-Export"}
 
-import bpy, bmesh, re, os, pickle
+import bpy, bmesh, re, os
+from contextlib import contextmanager
+
+@contextmanager
+def triangulate(mesh):
+    bm = bmesh.new()
+    bm.from_mesh(mesh)
+    bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
+    yield bm
+    bm.free()
+
+def id(*args):
+    return re.sub('[^a-zA-Z0-9]', '_', '_'.join(args)).lower()
+
+#Calculate total rotation relative to base
+def total_rotation(pbone):
+    rot = 0.0
+    while pbone:
+        #I don't know why this has to be negative
+        rot -= pbone.rotation_axis_angle[0]
+        pbone = pbone.parent
+    return rot
 
 def write_mesh(context, path):
-    result = {}
+    objects = {}
     
     for obj in bpy.data.objects:
         if obj.type != 'MESH':
             continue
-        bm = bmesh.new()
-        bm.from_mesh(obj.data)
-        bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
-
-        result[obj.name] = {}
         
-        if bm.verts.layers.shape:
-            for sk_name in bm.verts.layers.shape.keys():
-                sk = bm.verts.layers.shape[sk_name]
-                result[obj.name][sk_name] = [
-                    (v[sk].x, v[sk].y)
-                    for fa in bm.faces
-                    for v in fa.verts
-                ]
-        else:
-            result[obj.name]['Basis'] = [
-                (v.co.x, v.co.y)
-                for fa in bm.faces
-                for v in fa.verts
+        armature = obj.parent
+        if not armature or armature.type != 'ARMATURE':
+            with triangulate(obj.data) as bm:
+                objects[obj.name] = {
+                    'plain': True,
+                    'verts': [
+                    v.co[0:2] for fa in bm.faces for v in fa.verts
+                ]}
+            continue
+            
+        objects[obj.name] = {'plain': False}
+
+        bone_names = [grp.name for grp in obj.vertex_groups]
+        bones = armature.data.bones
+        pbones = armature.pose.bones
+        #To find the bone farthest from the root of the tree
+        bone_ranks = [len(bones[name].parent_recursive) for name in bone_names]
+        
+        with triangulate(obj.data) as bm:
+            weights = bm.verts.layers.deform.active
+        
+            def vert_data(vert):
+                vweights = vert[weights]
+                bone_idx = max(vweights.keys(), key=bone_ranks.__getitem__)
+                bone_name = bone_names[bone_idx]
+                bone_weight = round(vweights[bone_idx] * 255.)
+                parent = bones[bone_name].parent
+                parent_idx = bone_names.index(parent.name)
+            
+                rel_coord = vert.co - bones[bone_name].matrix_local.to_translation()
+            
+                return rel_coord[0:2] + (bone_idx, parent_idx, bone_weight)
+        
+            objects[obj.name]['verts'] = [
+                vert_data(v) for fa in bm.faces for v in fa.verts
             ]
-
-        bm.free()
-
-    with open(path, 'wb') as f:
-        pickle.dump(result, f, protocol=2)
+        
+        actions = {strip.action
+            for nla_track in armature.animation_data.nla_tracks
+            for strip in nla_track.strips} | {armature.animation_data.action}
+        
+        objects[obj.name]['anims'] = {}
+        
+        initial_arm_action = armature.animation_data.action
+        initial_frame = context.scene.frame_current
+        try:
+            for action in actions:
+                objects[obj.name]['anims'][action.name] = []
+                armature.animation_data.action = action
+                start, end = action.frame_range
+                for frame in range(int(start), int(end)+2, 2):
+                    context.scene.frame_set(frame)
+                    bone_datas = []
+                    for name in bone_names:
+                        #the position and scale are in object coord and the rotation is in rest bone coords
+                        bone_datas.append(pbones[name].matrix.to_translation()[0:2]
+                            + (total_rotation(pbones[name]), pbones[name].matrix.to_scale().y))
+                    objects[obj.name]['anims'][action.name].append(bone_datas)
+        finally:
+            armature.animation_data.action = initial_arm_action
+            context.scene.frame_set(initial_frame)
+    
+    path = os.path.splitext(path)[0]
+    
+    with open(path + '.c', 'w') as c_f, open(path + '.h', 'w') as h_f:
+        c_f.write('#include "engine.h"\n\n')
+        h_f.write('typedef const struct mesh* mesh_t;\n')
+        h_f.write('typedef const struct anim_mesh* anim_mesh_t;\n')
+        h_f.write('typedef const struct animation* animation_t;\n\n')
+        
+        for obj_name, obj in objects.items():
+            if obj['plain']:
+                h_f.write('extern mesh_t {};\n'.format(id(obj_name)))
+                c_f.write('mesh_t {} = &(struct mesh) {{\n'.format(id(obj_name)))
+                c_f.write('.size = {},\n'.format(len(obj['verts'])))
+            
+                c_f.write('.verts = (float[]) {\n')
+                for vert in obj['verts']:
+                    c_f.write('{}, {}, \n'.format(*vert))
+                c_f.write('}};\n\n')
+                
+                continue
+            
+            h_f.write('extern anim_mesh_t {};\n'.format(id(obj_name)))
+            c_f.write('anim_mesh_t {} = &(struct anim_mesh) {{\n'.format(id(obj_name)))
+            c_f.write('.size = {},\n'.format(len(obj['verts'])))
+            
+            c_f.write('.verts = (struct anim_vert[]) {\n')
+            for vert in obj['verts']:
+                c_f.write('{{{}, {}, {}, {}, {}}},\n'.format(*vert))
+            c_f.write('}};\n\n')
+            
+            for action_name, action in obj['anims'].items():
+                h_f.write('extern animation_t {};\n'.format(id(obj_name, action_name)))
+                c_f.write('animation_t {} = &(struct animation){{\n'.format(id(obj_name, action_name)))
+                c_f.write('.length = {},\n'.format(len(action)-1))
+                c_f.write('.frames = (struct bone[][MAX_BONES]) {\n')
+                for frame in action:
+                    c_f.write('{\n')
+                    for bone in frame:
+                        c_f.write('{{{}, {}, {}, {}}},\n'.format(*bone))
+                    c_f.write('},\n')
+                c_f.write('}};\n\n')
 
 
 # ExportHelper is a helper class, defines filename and
@@ -56,10 +156,10 @@ class ExportFgm(bpy.types.Operator, ExportHelper):
     bl_label = "Export Fighting Game model"
 
     # ExportHelper mixin class uses this
-    filename_ext = ".mesh"
+    filename_ext = ".c"
 
     filter_glob = bpy.props.StringProperty(
-            default="*.mesh",
+            default="*.c",
             options={'HIDDEN'},
             )
 

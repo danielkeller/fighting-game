@@ -108,7 +108,6 @@ void link_shader_program(struct program* prog)
     prog->transform = glGetUniformLocation(program, "transform");
     prog->time = glGetUniformLocation(program, "time");
     prog->alpha = glGetUniformLocation(program, "alpha");
-    prog->bones = glGetUniformLocation(program, "bones");
     prog->bones_from = glGetUniformLocation(program, "bones_from");
     prog->bones_to = glGetUniformLocation(program, "bones_to");
     
@@ -161,13 +160,6 @@ void free_program(struct program* prog)
     glDeleteProgram(prog->program);
 }
 
-void set_shader_anim(struct program* prog, anim_mesh_t mesh, animation_t anim, frame_t frame)
-{
-    glUniform2fv(prog->bones, MAX_BONES, (float*)mesh->bones);
-    glUniform4fv(prog->bones_from, MAX_BONES, (float*)anim->frames[frame]);
-    glUniform4fv(prog->bones_to, MAX_BONES, (float*)anim->frames[frame+1]);
-}
-
 #ifdef DEBUG
 static struct program* all_programs[1024] = {0};
 
@@ -213,7 +205,8 @@ void poll_shader_changes()
     int updated = 0;
     
     for (size_t i = 0; all_programs[i]; ++i)
-        if (all_programs[i]->vert == changed || all_programs[i]->frag == changed)
+        if (changed == lib_vert || changed == lib_frag
+            || all_programs[i]->vert == changed || all_programs[i]->frag == changed)
             update_program(all_programs[i]), ++updated;
     
     printf("Updated %d programs.\n", updated);

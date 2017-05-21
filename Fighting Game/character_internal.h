@@ -107,7 +107,6 @@ void move_character(character_t* c);
 void attack(character_t* attacker, struct attack* attack);
 
 void set_character_draw_state(character_t* c, struct program*, struct object*, anim_mesh_t, animation_t);
-void set_character_legs_draw_state(character_t* c, struct program* program, float step_length);
 
 void make_heath_bar(struct health_bar* hb, enum direction direction);
 void draw_health_bar(character_t *c);

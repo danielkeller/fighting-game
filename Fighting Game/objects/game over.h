@@ -1,2 +1,5 @@
-#include "types.h"
-extern const mesh_t game_over_text_mesh;
+typedef const struct mesh* mesh_t;
+typedef const struct anim_mesh* anim_mesh_t;
+typedef const struct animation* animation_t;
+
+extern mesh_t text;

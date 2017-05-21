@@ -105,7 +105,8 @@ void set_character_draw_state(character_t* c, struct program* program, struct ob
     if (frame >= anim->length)
         frame = anim->length - 1;
     
-    set_shader_anim(program, mesh, anim, frame);
+    glUniform4fv(program->bones_from, MAX_BONES, (float*)anim->frames[frame]);
+    glUniform4fv(program->bones_to, MAX_BONES, (float*)anim->frames[frame+1]);
     glUniform1f(program->alpha, game_time.alpha);
     
     glUniform1f(program->time, (float)game_time.current_time / 1000000.f);
@@ -117,23 +118,6 @@ void set_character_draw_state(character_t* c, struct program* program, struct ob
     Mat3 pos = affine(0., c->ground_pos * c->direction, 0.);
     pos.d[0] = c->direction;
     glUniformMatrix3fv(program->transform, 1, GL_FALSE, pos.d);
-}
-
-
-void set_character_legs_draw_state(character_t* c, struct program* program, float step_length)
-{
-    Mat3 pos = affine(0., c->ground_pos * c->direction, 0.);
-    pos.d[0] = c->direction;
-    glUniform1f(program->time, (float)game_time.current_time / 1000000.f);
-    glUniformMatrix3fv(program->camera, 1, GL_FALSE, camera.d);
-    glUniformMatrix3fv(program->transform, 1, GL_FALSE, pos.d);
-    
-    float ground_pos = c->prev.ground_pos * (1. - game_time.alpha)
-    + c->next.ground_pos * game_time.alpha;
-    
-    //Add one so the numerator is positive
-    float alpha = fmod(ground_pos+1., step_length) / step_length;
-    glUniform1f(program->alpha, alpha);
 }
 
 void character_actions(character_t* c)

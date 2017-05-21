@@ -24,17 +24,12 @@ Mat3 affine(float theta, float x, float y);
 //*** Object
 struct mesh {
     GLsizei size;
-    GLsizei stride;
     float* verts;
 };
 
-struct vert {
-    float x, y;
+struct anim_vert {
+    float x, y; //Relative to bone
     uint8_t bone, parent, weight;
-};
-
-struct rest_bone {
-    float x, y;
 };
 
 struct bone {
@@ -50,8 +45,7 @@ struct animation {
 
 struct anim_mesh {
     GLsizei size;
-    struct rest_bone bones[MAX_BONES];
-    struct vert* verts;
+    struct anim_vert* verts;
 };
 
 void make_box(struct object*);
@@ -82,8 +76,6 @@ struct shader {
 
 void load_shader_program(struct program*, shader_t vert, shader_t frag);
 void free_program(struct program*);
-
-void set_shader_anim(struct program*, anim_mesh_t, animation_t anim, frame_t frame);
 
 #ifdef DEBUG
 //This assumes the program objects don't move around in memory

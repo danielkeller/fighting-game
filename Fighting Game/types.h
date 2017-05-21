@@ -25,17 +25,12 @@ struct object
     GLsizei numVertecies;
 };
 
-struct anim_step {
-    GLsizei p_from, p_to; //position
-    GLsizei d_from, d_to; //derivative
-};
-
 typedef struct shader* shader_t;
 
 struct program
 {
     GLuint program;
-    GLint transform, camera, time, bones, bones_from, bones_to, alpha;
+    GLint transform, camera, time, bones_from, bones_to, alpha;
     
     shader_t vert, frag;
 };

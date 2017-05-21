@@ -7,7 +7,7 @@
 //
 
 #include "character_internal.h"
-#include "objects/stickman_skeletal.h"
+#include "objects/stickman.h"
 #include "engine.h"
 
 static const float speed = .015;
@@ -204,7 +204,7 @@ int draw_stickman(struct stickman* sm)
     glUseProgram(sm->program.program);
     
     if (sm->character->next.state == swing)
-        set_character_draw_state(sm->character, &sm->program, &sm->object, stickman, stickman_throw);
+        set_character_draw_state(sm->character, &sm->program, &sm->object, stickman, stickman_swing);
     else
         set_character_draw_state(sm->character, &sm->program, &sm->object, stickman, stickman_top);
     

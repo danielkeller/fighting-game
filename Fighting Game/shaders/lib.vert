@@ -14,9 +14,9 @@ vec2 skinned_pos() {
     vec4 eff_bone = bones_from[bone] * (1. - alpha) + bones_to[bone] * alpha;
     vec4 eff_parent = bones_from[parent] * (1. - alpha) + bones_to[parent] * alpha;
     
-    float rel_bone_rot = (eff_bone.z - eff_parent.z) * (1 - weight);
-    float rot = eff_bone.z - rel_bone_rot;
-    vec2 bone_rel_pos = position - bones[bone];
+    float rot = eff_parent.z + (eff_bone.z - eff_parent.z) * weight;
+    
+    vec2 bone_rel_pos = position;
     bone_rel_pos = rotation(rot) * bone_rel_pos;
     return eff_bone.xy + bone_rel_pos;
 }
