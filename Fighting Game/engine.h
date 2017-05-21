@@ -28,18 +28,42 @@ struct mesh {
     float* verts;
 };
 
+struct vert {
+    float x, y;
+    uint8_t bone, parent, weight;
+};
+
+struct rest_bone {
+    float x, y;
+};
+
+struct bone {
+    float x, y, theta, length;
+};
+
+#define MAX_BONES 32
+
+struct animation {
+    GLsizei length;
+    struct bone (*frames)[MAX_BONES];
+};
+
+struct anim_mesh {
+    GLsizei size;
+    struct rest_bone bones[MAX_BONES];
+    struct vert* verts;
+};
+
 void make_box(struct object*);
 void make_object(struct object*, mesh_t mesh);
-void make_anim_obj(struct object*, mesh_t mesh);
-void anim_obj_keys(struct object*, const struct anim_step* step);
+void make_anim_obj(struct object*, anim_mesh_t mesh);
 void free_object(struct object*);
 
 //*** Shader
 #define POSITION_ATTRIB 0
-#define POS_FROM_ATTRIB 0
-#define POS_TO_ATTRIB 1
-#define DERIV_FROM_ATTRIB 3
-#define DERIV_TO_ATTRIB 4
+#define WEIGHT_ATTRIB 1
+#define BONE_ATTRIB 2
+#define PARENT_ATTRIB 3
 #define DRAW_BUFFER 0
 #define FB_TEX_UNIT 0
 
@@ -58,6 +82,8 @@ struct shader {
 
 void load_shader_program(struct program*, shader_t vert, shader_t frag);
 void free_program(struct program*);
+
+void set_shader_anim(struct program*, anim_mesh_t, animation_t anim, frame_t frame);
 
 #ifdef DEBUG
 //This assumes the program objects don't move around in memory
@@ -105,7 +131,7 @@ static const usec_t tick_length = 40000ll;
 static const usec_t frame_limit = 250000ll;
 
 struct game_time {
-    unsigned long long frame;
+    frame_t frame;
     float alpha;
     int multiplier;
     usec_t last_render, last_frame_length, current_time, unsimulated_time;

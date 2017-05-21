@@ -7,7 +7,7 @@
 //
 
 #include "character_internal.h"
-#include "objects/stickman.h"
+#include "objects/stickman_skeletal.h"
 #include "engine.h"
 
 static const float speed = .015;
@@ -21,32 +21,6 @@ enum stickman_states {
     lunge, unlunge, forward_pause,
     poke, drop,
     hi_block, lo_block, hi_unblock, lo_unblock,
-};
-
-static const struct anim_sequence torso_sequences[] = {
-    [top] = {{{1, &torso_null_Top}}},
-    [bottom] = {{{1, &torso_null_Bottom}}},
-    [swing] = {{{3, &torso_swing_1}, {2, &torso_swing_2}, {2, &torso_swing_3}}},
-    [swingup] = {{{5, &torso_swingup_1}, {4, &torso_swingup_2}}},
-    
-    [lift] = {{{4, &torso_lift_1}, {6, &torso_lift_2}}},
-    [overhead] = {{{1, &torso_null_Overhead}}},
-    [unlift] = {{{2, &torso_lift_2}, {4, &torso_lift_1}}, REVERSED},
-    [big_swing_1] = {{{3, &torso_big_swing_1}, {1, &torso_big_swing_2}}},
-    [big_swing_2] = {{{1, &torso_big_swing_3}, {3, &torso_big_swing_4}}},
-    
-    [lunge] = {{{4, &torso_lunge}}},
-    [forward_pause] = {{{1, &torso_null_Forward}}},
-    [forward] = {{{1, &torso_null_Forward}}},
-    [unlunge] = {{{5, &torso_lunge}}, REVERSED},
-    [poke] = {{{2, &torso_poke_1}, {2, &torso_poke_2}}},
-    [drop] = {{{4, &torso_drop_1}, {8, &torso_drop_2}, {6, &torso_drop_3}, {6, &torso_drop_4}, {6, &torso_drop_5}}},
-    
-    [block] = {{{6, &torso_null_Block}}},
-    [hi_block] = {{{3, &torso_hi_block}}},
-    [lo_block] = {{{2, &torso_lo_block_1}, {1, &torso_lo_block_2}, {2, &torso_lo_block_3}}},
-    [hi_unblock] = {{{5, &torso_hi_block}}, REVERSED},
-    [lo_unblock] = {{{2, &torso_lo_block_3}, {1, &torso_lo_block_2}, {2, &torso_lo_block_1}}, REVERSED}
 };
 
 //For attacks that give defense/momentum buffs, used symmetrically:
@@ -219,10 +193,6 @@ int stickman_actions(struct stickman* sm)
     }
     
     next_state(c);
-        
-    //This effect is annoying
-    //if (c->other->prev.attack_result & KNOCKED)
-    //    goto_state(c, bottom);
     
     return 0;
 }
@@ -233,13 +203,13 @@ int draw_stickman(struct stickman* sm)
 {
     glUseProgram(sm->program.program);
     
-    set_character_draw_state(sm->character, &sm->program, &sm->torso, &torso_sequences[sm->character->next.state]);
-    glBindVertexArray(sm->torso.vertexArrayObject);
-    glDrawArrays(GL_TRIANGLES, 0, sm->torso.numVertecies);
+    if (sm->character->next.state == swing)
+        set_character_draw_state(sm->character, &sm->program, &sm->object, stickman, stickman_throw);
+    else
+        set_character_draw_state(sm->character, &sm->program, &sm->object, stickman, stickman_top);
     
-    set_character_legs_draw_state(sm->character, &sm->program, .32);
-    glBindVertexArray(sm->legs.vertexArrayObject);
-    glDrawArrays(GL_TRIANGLES, 0, sm->legs.numVertecies);
+    glBindVertexArray(sm->object.vertexArrayObject);
+    glDrawArrays(GL_TRIANGLES, 0, sm->object.numVertecies);
     
     draw_health_bar(sm->character);
     if (learning_mode)
@@ -256,8 +226,7 @@ int free_stickman(struct stickman* sm)
     free_state_indicator(&c->state_indicator);
     free_program(&sm->hit_effect);
     free_program(&sm->parry_effect);
-    free_object(&sm->torso);
-    free_object(&sm->legs);
+    free_object(&sm->object);
     free_program(&sm->program);
     
     free(sm);
@@ -281,9 +250,7 @@ void make_stickman(character_t* c, character_t* other, enum direction direction)
     load_shader_program(&sm->hit_effect, screenspace_vert, blast_frag);
     load_shader_program(&sm->parry_effect, particles_vert, color_frag);
     
-    make_anim_obj(&sm->torso, stickman_torso_mesh);
-    make_anim_obj(&sm->legs, stickman_legs_mesh);
-    anim_obj_keys(&sm->legs, &legs_walk);
+    make_anim_obj(&sm->object, stickman);
     load_shader_program(&sm->program, anim_vert, color_frag);
     sm->color_unif = glGetUniformLocation(sm->program.program, "main_color");
     glUniform3f(sm->color_unif, 1., 1., 1.);

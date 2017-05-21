@@ -78,10 +78,9 @@ void link_shader_program(struct program* prog)
     glAttachShader(program, lib_vert->shader);
     
     glBindAttribLocation(program, POSITION_ATTRIB, "position");
-    glBindAttribLocation(program, POS_FROM_ATTRIB, "pos_from");
-    glBindAttribLocation(program, POS_TO_ATTRIB, "pos_to");
-    glBindAttribLocation(program, DERIV_FROM_ATTRIB, "deriv_from");
-    glBindAttribLocation(program, DERIV_TO_ATTRIB, "deriv_to");
+    glBindAttribLocation(program, BONE_ATTRIB, "bone");
+    glBindAttribLocation(program, PARENT_ATTRIB, "parent");
+    glBindAttribLocation(program, WEIGHT_ATTRIB, "weight");
     
     glBindFragDataLocation(program, DRAW_BUFFER, "color");
     
@@ -108,7 +107,10 @@ void link_shader_program(struct program* prog)
     prog->camera = glGetUniformLocation(program, "camera");
     prog->transform = glGetUniformLocation(program, "transform");
     prog->time = glGetUniformLocation(program, "time");
-    prog->pos_alpha = glGetUniformLocation(program, "pos_alpha");
+    prog->alpha = glGetUniformLocation(program, "alpha");
+    prog->bones = glGetUniformLocation(program, "bones");
+    prog->bones_from = glGetUniformLocation(program, "bones_from");
+    prog->bones_to = glGetUniformLocation(program, "bones_to");
     
     glUseProgram(program);
     GLuint framebuffer = glGetUniformLocation(program, "framebuffer");
@@ -157,6 +159,13 @@ void free_program(struct program* prog)
     remove_program(prog);
 #endif
     glDeleteProgram(prog->program);
+}
+
+void set_shader_anim(struct program* prog, anim_mesh_t mesh, animation_t anim, frame_t frame)
+{
+    glUniform2fv(prog->bones, MAX_BONES, (float*)mesh->bones);
+    glUniform4fv(prog->bones_from, MAX_BONES, (float*)anim->frames[frame]);
+    glUniform4fv(prog->bones_to, MAX_BONES, (float*)anim->frames[frame+1]);
 }
 
 #ifdef DEBUG

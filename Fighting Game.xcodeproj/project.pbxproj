@@ -19,6 +19,7 @@
 		37421ACE1CB306220027B7D4 /* gl_core_3_3.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421ACC1CB306220027B7D4 /* gl_core_3_3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		37421AD41CB3066D0027B7D4 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421AD21CB3066D0027B7D4 /* window.c */; };
 		37421AD71CB3CF070027B7D4 /* time.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421AD51CB3CF070027B7D4 /* time.c */; };
+		377D3FE21ECE27B500531846 /* stickman_skeletal.c in Sources */ = {isa = PBXBuildFile; fileRef = 377D3FE11ECE27B500531846 /* stickman_skeletal.c */; };
 		37853D5D1D6622680052A8C8 /* shader.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D5B1D6622680052A8C8 /* shader.c */; };
 		37853D681D662D520052A8C8 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D661D662D520052A8C8 /* error.c */; };
 		37853D6B1D68AA720052A8C8 /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D691D68AA720052A8C8 /* object.c */; };
@@ -83,6 +84,8 @@
 		37421AD31CB3066D0027B7D4 /* window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = window.h; sourceTree = "<group>"; };
 		37421AD51CB3CF070027B7D4 /* time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = time.c; sourceTree = "<group>"; };
 		374EF43B1D722F55001E8C8E /* Utils */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Utils; sourceTree = "<group>"; };
+		377D3FE11ECE27B500531846 /* stickman_skeletal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stickman_skeletal.c; path = objects/stickman_skeletal.c; sourceTree = "<group>"; };
+		377D3FE41ECE2FED00531846 /* stickman_skeletal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stickman_skeletal.h; path = objects/stickman_skeletal.h; sourceTree = "<group>"; };
 		37853D5B1D6622680052A8C8 /* shader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shader.c; sourceTree = "<group>"; };
 		37853D5F1D6624BC0052A8C8 /* gl_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gl_types.h; path = Libs/GL/gl_types.h; sourceTree = "<group>"; };
 		37853D661D662D520052A8C8 /* error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = error.c; sourceTree = "<group>"; };
@@ -284,6 +287,8 @@
 		37B695091D737A04009A40B1 /* objects */ = {
 			isa = PBXGroup;
 			children = (
+				377D3FE41ECE2FED00531846 /* stickman_skeletal.h */,
+				377D3FE11ECE27B500531846 /* stickman_skeletal.c */,
 				37E3B5661EAF8834004DBE36 /* game over.c */,
 				37E3B5671EAF8834004DBE36 /* game over.h */,
 				37E1D7F21D77633E005C7198 /* stickman.c */,
@@ -425,6 +430,7 @@
 				372F30B61EA910AD00F9AE22 /* stickman_effects.c in Sources */,
 				37421AD71CB3CF070027B7D4 /* time.c in Sources */,
 				37B6950C1D737A0D009A40B1 /* test.c in Sources */,
+				377D3FE21ECE27B500531846 /* stickman_skeletal.c in Sources */,
 				37E3B5681EAF8834004DBE36 /* game over.c in Sources */,
 				372F30AF1EA89F6200F9AE22 /* AppDelegate.m in Sources */,
 				37421AC01CB2FFE50027B7D4 /* main.c in Sources */,

@@ -20,6 +20,7 @@ class Add2DBoneKeyframe(bpy.types.Operator):
     def execute(self, context):
 
         pbones = context.selected_pose_bones
+        keying_set_paths = [path.data_path for path in context.scene.keying_sets.active.paths]
         
         for pbone in pbones:
             #Fix the rotation
@@ -30,8 +31,15 @@ class Add2DBoneKeyframe(bpy.types.Operator):
             
             if not self.just_fix:
                 pbone.keyframe_insert(data_path='rotation_axis_angle', index=0)
-                if not pbone.bone.use_connect:
-                    pbone.keyframe_insert(data_path='location')
+                
+                path = 'pose.bones["{}"].location'.format(pbone.name)
+                if path in keying_set_paths:
+                    pbone.keyframe_insert(data_path='location', index=0)
+                    pbone.keyframe_insert(data_path='location', index=1)
+                    
+                path = 'pose.bones["{}"].scale'.format(pbone.name)
+                if path in keying_set_paths:
+                    pbone.keyframe_insert(data_path='scale', index=1)
 
         for area in bpy.context.screen.areas:
             if area.type in ['DOPESHEET_EDITOR', 'PROPERTIES']:
@@ -51,7 +59,7 @@ def register():
     
     kmi = km.keymap_items.new(Add2DBoneKeyframe.bl_idname, 'J', 'PRESS')
     kmi.properties['just_fix'] = True
-    addon_keymaps = [km]
+    addon_keymaps.append(km)
     
     bpy.utils.register_class(Add2DBoneKeyframe)
 
@@ -59,7 +67,7 @@ def register():
 def unregister():
     for km in addon_keymaps:
         wm.keyconfigs.addon.keymaps.remove(km)
-    addon_keymaps = []
+    addon_keymaps.clear()
     
     bpy.utils.unregister_class(Add2DBoneKeyframe)
 

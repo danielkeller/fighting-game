@@ -12,15 +12,17 @@
 #include "gl_types.h"
 
 typedef long long usec_t;
+typedef unsigned long long frame_t;
 
 typedef const struct mesh* mesh_t;
+typedef const struct anim_mesh* anim_mesh_t;
+typedef const struct animation* animation_t;
 
 struct object
 {
     GLuint vertexArrayObject;
     GLuint vertexBufferObject;
     GLsizei numVertecies;
-    GLsizei stride;
 };
 
 struct anim_step {
@@ -33,7 +35,7 @@ typedef struct shader* shader_t;
 struct program
 {
     GLuint program;
-    GLint transform, camera, time, pos_alpha;
+    GLint transform, camera, time, bones, bones_from, bones_to, alpha;
     
     shader_t vert, frag;
 };

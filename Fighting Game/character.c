@@ -98,35 +98,15 @@ void attack(character_t* attacker, struct attack* attack)
     }
 }
 
-void set_character_draw_state(character_t* c,
-                              struct program* program, struct object* object,
-                              const struct anim_sequence* sequence)
+void set_character_draw_state(character_t* c, struct program* program, struct object* object, anim_mesh_t mesh, animation_t anim)
 {
-    //Calculate the step in the sequence, and the number of frames into that step
-    int step = 0;
-    //Number of completed frames into sequence
-    unsigned long long step_frames = game_time.frame - c->anim_start;
-    //For each step where we have completed all the frames...
-    for (; step_frames >= sequence->steps[step].num_frames; ++step) {
-        if (sequence->steps[step+1].num_frames == 0) //Off the end of the animation
-            break;
-        //...subtract length of completed step
-        step_frames -= sequence->steps[step].num_frames;
-    }
-    //Now step_frames is the number of completed frames into the step
-    
-    anim_obj_keys(object, sequence->steps[step].anim_step);
-    
-    float anim_alpha = ((float)step_frames + game_time.alpha)
-        / (float)sequence->steps[step].num_frames;
-    
+    frame_t frame = game_time.frame - c->anim_start;
     //In case we're off the end
-    anim_alpha = fminf(anim_alpha, 1.);
+    if (frame >= anim->length)
+        frame = anim->length - 1;
     
-    if (sequence->reversed)
-        anim_alpha = 1. - anim_alpha;
-    
-    glUniform1f(program->pos_alpha, anim_alpha);
+    set_shader_anim(program, mesh, anim, frame);
+    glUniform1f(program->alpha, game_time.alpha);
     
     glUniform1f(program->time, (float)game_time.current_time / 1000000.f);
     glUniformMatrix3fv(program->camera, 1, GL_FALSE, camera.d);
@@ -153,7 +133,7 @@ void set_character_legs_draw_state(character_t* c, struct program* program, floa
     
     //Add one so the numerator is positive
     float alpha = fmod(ground_pos+1., step_length) / step_length;
-    glUniform1f(program->pos_alpha, alpha);
+    glUniform1f(program->alpha, alpha);
 }
 
 void character_actions(character_t* c)

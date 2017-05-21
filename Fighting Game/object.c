@@ -38,7 +38,6 @@ void make_object(struct object* obj, mesh_t mesh)
     glVertexAttribPointer(POSITION_ATTRIB, 2, GL_FLOAT, GL_FALSE, stride, NULL);
     
     obj->numVertecies = mesh->size / stride;
-    obj->stride = stride;
 }
 
 void make_box(struct object* obj)
@@ -46,32 +45,30 @@ void make_box(struct object* obj)
     make_object(obj, &box_mesh);
 }
 
-void make_anim_obj(struct object* obj, mesh_t mesh)
-{
-    make_object(obj, mesh);
-    
-    glEnableVertexAttribArray(POS_FROM_ATTRIB);
-    glEnableVertexAttribArray(POS_TO_ATTRIB);
-    glEnableVertexAttribArray(DERIV_FROM_ATTRIB);
-    glEnableVertexAttribArray(DERIV_TO_ATTRIB);
-}
+#define STRUCT_OFFS(label, member) (void*)&((struct label*)NULL)->member
 
-void anim_obj_keys(struct object* obj, const struct anim_step* step)
+void make_anim_obj(struct object* obj, anim_mesh_t mesh)
 {
-    assert(obj->stride > step->d_from && obj->stride > step->d_to
-           && obj->stride > step->p_from && obj->stride > step->p_to
-           && "Not enough attributes");
-    
+    glGenVertexArrays(1, &obj->vertexArrayObject);
     glBindVertexArray(obj->vertexArrayObject);
+    
+    const GLsizei stride = sizeof(struct vert);
+    
+    glGenBuffers(1, &obj->vertexBufferObject);
     glBindBuffer(GL_ARRAY_BUFFER, obj->vertexBufferObject);
-    glVertexAttribPointer(POS_FROM_ATTRIB, 2, GL_FLOAT, GL_FALSE,
-                          obj->stride, (char*)NULL + step->p_from);
-    glVertexAttribPointer(POS_TO_ATTRIB, 2, GL_FLOAT, GL_FALSE,
-                          obj->stride, (char*)NULL + step->p_to);
-    glVertexAttribPointer(DERIV_FROM_ATTRIB, 2, GL_FLOAT, GL_FALSE,
-                          obj->stride, (char*)NULL + step->d_from);
-    glVertexAttribPointer(DERIV_TO_ATTRIB, 2, GL_FLOAT, GL_FALSE,
-                          obj->stride, (char*)NULL + step->d_to);
+    glBufferData(GL_ARRAY_BUFFER, mesh->size * stride, mesh->verts, GL_STATIC_DRAW);
+    
+    glEnableVertexAttribArray(POSITION_ATTRIB);
+    glEnableVertexAttribArray(BONE_ATTRIB);
+    glEnableVertexAttribArray(PARENT_ATTRIB);
+    glEnableVertexAttribArray(WEIGHT_ATTRIB);
+    
+    glVertexAttribPointer(POSITION_ATTRIB, 2, GL_FLOAT, GL_FALSE, stride, STRUCT_OFFS(vert, x));
+    glVertexAttribIPointer(BONE_ATTRIB, 1, GL_UNSIGNED_BYTE, stride, STRUCT_OFFS(vert, bone));
+    glVertexAttribIPointer(PARENT_ATTRIB, 1, GL_UNSIGNED_BYTE, stride, STRUCT_OFFS(vert, parent));
+    glVertexAttribPointer(WEIGHT_ATTRIB, 1, GL_UNSIGNED_BYTE, GL_TRUE, stride, STRUCT_OFFS(vert, weight));
+    
+    obj->numVertecies = mesh->size;
 }
 
 void free_object(struct object* obj)
