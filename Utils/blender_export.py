@@ -11,6 +11,8 @@ bl_info = {
     "category": "Import-Export"}
 
 import bpy, bmesh, re, os
+from math import atan2
+from mathutils import Vector
 from contextlib import contextmanager
 
 @contextmanager
@@ -24,16 +26,7 @@ def triangulate(mesh):
 def id(*args):
     return re.sub('[^a-zA-Z0-9]', '_', '_'.join(args)).lower()
 
-#Calculate total rotation relative to base
-def total_rotation(pbone):
-    rot = 0.0
-    while pbone:
-        #I don't know why this has to be negative
-        rot -= pbone.rotation_axis_angle[0]
-        pbone = pbone.parent
-    return rot
-
-def write_mesh(context, path):
+def write_mesh(operator, context, path):
     objects = {}
     
     for obj in bpy.data.objects:
@@ -53,6 +46,7 @@ def write_mesh(context, path):
         objects[obj.name] = {'plain': False}
 
         bone_names = [grp.name for grp in obj.vertex_groups]
+        objects[obj.name]['num_bones'] = len(bone_names)
         bones = armature.data.bones
         pbones = armature.pose.bones
         #To find the bone farthest from the root of the tree
@@ -63,7 +57,8 @@ def write_mesh(context, path):
         
             def vert_data(vert):
                 vweights = vert[weights]
-                bone_idx = max(vweights.keys(), key=bone_ranks.__getitem__)
+                non_tiny_keys = [k for k, v in vweights.items() if v > 1/255.]
+                bone_idx = max(non_tiny_keys, key=bone_ranks.__getitem__)
                 bone_name = bone_names[bone_idx]
                 bone_weight = round(vweights[bone_idx] * 255.)
                 parent = bones[bone_name].parent
@@ -80,6 +75,13 @@ def write_mesh(context, path):
         actions = {strip.action
             for nla_track in armature.animation_data.nla_tracks
             for strip in nla_track.strips} | {armature.animation_data.action}
+        actions = {a for a in actions if a is not None}
+        
+        rest_actions = [a for a in actions if 'Rest' in a.name]
+        if not rest_actions:
+            operator.report({'ERROR'}, 'Object {} must have an action with "Rest" in its name'.format(obj.name))
+            return {'CANCELLED'}
+        rest_action = rest_actions[0]
         
         objects[obj.name]['anims'] = {}
         
@@ -88,6 +90,9 @@ def write_mesh(context, path):
         try:
             for action in actions:
                 objects[obj.name]['anims'][action.name] = []
+                armature.animation_data.action = rest_action
+                #This appears to be needed to actually apply the rest action
+                context.scene.frame_set(1)
                 armature.animation_data.action = action
                 start, end = action.frame_range
                 for frame in range(int(start), int(end)+2, 2):
@@ -95,8 +100,10 @@ def write_mesh(context, path):
                     bone_datas = []
                     for name in bone_names:
                         #the position and scale are in object coord and the rotation is in rest bone coords
-                        bone_datas.append(pbones[name].matrix.to_translation()[0:2]
-                            + (total_rotation(pbones[name]), pbones[name].matrix.to_scale().y))
+                        mat = pbones[name].matrix
+                        rel_mat = mat * bones[name].matrix_local.inverted()
+                        bone_datas.append(mat.to_translation()[0:2]
+                            + (rel_mat.to_euler().z, mat.to_scale().y))
                     objects[obj.name]['anims'][action.name].append(bone_datas)
         finally:
             armature.animation_data.action = initial_arm_action
@@ -126,6 +133,7 @@ def write_mesh(context, path):
             h_f.write('extern anim_mesh_t {};\n'.format(id(obj_name)))
             c_f.write('anim_mesh_t {} = &(struct anim_mesh) {{\n'.format(id(obj_name)))
             c_f.write('.size = {},\n'.format(len(obj['verts'])))
+            c_f.write('.num_bones = {},\n'.format(obj['num_bones']))
             
             c_f.write('.verts = (struct anim_vert[]) {\n')
             for vert in obj['verts']:
@@ -133,16 +141,18 @@ def write_mesh(context, path):
             c_f.write('}};\n\n')
             
             for action_name, action in obj['anims'].items():
-                h_f.write('extern animation_t {};\n'.format(id(obj_name, action_name)))
-                c_f.write('animation_t {} = &(struct animation){{\n'.format(id(obj_name, action_name)))
+                h_f.write('extern struct animation {};\n'.format(id(obj_name, action_name)))
+                c_f.write('struct animation {} = {{\n'.format(id(obj_name, action_name)))
                 c_f.write('.length = {},\n'.format(len(action)-1))
-                c_f.write('.frames = (struct bone[][MAX_BONES]) {\n')
+                c_f.write('.frames = (struct bone* []) {\n')
                 for frame in action:
-                    c_f.write('{\n')
+                    c_f.write('(struct bone[]) {\n')
                     for bone in frame:
                         c_f.write('{{{}, {}, {}, {}}},\n'.format(*bone))
                     c_f.write('},\n')
                 c_f.write('}};\n\n')
+
+    return {'FINISHED'}
 
 
 # ExportHelper is a helper class, defines filename and
@@ -164,8 +174,7 @@ class ExportFgm(bpy.types.Operator, ExportHelper):
             )
 
     def execute(self, context):
-        write_mesh(context, self.filepath)
-        return {'FINISHED'}
+        return write_mesh(self, context, self.filepath)
 
 
 # Only needed if you want to add into a dynamic menu

@@ -106,7 +106,7 @@ void next_state(character_t *c);
 void move_character(character_t* c);
 void attack(character_t* attacker, struct attack* attack);
 
-void set_character_draw_state(character_t* c, struct program*, struct object*, anim_mesh_t, animation_t);
+void set_character_draw_state(character_t* c, struct program*, anim_mesh_t, animation_t, float frame);
 
 void make_heath_bar(struct health_bar* hb, enum direction direction);
 void draw_health_bar(character_t *c);

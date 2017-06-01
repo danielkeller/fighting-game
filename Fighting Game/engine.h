@@ -40,11 +40,11 @@ struct bone {
 
 struct animation {
     GLsizei length;
-    struct bone (*frames)[MAX_BONES];
+    struct bone **frames;
 };
 
 struct anim_mesh {
-    GLsizei size;
+    GLsizei size, num_bones;
     struct anim_vert* verts;
 };
 

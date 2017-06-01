@@ -1,13 +1,7 @@
-uniform mat3 camera;
-uniform mat3 transform;
-
-out vec2 posFrag;
-
 vec2 skinned_pos();
+void output_local_world_space(vec2 pos);
 
 void main()
 {
-    vec2 pos = skinned_pos();
-    gl_Position = vec4((camera * transform * vec3(pos, 1)).xy, 0, 1);
-    posFrag = (transform * vec3(pos, 1)).xy;
+    output_local_world_space(skinned_pos());
 }

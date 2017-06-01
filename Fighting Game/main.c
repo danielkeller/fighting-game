@@ -42,29 +42,6 @@ int main (int argc, char* argv[])
         key_right = key_left = (struct key_events){{0}};
         
         while (!glfwWindowShouldClose(window)) {
-#if PROFILE
-            usec_t frame_work_time = get_time() - game_time.last_render;
-#endif
-            
-            //render_tick must be called immediately after the frame appears
-            //onscreen for the algorithm to work.
-            glfwSwapBuffers(window);
-            render_tick(&game_time);
-            
-#if PROFILE
-            ++frame_count;
-            load_total += (frame_work_time * 100ull) / game_time.last_frame_length;
-            usec_t elapsed = get_time() - last_fps;
-            if (elapsed > 4000000ll)
-            {
-                printf("%llu%% ", load_total / frame_count);
-                printf("%lld fps %lld uspf\n", (frame_count * 1000) / (elapsed / 1000), elapsed / frame_count);
-                load_total = 0;
-                frame_count = 0;
-                last_fps += elapsed;
-            }
-#endif
-            
             while (phys_tick(&game_time)) {
                 poll_input();
                 
@@ -93,6 +70,28 @@ int main (int argc, char* argv[])
             draw_effects(&effects);
             
             blit_fbo(&fbo);
+#if PROFILE
+            usec_t frame_work_time = get_time() - game_time.last_render;
+#endif
+            
+            //render_tick must be called immediately after the frame appears
+            //onscreen for the algorithm to work.
+            glfwSwapBuffers(window);
+            render_tick(&game_time);
+            
+#if PROFILE
+            ++frame_count;
+            load_total += (frame_work_time * 100ull) / game_time.last_frame_length;
+            usec_t elapsed = get_time() - last_fps;
+            if (elapsed > 4000000ll)
+            {
+                printf("%llu%% ", load_total / frame_count);
+                printf("%lld fps %lld uspf\n", (frame_count * 1000) / (elapsed / 1000), elapsed / frame_count);
+                load_total = 0;
+                frame_count = 0;
+                last_fps += elapsed;
+            }
+#endif
         }
         
     game_over:

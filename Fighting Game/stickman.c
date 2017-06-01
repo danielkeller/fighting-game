@@ -9,19 +9,21 @@
 #include "character_internal.h"
 #include "objects/stickman.h"
 #include "engine.h"
-
-static const float speed = .015;
-static const float rev_speed = RETREAT * speed;
-static const float block_dist = .3;
+#include <math.h>
 
 enum stickman_states {
     top, bottom, overhead, forward, block,
     swing, swingup,
     lift, unlift, big_swing_1, big_swing_2,
-    lunge, unlunge, forward_pause,
-    poke, drop,
+    lunge, unlunge, lunge_recover,
+    poke, drop, poke_recover,
     hi_block, lo_block, hi_unblock, lo_unblock,
+    NUM_STICKMAN_STATES
 };
+
+static const float speed = .015;
+static const float rev_speed = RETREAT * speed;
+static const float block_dist = .3;
 
 //For attacks that give defense/momentum buffs, used symmetrically:
 //If the attack is before the midpoint of the animation, advantage goes to the
@@ -31,32 +33,33 @@ enum stickman_states {
 //To make dodging make sense, the player must be stationary or slow during attacks
 
 //            frames  next  fwd_speed rev_speed    balance   hi        lo
-static const struct state states[] = {
-    [top]     = {1, top,    speed, rev_speed, {10, {{8,  MIDDLE}, {0,  WEAK}}}},
-    [bottom]  = {1, bottom, speed, rev_speed, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
-    [swing]   = {7, bottom, 0,     0,         {5,  {{10, HEAVY},  {0,  WEAK}}}},
-    [swingup] = {9, top,    0,     0,         {20, {{0,  WEAK},   {10, HEAVY}}}},
+static const struct state states[NUM_STICKMAN_STATES] = {
+    [top]     = {40, top,    speed, rev_speed, {10, {{8,  MIDDLE}, {0,  WEAK}}}},
+    [bottom]  = {40, bottom, speed, rev_speed, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
+    [swing]   = {7,  bottom, 0,     0,         {5,  {{10, HEAVY},  {0,  WEAK}}}},
+    [swingup] = {9,  top,    0,     0,         {20, {{0,  WEAK},   {10, HEAVY}}}},
     
 #define UNSTEADY                              {4,  {{0, WEAK},    {0, WEAK}}}
     [lift]        = {10, overhead,    0,         0,             UNSTEADY},
     [unlift]      = {6,  top,         0,         0,             UNSTEADY},
-    [overhead]    = {1,  overhead,    speed*.75, rev_speed*.75, UNSTEADY},
+    [overhead]    = {40, overhead,    speed*.75, rev_speed*.75, UNSTEADY},
     [big_swing_1] = {4,  big_swing_2, 0,         0,             UNSTEADY},
-    [big_swing_2] = {4,  bottom,      0,         0, {5,  {{10, HEAVY},  {0,  WEAK}}}},
+    [big_swing_2] = {7,  bottom,      0,         0, {5,  {{10, HEAVY},  {0,  WEAK}}}},
     
-#define REACHING                              {10, {{8,  WEAK}, {8,  WEAK}}}
-    [lunge]         = {4,  forward_pause, speed*20./4., 0,             REACHING},
-    [forward_pause] = {6,  forward,       0,            0,             REACHING},
-    [forward]       = {1,  forward,       speed*.75,    rev_speed*.75, REACHING},
-    [poke]          = {4,  forward_pause, 0,            0,             REACHING},
+#define REACHING                              {4,  {{8,  WEAK}, {8,  WEAK}}}
+    [lunge]         = {4,  lunge_recover, speed*20./4., 0,             REACHING},
+    [lunge_recover] = {6,  forward,       0,            0,             REACHING},
+    [forward]       = {40, forward,       speed*.75,    rev_speed*.75, REACHING},
+    [poke]          = {4,  poke_recover,  0,            0,             REACHING},
+    [poke_recover]  = {6,  forward,       0,            0,             REACHING},
     [unlunge]       = {5,  bottom,        0,            block_dist/5., REACHING},
     //Knockback would look weird here
     [drop]          = {30, top,           0,            0, {50,  {{0, WEAK},    {0, WEAK}}}},
     
 #define BLOCKED                               {10, {{20, HEAVY},  {20, HEAVY}}}
 #define UNBLOCKED                             {10,  {{0, WEAK},    {0, WEAK}}}
-    [hi_block]   = {3, block,      0, block_dist/2., BLOCKED},
-    [lo_block]   = {5, block,      0, block_dist/3., BLOCKED},
+    [hi_block]   = {3, block,      0, block_dist/3., BLOCKED},
+    [lo_block]   = {5, block,      0, block_dist/5., BLOCKED},
     [block]      = {6, hi_unblock, 0, 0,             BLOCKED},
     [hi_unblock] = {5, top,        0, 0,             UNBLOCKED},
     [lo_unblock] = {5, bottom,     0, 0,             UNBLOCKED},
@@ -68,7 +71,7 @@ static const struct state states[] = {
 static struct attack
 //          frame target min- range damage knock force
 down_attack     = {6, HI, .2, .6, 14, 15, MIDDLE},
-up_attack       = {5, LO, .2, .6, 10, 30, MIDDLE},
+up_attack       = {7, LO, .2, .6, 10, 30, MIDDLE},
 overhead_attack = {1, HI, .2, .6, 20, 20, HEAVY},
 lunge_attack    = {4, LO, .4, .8, 10, 0,  MIDDLE},
 poke_attack     = {2, LO, .7, .8, 8,  0,  LIGHT};
@@ -82,8 +85,6 @@ poke_attack     = {2, LO, .7, .8, 8,  0,  LIGHT};
 int stickman_actions(struct stickman* sm)
 {
     character_t* c = sm->character;
-    
-    move_character(c);
     
     int can_cancel = CANCELLING && game_time.frame - c->anim_start <= 3;
     int is_last_frame = game_time.frame - c->anim_start >= states[c->prev.state].frames;
@@ -154,16 +155,19 @@ int stickman_actions(struct stickman* sm)
             //Lunge isn't cancellable, otherwise it would be a "run" technique
             attack(c, &lunge_attack);
             break;
+            
         case forward:
             if (shift_button_press(&c->buttons.special) || c->buttons.dodge.down)
                 goto_state(c, unlunge);
             else if (shift_button_press(&c->buttons.attack))
                 goto_state(c, poke);
             //fall thru
-        case forward_pause:
+        case lunge_recover:
+        case poke_recover:
             if (c->other->prev.attack_result & (KNOCKED | LANDED))
                 goto_state(c, drop);
             break;
+            
         case poke:
             attack(c, &poke_attack);
             break;
@@ -193,27 +197,54 @@ int stickman_actions(struct stickman* sm)
     }
     
     next_state(c);
+    move_character(c);
     
     return 0;
 }
 BINDABLE(stickman_actions, struct stickman)
 
+static animation_t animations[NUM_STICKMAN_STATES] = {
+    [top] = &stickman_top, [bottom] = &stickman_bottom,
+    [swing] = &stickman_swing, [swingup] = &stickman_swing_up,
+    [lift] = &stickman_lift, [overhead] = &stickman_overhead, [unlift] = &stickman_unlift,
+    [big_swing_1] = &stickman_big_swing, [big_swing_2] = &stickman_big_swing,
+    [hi_block] = &stickman_hi_block, [lo_block] = &stickman_lo_block,
+    [block] = &stickman_block, [hi_unblock] = &stickman_hi_unblock, [lo_unblock] = &stickman_lo_unblock,
+    [lunge] = &stickman_lunge, [lunge_recover] = &stickman_lunge, [unlunge] = &stickman_unlunge,
+    [forward] = &stickman_forward,
+    [poke] = &stickman_poke, [poke_recover] = &stickman_forward,
+};
+
 //'frame' is also the number of the previous frame here.
 int draw_stickman(struct stickman* sm)
 {
+    struct character* c = sm->character;
+    
     glUseProgram(sm->program.program);
     
-    if (sm->character->next.state == swing)
-        set_character_draw_state(sm->character, &sm->program, &sm->object, stickman, stickman_swing);
-    else
-        set_character_draw_state(sm->character, &sm->program, &sm->object, stickman, stickman_top);
+    const struct animation* anim = animations[c->next.state];
+    if (!c->next.advancing) {
+        if (anim == &stickman_hi_block) anim = &stickman_hi_dodge;
+        if (anim == &stickman_lo_block) anim = &stickman_lo_dodge;
+    }
+    
+    float frame = game_time.frame - c->anim_start + game_time.alpha;
+    if (c->next.state == big_swing_2)
+        frame += states[big_swing_1].frames;
+    else if (c->next.state == lunge_recover)
+        frame += states[lunge].frames;
+    else if (anim == &stickman_top || anim == &stickman_bottom
+             || anim == &stickman_overhead || anim == &stickman_forward)
+        frame /= 10.;
+    
+    set_character_draw_state(c, &sm->program, stickman, anim, frame);
     
     glBindVertexArray(sm->object.vertexArrayObject);
     glDrawArrays(GL_TRIANGLES, 0, sm->object.numVertecies);
     
-    draw_health_bar(sm->character);
+    draw_health_bar(c);
     if (learning_mode)
-        draw_state_indicator(sm->character);
+        draw_state_indicator(c);
     return 0;
 }
 BINDABLE(draw_stickman, struct stickman)
@@ -258,7 +289,7 @@ void make_stickman(character_t* c, character_t* other, enum direction direction)
     c->direction = direction;
     c->states = states;
     c->hitbox_width = stickman_hitbox_width;
-    c->next = (struct character_state){
+    c->prev = c->next = (struct character_state){
         .ground_pos = -1.f,
         .health = 100,
         .advancing = 0,

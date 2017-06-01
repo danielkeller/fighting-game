@@ -51,6 +51,8 @@ void make_box(struct object* obj)
 
 void make_anim_obj(struct object* obj, anim_mesh_t mesh)
 {
+    assert(mesh->num_bones <= MAX_BONES && "Mesh has too many bones");
+    
     const GLsizei stride = sizeof(struct anim_vert);
     make_object_base(obj, mesh->size, stride, mesh->verts);
     

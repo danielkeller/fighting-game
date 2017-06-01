@@ -35,8 +35,8 @@ void next_state(character_t *c)
 void move_character(character_t* c)
 {
     float move_amt = c->prev.advancing
-        ? c->states[c->prev.state].fwd_speed
-        : c->states[c->prev.state].rev_speed * -1.;
+        ? c->states[c->next.state].fwd_speed
+        : c->states[c->next.state].rev_speed * -1.;
     c->next.ground_pos += move_amt;
     
     //using next may not be fair here, but using prev causes weird oscillations
@@ -98,16 +98,17 @@ void attack(character_t* attacker, struct attack* attack)
     }
 }
 
-void set_character_draw_state(character_t* c, struct program* program, struct object* object, anim_mesh_t mesh, animation_t anim)
+void set_character_draw_state(character_t* c, struct program* program, anim_mesh_t mesh, animation_t anim, float frame)
 {
-    frame_t frame = game_time.frame - c->anim_start;
+    assert(anim && "Animation not implemented");
     //In case we're off the end
     if (frame >= anim->length)
         frame = anim->length - 1;
     
-    glUniform4fv(program->bones_from, MAX_BONES, (float*)anim->frames[frame]);
-    glUniform4fv(program->bones_to, MAX_BONES, (float*)anim->frames[frame+1]);
-    glUniform1f(program->alpha, game_time.alpha);
+    int frame_num = frame;
+    glUniform4fv(program->bones_from, mesh->num_bones, (float*)anim->frames[frame_num]);
+    glUniform4fv(program->bones_to, mesh->num_bones, (float*)anim->frames[frame_num+1]);
+    glUniform1f(program->alpha, frame - frame_num);
     
     glUniform1f(program->time, (float)game_time.current_time / 1000000.f);
     glUniformMatrix3fv(program->camera, 1, GL_FALSE, camera.d);

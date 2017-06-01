@@ -27,7 +27,9 @@ class Add2DBoneKeyframe(bpy.types.Operator):
             pbone.rotation_mode = 'AXIS_ANGLE'
             t, _, _, z = pbone.rotation_axis_angle
             if z < 0:
-                pbone.rotation_axis_angle = (-t, 0, 0, 1)
+                t = -t
+            pbone.rotation_axis_angle = (t, 0, 0, 1)
+        
             
             if not self.just_fix:
                 pbone.keyframe_insert(data_path='rotation_axis_angle', index=0)
@@ -40,6 +42,10 @@ class Add2DBoneKeyframe(bpy.types.Operator):
                 path = 'pose.bones["{}"].scale'.format(pbone.name)
                 if path in keying_set_paths:
                     pbone.keyframe_insert(data_path='scale', index=1)
+
+        #for path in keying_set_paths:
+        #    if 'constraints' in path:
+        #        context.object.keyframe_insert(data_path=path)
 
         for area in bpy.context.screen.areas:
             if area.type in ['DOPESHEET_EDITOR', 'PROPERTIES']:
