@@ -44,13 +44,15 @@ struct animation {
 };
 
 struct anim_mesh {
-    GLsizei size, num_bones;
+    GLsizei num_verts, num_inds, num_bones;
     struct anim_vert* verts;
+    GLushort* indices;
 };
 
 void make_box(struct object*);
 void make_object(struct object*, mesh_t mesh);
 void make_anim_obj(struct object*, anim_mesh_t mesh);
+void draw_object(struct object*);
 void free_object(struct object*);
 
 //*** Shader

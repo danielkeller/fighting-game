@@ -69,8 +69,13 @@ def write_mesh(operator, context, path):
                 return rel_coord[0:2] + (bone_idx, parent_idx, bone_weight)
         
             objects[obj.name]['verts'] = [
-                vert_data(v) for fa in bm.faces for v in fa.verts
+                vert_data(v) for v in bm.verts
             ]
+            
+            objects[obj.name]['indices'] = [
+                v.index for fa in bm.faces for v in fa.verts
+            ]
+        
         
         actions = {strip.action
             for nla_track in armature.animation_data.nla_tracks
@@ -132,13 +137,21 @@ def write_mesh(operator, context, path):
             
             h_f.write('extern anim_mesh_t {};\n'.format(id(obj_name)))
             c_f.write('anim_mesh_t {} = &(struct anim_mesh) {{\n'.format(id(obj_name)))
-            c_f.write('.size = {},\n'.format(len(obj['verts'])))
+            c_f.write('.num_verts = {},\n'.format(len(obj['verts'])))
+            c_f.write('.num_inds = {},\n'.format(len(obj['indices'])))
             c_f.write('.num_bones = {},\n'.format(obj['num_bones']))
             
             c_f.write('.verts = (struct anim_vert[]) {\n')
             for vert in obj['verts']:
                 c_f.write('{{{}, {}, {}, {}, {}}},\n'.format(*vert))
-            c_f.write('}};\n\n')
+            c_f.write('},\n')
+            
+            c_f.write('.indices = (GLushort []){\n')
+            c_f.write(', '.join(map(str, obj['indices'])))
+            c_f.write('},\n')
+            
+            c_f.write('};\n\n')
+            
             
             for action_name, action in obj['anims'].items():
                 h_f.write('extern struct animation {};\n'.format(id(obj_name, action_name)))

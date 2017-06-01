@@ -21,22 +21,21 @@ static struct mesh box_mesh = {
     }
 };
 
-void make_object_base(struct object* obj, GLsizei n_verts, GLsizei stride, const void* verts)
+void make_object_base(struct object* obj, GLsizei num_verts, GLsizei stride, const void* verts)
 {
-    obj->numVertecies = n_verts;
-    
     glGenVertexArrays(1, &obj->vertexArrayObject);
     glBindVertexArray(obj->vertexArrayObject);
     
     glGenBuffers(1, &obj->vertexBufferObject);
     glBindBuffer(GL_ARRAY_BUFFER, obj->vertexBufferObject);
-    glBufferData(GL_ARRAY_BUFFER, n_verts * stride, verts, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, num_verts * stride, verts, GL_STATIC_DRAW);
 }
 
 void make_object(struct object* obj, mesh_t mesh)
 {
     GLsizei stride = sizeof(float)*2;
     make_object_base(obj, mesh->size, stride, mesh->verts);
+    obj->numVertecies = mesh->size;
     
     glEnableVertexAttribArray(POSITION_ATTRIB);
     glVertexAttribPointer(POSITION_ATTRIB, 2, GL_FLOAT, GL_FALSE, stride, NULL);
@@ -54,7 +53,12 @@ void make_anim_obj(struct object* obj, anim_mesh_t mesh)
     assert(mesh->num_bones <= MAX_BONES && "Mesh has too many bones");
     
     const GLsizei stride = sizeof(struct anim_vert);
-    make_object_base(obj, mesh->size, stride, mesh->verts);
+    make_object_base(obj, mesh->num_verts, stride, mesh->verts);
+    obj->numVertecies = mesh->num_inds;
+    
+    glGenBuffers(1, &obj->indexBufferObject);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, obj->indexBufferObject);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->num_inds * sizeof(GLushort), mesh->indices, GL_STATIC_DRAW);
     
     glEnableVertexAttribArray(POSITION_ATTRIB);
     glEnableVertexAttribArray(BONE_ATTRIB);
@@ -65,6 +69,12 @@ void make_anim_obj(struct object* obj, anim_mesh_t mesh)
     glVertexAttribIPointer(BONE_ATTRIB, 1, GL_UNSIGNED_BYTE, stride, STRUCT_OFFS(anim_vert, bone));
     glVertexAttribIPointer(PARENT_ATTRIB, 1, GL_UNSIGNED_BYTE, stride, STRUCT_OFFS(anim_vert, parent));
     glVertexAttribPointer(WEIGHT_ATTRIB, 1, GL_UNSIGNED_BYTE, GL_TRUE, stride, STRUCT_OFFS(anim_vert, weight));
+}
+
+void draw_object(struct object* obj)
+{
+    glBindVertexArray(obj->vertexArrayObject);
+    glDrawElements(GL_TRIANGLES, obj->numVertecies, GL_UNSIGNED_SHORT, NULL);
 }
 
 void free_object(struct object* obj)

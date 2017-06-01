@@ -255,8 +255,7 @@ int draw_stickman(struct stickman* sm)
     
     set_character_draw_state(c, &sm->program, stickman, anim, frame);
     
-    glBindVertexArray(sm->object.vertexArrayObject);
-    glDrawArrays(GL_TRIANGLES, 0, sm->object.numVertecies);
+    draw_object(&sm->object);
     
     draw_health_bar(c);
     if (learning_mode)

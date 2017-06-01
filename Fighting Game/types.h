@@ -21,7 +21,7 @@ typedef const struct animation* animation_t;
 struct object
 {
     GLuint vertexArrayObject;
-    GLuint vertexBufferObject;
+    GLuint vertexBufferObject, indexBufferObject;
     GLsizei numVertecies;
 };
 
