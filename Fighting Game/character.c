@@ -11,13 +11,6 @@
 #include <math.h>
 #include <assert.h>
 
-int shift_button_press(struct button* b)
-{
-    int ret = b->pressed != 0;
-    b->pressed = 0;
-    return ret;
-}
-
 //This overrides next_state because it updates anim_start
 void goto_state(character_t *c, int state)
 {

@@ -159,8 +159,11 @@ void free_effects(effects_t*);
 struct GLFWwindow;
 void init_input(struct GLFWwindow* window);
 void poll_input();
+#define TAP_FRAMES 3
 
 void update_key_events(struct key_events* to, struct key_events* from);
+int shift_button_press(struct button*);
+int shift_button_cancel(struct button*);
 
 //*** Globals
 //Read-only

@@ -9,11 +9,27 @@
 #include "engine.h"
 #include "window.h"
 
+int shift_button_press(struct button* b)
+{
+    int ret = b->pressed != 0;
+    b->pressed = 0;
+    return ret;
+}
+
+int shift_button_cancel(struct button* b)
+{
+    int ret = b->cancelled != 0;
+    b->cancelled = 0;
+    return ret;
+}
+
 void update_button(struct button* to, struct button* from)
 {
     to->down = from->down;
     to->pressed += from->pressed;
+    to->cancelled |= from->cancelled;
     from->pressed = 0;
+    from->cancelled = 0;
 }
 
 void update_key_events(struct key_events* to, struct key_events* from)
@@ -29,7 +45,13 @@ struct key_events key_left, key_right;
 //State should be pressed=1 or released=0
 void binding(struct button* button, int state)
 {
-    if (state && !button->down) ++button->pressed;
+    if (state && !button->down) {
+        ++button->pressed;
+        button->press_time = game_time.frame;
+        button->cancelled = 0;
+    }
+    if (!state && game_time.frame - button->press_time <= TAP_FRAMES)
+        button->cancelled = 1;
     button->down = state;
 }
 

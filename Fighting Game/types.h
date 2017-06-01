@@ -36,7 +36,8 @@ struct program
 };
 
 struct button {
-    int down, pressed;
+    int down, pressed, cancelled;
+    frame_t press_time;
 };
 
 struct key_events {

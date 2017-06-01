@@ -45,8 +45,9 @@ static const struct state states[NUM_STICKMAN_STATES] = {
     [overhead]    = {40, overhead,    speed*.75, rev_speed*.75, UNSTEADY},
     [big_swing_1] = {4,  big_swing_2, 0,         0,             UNSTEADY},
     [big_swing_2] = {7,  bottom,      0,         0, {5,  {{10, HEAVY},  {0,  WEAK}}}},
-    
-#define REACHING                              {10,  {{8,  WEAK}, {8,  WEAK}}}
+
+//Can't have knockback here, otherwise the drop-punish is too weak
+#define REACHING                              {50,  {{8,  WEAK}, {8,  WEAK}}}
     [lunge]         = {4,  lunge_recover, speed*20./4., 0,             REACHING},
     [lunge_recover] = {6,  forward,       0,            0,             REACHING},
     [forward]       = {40, forward,       speed*.75,    rev_speed*.75, REACHING},
@@ -63,6 +64,12 @@ static const struct state states[NUM_STICKMAN_STATES] = {
     [block]      = {6, hi_unblock, 0, 0,             BLOCKED},
     [hi_unblock] = {5, top,        0, 0,             UNBLOCKED},
     [lo_unblock] = {5, bottom,     0, 0,             UNBLOCKED},
+};
+
+static const frame_t cancel_frames[NUM_STICKMAN_STATES] = {
+    [swing] = 4, [swingup] = 6,
+    [lo_block] = 3, [hi_block] = 5,
+    [lift] = 10, [big_swing_1] = 5,
 };
 
 //Attacks can be in cancellable states, but *only* on the last frame. Otherwise
@@ -86,8 +93,9 @@ int stickman_actions(struct stickman* sm)
 {
     character_t* c = sm->character;
     
-    int can_cancel = CANCELLING && game_time.frame - c->anim_start <= 3;
-    int is_last_frame = game_time.frame - c->anim_start >= states[c->prev.state].frames;
+    frame_t frame = game_time.frame - c->anim_start;
+    int is_last_frame = frame >= states[c->prev.state].frames;
+    int is_cancel_frame = frame == cancel_frames[c->prev.state];
     
     //Remember not to call shift_button_press until we're really ready to use the input
     
@@ -101,9 +109,9 @@ int stickman_actions(struct stickman* sm)
                 goto_state(c, lift);
             break;
         case swing:
-            if (can_cancel && shift_button_press(&c->buttons.dodge))
+            if (is_cancel_frame && shift_button_press(&c->buttons.dodge))
                 goto_state(c, hi_block);
-            else if (can_cancel && !c->buttons.attack.down)
+            else if (is_cancel_frame && shift_button_cancel(&c->buttons.attack))
                 goto_state(c, top);
             attack(c, &down_attack);
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .6));
@@ -118,17 +126,17 @@ int stickman_actions(struct stickman* sm)
                 goto_state(c, lunge);
             break;
         case swingup:
-            if (can_cancel && shift_button_press(&c->buttons.dodge))
+            if (is_cancel_frame && shift_button_press(&c->buttons.dodge))
                 goto_state(c, lo_block);
-            else if (can_cancel && !c->buttons.attack.down)
+            else if (is_cancel_frame && shift_button_cancel(&c->buttons.attack))
                 goto_state(c, bottom);
             attack(c, &up_attack);
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .7));
             break;
             
         case lift:
-            if (can_cancel && !c->buttons.special.down)
-                goto_state(c, top);
+            if (is_cancel_frame && shift_button_cancel(&c->buttons.special))
+                goto_state(c, unlift);
             break;
         case overhead:
             if (shift_button_press(&c->buttons.attack))
@@ -136,13 +144,9 @@ int stickman_actions(struct stickman* sm)
             else if (shift_button_press(&c->buttons.special) || c->buttons.dodge.down)
                 goto_state(c, unlift);
             break;
-        case unlift:
-            //don't dodge if the player let go of the button
-            if (!c->buttons.dodge.down)
-                shift_button_press(&c->buttons.dodge);
-            break;
+        
         case big_swing_1:
-            if (can_cancel && !c->buttons.attack.down)
+            if (is_cancel_frame && shift_button_cancel(&c->buttons.attack))
                 goto_state(c, top);
             break;
         case big_swing_2:
@@ -161,7 +165,7 @@ int stickman_actions(struct stickman* sm)
                 goto_state(c, unlunge);
             else if (shift_button_press(&c->buttons.attack))
                 goto_state(c, poke);
-            //fall thru
+            //fall thru to other state with drop effect
         case lunge_recover:
         case poke_recover:
             if (c->other->prev.attack_result & (KNOCKED | LANDED))
@@ -171,19 +175,21 @@ int stickman_actions(struct stickman* sm)
         case poke:
             attack(c, &poke_attack);
             break;
+            
+        case unlift:
         case unlunge:
-            //don't dodge if the player let go of the button
-            if (!c->buttons.dodge.down)
+            //don't begin dodging if the player dodge-cancelled from a special state
+            if (shift_button_cancel(&c->buttons.dodge))
                 shift_button_press(&c->buttons.dodge);
             break;
             
         case lo_block:
-            if (can_cancel && !c->buttons.dodge.down)
+            if (is_cancel_frame && shift_button_cancel(&c->buttons.dodge))
                 goto_state(c, lo_unblock);
             break;
         
         case hi_block:
-            if (can_cancel && !c->buttons.dodge.down)
+            if (is_cancel_frame && shift_button_cancel(&c->buttons.dodge))
                 goto_state(c, hi_unblock);
             break;
             

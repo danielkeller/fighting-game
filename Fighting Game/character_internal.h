@@ -98,8 +98,6 @@ struct attack {
     enum force force;
 };
 
-int shift_button_press(struct button*);
-
 void goto_state(character_t *c, int state);
 void next_state(character_t *c);
 
