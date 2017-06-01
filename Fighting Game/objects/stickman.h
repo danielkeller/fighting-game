@@ -18,6 +18,7 @@ extern struct animation stickman_bottom;
 extern struct animation stickman_lift;
 extern struct animation stickman_drop;
 extern struct animation stickman_step_top;
+extern struct animation stickman_step_bottom;
 extern struct animation stickman_hi_block;
 extern struct animation stickman_hi_dodge;
 extern struct animation stickman_hi_unblock;

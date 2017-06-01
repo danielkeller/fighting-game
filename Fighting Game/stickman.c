@@ -13,7 +13,7 @@
 
 enum stickman_states {
     top, bottom, overhead, forward, block,
-    top_step,
+    top_step, bottom_step,
     swing, swingup,
     lift, unlift, big_swing_1, big_swing_2,
     lunge, unlunge, lunge_recover,
@@ -35,11 +35,12 @@ static const float block_dist = .3;
 
 //            frames  next  fwd_speed rev_speed    balance   hi        lo
 static const struct state states[NUM_STICKMAN_STATES] = {
-    [top]      = {40, top,    0,     rev_speed, {10, {{8,  MIDDLE}, {0,  WEAK}}}},
-    [top_step] = {7,  top,    speed, -speed,    {10, {{8,  MIDDLE}, {0,  WEAK}}}},
-    [bottom]   = {40, bottom, speed, rev_speed, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
-    [swing]    = {7,  bottom, 0,     0,         {5,  {{10, HEAVY},  {0,  WEAK}}}},
-    [swingup]  = {9,  top,    0,     0,         {20, {{0,  WEAK},   {10, HEAVY}}}},
+    [top]         = {40, top,    0,     rev_speed, {10, {{8,  MIDDLE}, {0,  WEAK}}}},
+    [top_step]    = {7,  top,    speed, -speed,    {10, {{8,  MIDDLE}, {0,  WEAK}}}},
+    [bottom]      = {40, bottom, 0,     rev_speed, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
+    [bottom_step] = {7,  bottom, speed, -speed,    {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
+    [swing]       = {7,  bottom, 0,     0,         {5,  {{10, HEAVY},  {0,  WEAK}}}},
+    [swingup]     = {9,  top,    0,     0,         {20, {{0,  WEAK},   {10, HEAVY}}}},
     
 #define UNSTEADY                              {4,  {{0, WEAK},    {0, WEAK}}}
     [lift]        = {10, overhead,    0,         0,             UNSTEADY},
@@ -103,14 +104,15 @@ int stickman_actions(struct stickman* sm)
     
     switch (c->prev.state) {
         case top:
+            if (c->buttons.move.down)
+                goto_state(c, top_step);
+        case top_step:
             if (shift_button_press(&c->buttons.dodge))
                 goto_state(c, hi_block);
             else if (shift_button_press(&c->buttons.attack))
                 goto_state(c, swing);
             else if (shift_button_press(&c->buttons.special))
                 goto_state(c, lift);
-            else if (c->buttons.move.down)
-                goto_state(c, top_step);
             break;
         case swing:
             if (is_cancel_frame && shift_button_press(&c->buttons.dodge))
@@ -122,6 +124,9 @@ int stickman_actions(struct stickman* sm)
             break;
             
         case bottom:
+            if (c->buttons.move.down)
+                goto_state(c, bottom_step);
+        case bottom_step:
             if (shift_button_press(&c->buttons.dodge))
                 goto_state(c, lo_block);
             else if (shift_button_press(&c->buttons.attack))
@@ -215,7 +220,7 @@ BINDABLE(stickman_actions, struct stickman)
 
 static animation_t animations[NUM_STICKMAN_STATES] = {
     [top] = &stickman_top, [bottom] = &stickman_bottom,
-    [top_step] = &stickman_step_top,
+    [top_step] = &stickman_step_top, [bottom_step] = &stickman_step_bottom,
     [swing] = &stickman_swing, [swingup] = &stickman_swing_up,
     [lift] = &stickman_lift, [overhead] = &stickman_overhead, [unlift] = &stickman_unlift,
     [big_swing_1] = &stickman_big_swing, [big_swing_2] = &stickman_big_swing,
