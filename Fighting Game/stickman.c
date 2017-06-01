@@ -46,7 +46,7 @@ static const struct state states[NUM_STICKMAN_STATES] = {
     [big_swing_1] = {4,  big_swing_2, 0,         0,             UNSTEADY},
     [big_swing_2] = {7,  bottom,      0,         0, {5,  {{10, HEAVY},  {0,  WEAK}}}},
     
-#define REACHING                              {4,  {{8,  WEAK}, {8,  WEAK}}}
+#define REACHING                              {10,  {{8,  WEAK}, {8,  WEAK}}}
     [lunge]         = {4,  lunge_recover, speed*20./4., 0,             REACHING},
     [lunge_recover] = {6,  forward,       0,            0,             REACHING},
     [forward]       = {40, forward,       speed*.75,    rev_speed*.75, REACHING},
@@ -212,7 +212,7 @@ static animation_t animations[NUM_STICKMAN_STATES] = {
     [block] = &stickman_block, [hi_unblock] = &stickman_hi_unblock, [lo_unblock] = &stickman_lo_unblock,
     [lunge] = &stickman_lunge, [lunge_recover] = &stickman_lunge, [unlunge] = &stickman_unlunge,
     [forward] = &stickman_forward,
-    [poke] = &stickman_poke, [poke_recover] = &stickman_forward,
+    [poke] = &stickman_poke, [poke_recover] = &stickman_forward, [drop] = &stickman_drop,
 };
 
 //'frame' is also the number of the previous frame here.
