@@ -235,19 +235,20 @@ static animation_t animations[NUM_STICKMAN_STATES] = {
 int draw_stickman(struct stickman* sm)
 {
     struct character* c = sm->character;
+    int state = c->next.state;
     
     draw_health_bar(c);
     
-    const struct animation* anim = animations[c->next.state];
+    const struct animation* anim = animations[state];
     if (!c->next.advancing) {
         if (anim == &stickman_hi_block) anim = &stickman_hi_dodge;
         if (anim == &stickman_lo_block) anim = &stickman_lo_dodge;
     }
     
     float frame = game_time.frame - c->anim_start + game_time.alpha;
-    if (c->next.state == big_swing_2)
+    if (state == big_swing_2)
         frame += states[big_swing_1].frames;
-    else if (c->next.state == lunge_recover)
+    else if (state == lunge_recover)
         frame += states[lunge].frames;
     else if (anim == &stickman_top || anim == &stickman_bottom
              || anim == &stickman_overhead || anim == &stickman_forward)
@@ -256,6 +257,11 @@ int draw_stickman(struct stickman* sm)
     flip_fbo(&fbo);
     glUseProgram(sm->blur_program.program);
     set_character_draw_state(c, &sm->blur_program, stickman, anim, frame);
+    if (state == swing || state == swingup || state == big_swing_1 || state == big_swing_2)
+        glUniform1i(sm->attacking_unif, 1);
+    else
+        glUniform1i(sm->attacking_unif, 0);
+    
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
     draw_blur_object(&sm->object);
@@ -309,6 +315,7 @@ void make_stickman(character_t* c, character_t* other, enum direction direction)
     sm->color_unif = glGetUniformLocation(sm->program.program, "main_color");
     glUniform3f(sm->color_unif, 1., 1., 1.);
     load_shader_program(&sm->blur_program, stickman_blur_vert, stickman_blur_frag);
+    sm->attacking_unif = glGetUniformLocation(sm->blur_program.program, "attacking");
     
     c->direction = direction;
     c->states = states;

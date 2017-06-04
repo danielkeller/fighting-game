@@ -119,7 +119,7 @@ struct stickman {
     character_t* character;
     struct program program, blur_program;
     struct object object;
-    GLint color_unif;
+    GLint color_unif, attacking_unif;
     struct program hit_effect, parry_effect;
 };
 

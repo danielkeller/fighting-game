@@ -36,15 +36,19 @@ vec2 skinned_pos() {
 
 in float blur_alpha;
 
-vec3 blur_skinned_pos() {
+vec3 blur_skinned_pos(float threshold, float exaggeration) {
     //return skinned_pos_at(alpha - (1. - blur_alpha));
     float inv_ba = 1. - blur_alpha;
     vec2 start_pos = skinned_pos_at(0);
     vec2 end_pos = skinned_pos_at(1);
-    if (distance(start_pos, end_pos) > .05)
-        return vec3(skinned_pos_at(alpha - inv_ba*.4), inv_ba);
+    if (distance(start_pos, end_pos) > threshold)
+        return vec3(skinned_pos_at(alpha - inv_ba*exaggeration), inv_ba);
     else
         return vec3(skinned_pos_at(alpha), 0.);
+}
+
+vec3 blur_skinned_pos() {
+    return blur_skinned_pos(.05, .4);
 }
 
 out float frag_blur_alpha;
