@@ -43,9 +43,10 @@ GLFWwindow* init_window(void)
     //set vsync
     glfwSwapInterval(!PROFILE);
     
+    //Leave these disabled though
+    glDepthFunc(GL_LESS);
     //glClearColor(1.f, 0.f, 1.f, 1.f);
     //glCullFace(GL_BACK);
-    //glDepthFunc(GL_LESS);
     
     return window;
 }

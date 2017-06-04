@@ -81,6 +81,7 @@ void link_shader_program(struct program* prog)
     glBindAttribLocation(program, BONE_ATTRIB, "bone");
     glBindAttribLocation(program, PARENT_ATTRIB, "parent");
     glBindAttribLocation(program, WEIGHT_ATTRIB, "weight");
+    glBindAttribLocation(program, BLUR_ALPHA_ATTRIB, "blur_alpha");
     
     glBindFragDataLocation(program, DRAW_BUFFER, "color");
     

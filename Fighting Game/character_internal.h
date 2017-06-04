@@ -117,7 +117,7 @@ void free_state_indicator(struct state_indicator*);
 //*** Stickman
 struct stickman {
     character_t* character;
-    struct program program;
+    struct program program, blur_program;
     struct object object;
     GLint color_unif;
     struct program hit_effect, parry_effect;

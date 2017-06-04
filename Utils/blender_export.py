@@ -119,7 +119,7 @@ def write_mesh(operator, context, path):
     with open(path + '.c', 'w') as c_f, open(path + '.h', 'w') as h_f:
         c_f.write('#include "engine.h"\n\n')
         h_f.write('typedef const struct mesh* mesh_t;\n')
-        h_f.write('typedef const struct anim_mesh* anim_mesh_t;\n')
+        h_f.write('typedef struct anim_mesh* anim_mesh_t;\n')
         h_f.write('typedef const struct animation* animation_t;\n\n')
         
         for obj_name, obj in objects.items():

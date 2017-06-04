@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37026DA61EE1C43300440F60 /* stickman_blur.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37026DA51EE1C43300440F60 /* stickman_blur.frag */; };
+		37026DA91EE2B01500440F60 /* stickman_blur.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37026DA81EE2B01500440F60 /* stickman_blur.vert */; };
 		371FF0AC1EA528A0003274FE /* function.c in Sources */ = {isa = PBXBuildFile; fileRef = 371FF0AA1EA528A0003274FE /* function.c */; };
 		371FF0B01EA5FE81003274FE /* effects.c in Sources */ = {isa = PBXBuildFile; fileRef = 371FF0AE1EA5FE81003274FE /* effects.c */; };
 		372F30AF1EA89F6200F9AE22 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 372F30AD1EA89F6200F9AE22 /* AppDelegate.m */; };
@@ -57,6 +59,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		37026DA51EE1C43300440F60 /* stickman_blur.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = stickman_blur.frag; path = shaders/stickman_blur.frag; sourceTree = "<group>"; };
+		37026DA81EE2B01500440F60 /* stickman_blur.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = stickman_blur.vert; path = shaders/stickman_blur.vert; sourceTree = "<group>"; };
 		371FF0AA1EA528A0003274FE /* function.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = function.c; sourceTree = "<group>"; };
 		371FF0AB1EA528A0003274FE /* function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = function.h; sourceTree = "<group>"; };
 		371FF0AE1EA5FE81003274FE /* effects.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = effects.c; sourceTree = "<group>"; };
@@ -260,6 +264,8 @@
 				3791266B1E866E8F00613418 /* color.frag */,
 				3791266C1E866E8F00613418 /* waves.frag */,
 				3791266D1E866E8F00613418 /* anim.vert */,
+				37026DA81EE2B01500440F60 /* stickman_blur.vert */,
+				37026DA51EE1C43300440F60 /* stickman_blur.frag */,
 				3791266E1E866E8F00613418 /* simple.vert */,
 				37EA382A1E9F726E00848254 /* health bar.frag */,
 				37EA382F1EA24B0B00848254 /* screenspace.vert */,
@@ -372,9 +378,11 @@
 			files = (
 				37EA38361EA4F0F700848254 /* particles.vert in Resources */,
 				37F36A321EB2124800E30D1D /* lib.frag in Resources */,
+				37026DA61EE1C43300440F60 /* stickman_blur.frag in Resources */,
 				37F36A381EB239FC00E30D1D /* blast.frag in Resources */,
 				37F36A341EB22C0800E30D1D /* lib.vert in Resources */,
 				37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */,
+				37026DA91EE2B01500440F60 /* stickman_blur.vert in Resources */,
 				37EA38321EA24B4400848254 /* blit.frag in Resources */,
 				37EA38301EA24B0B00848254 /* screenspace.vert in Resources */,
 				37F36A421EB6467900E30D1D /* state_indicator.frag in Resources */,

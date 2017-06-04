@@ -236,7 +236,7 @@ int draw_stickman(struct stickman* sm)
 {
     struct character* c = sm->character;
     
-    glUseProgram(sm->program.program);
+    draw_health_bar(c);
     
     const struct animation* anim = animations[c->next.state];
     if (!c->next.advancing) {
@@ -253,11 +253,18 @@ int draw_stickman(struct stickman* sm)
              || anim == &stickman_overhead || anim == &stickman_forward)
         frame /= 10.;
     
+    flip_fbo(&fbo);
+    glUseProgram(sm->blur_program.program);
+    set_character_draw_state(c, &sm->blur_program, stickman, anim, frame);
+    glEnable(GL_DEPTH_TEST);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    draw_blur_object(&sm->object);
+    glDisable(GL_DEPTH_TEST);
+    
+    glUseProgram(sm->program.program);
     set_character_draw_state(c, &sm->program, stickman, anim, frame);
-    
     draw_object(&sm->object);
-    
-    draw_health_bar(c);
+
     if (learning_mode)
         draw_state_indicator(c);
     return 0;
@@ -274,6 +281,7 @@ int free_stickman(struct stickman* sm)
     free_program(&sm->parry_effect);
     free_object(&sm->object);
     free_program(&sm->program);
+    free_program(&sm->blur_program);
     
     free(sm);
     return 0;
@@ -300,6 +308,7 @@ void make_stickman(character_t* c, character_t* other, enum direction direction)
     load_shader_program(&sm->program, anim_vert, color_frag);
     sm->color_unif = glGetUniformLocation(sm->program.program, "main_color");
     glUniform3f(sm->color_unif, 1., 1., 1.);
+    load_shader_program(&sm->blur_program, stickman_blur_vert, stickman_blur_frag);
     
     c->direction = direction;
     c->states = states;

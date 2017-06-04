@@ -30,6 +30,7 @@ struct mesh {
 struct anim_vert {
     float x, y; //Relative to bone
     uint8_t bone, parent, weight;
+    uint8_t blur_alpha;
 };
 
 struct bone {
@@ -46,13 +47,14 @@ struct animation {
 struct anim_mesh {
     GLsizei num_verts, num_inds, num_bones;
     struct anim_vert* verts;
-    GLushort* indices;
+    GLushort *indices, *blur_indices;
 };
 
 void make_box(struct object*);
 void make_object(struct object*, mesh_t mesh);
 void make_anim_obj(struct object*, anim_mesh_t mesh);
 void draw_object(struct object*);
+void draw_blur_object(struct object*);
 void free_object(struct object*);
 
 //*** Shader
@@ -60,6 +62,7 @@ void free_object(struct object*);
 #define WEIGHT_ATTRIB 1
 #define BONE_ATTRIB 2
 #define PARENT_ATTRIB 3
+#define BLUR_ALPHA_ATTRIB 4
 #define DRAW_BUFFER 0
 #define FB_TEX_UNIT 0
 
@@ -90,7 +93,7 @@ inline void poll_shader_changes() {}
 typedef struct fbo {
     GLsizei width, height;
     GLuint fbos[2], default_fb;
-    GLuint texes[2];
+    GLuint texes[2], depth;
     size_t cur;
     struct program quad_shader;
 } fbo_t;

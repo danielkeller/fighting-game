@@ -12,4 +12,6 @@ extern shader_t particles_vert;
 extern shader_t screenspace_vert;
 extern shader_t simple_vert;
 extern shader_t state_indicator_frag;
+extern shader_t stickman_blur_frag;
+extern shader_t stickman_blur_vert;
 extern shader_t waves_frag;

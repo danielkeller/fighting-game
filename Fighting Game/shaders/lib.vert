@@ -11,7 +11,7 @@ mat2 rotation(float t) {
                 sin(t), cos(t));
 }
 
-vec4 bone_lerp(vec4 from, vec4 to) {
+vec4 bone_lerp(vec4 from, vec4 to, float alpha) {
     //Go around the short way
     if (from.z + pi < to.z)
         to.z -= 2*pi;
@@ -20,14 +20,37 @@ vec4 bone_lerp(vec4 from, vec4 to) {
     return from * (1. - alpha) + to * alpha;
 }
 
-vec2 skinned_pos() {
-    vec4 eff_bone = bone_lerp(bones_from[bone], bones_to[bone]);
-    vec4 eff_parent = bone_lerp(bones_from[parent], bones_to[parent]);
+vec2 skinned_pos_at(float alpha) {
+    vec4 eff_bone = bone_lerp(bones_from[bone], bones_to[bone], alpha);
+    vec4 eff_parent = bone_lerp(bones_from[parent], bones_to[parent], alpha);
     
     //Interpolate the rotation by 'weight', then translate with the lower bone
     float rot = eff_parent.z + (eff_bone.z - eff_parent.z) * weight;
     vec2 bone_rel_pos = rotation(-rot) * position;
     return eff_bone.xy + bone_rel_pos;
+}
+
+vec2 skinned_pos() {
+    return skinned_pos_at(alpha);
+}
+
+in float blur_alpha;
+
+vec3 blur_skinned_pos() {
+    //return skinned_pos_at(alpha - (1. - blur_alpha));
+    float inv_ba = 1. - blur_alpha;
+    vec2 start_pos = skinned_pos_at(0);
+    vec2 end_pos = skinned_pos_at(1);
+    if (distance(start_pos, end_pos) > .05)
+        return vec3(skinned_pos_at(alpha - inv_ba*.4), inv_ba);
+    else
+        return vec3(skinned_pos_at(alpha), 0.);
+}
+
+out float frag_blur_alpha;
+
+void set_frag_blur_input() {
+    frag_blur_alpha = blur_alpha;
 }
 
 uniform mat3 camera;
@@ -38,4 +61,9 @@ out vec2 posFrag;
 void output_local_world_space(vec2 pos) {
     gl_Position = vec4((camera * transform * vec3(pos, 1)).xy, 0, 1);
     posFrag = (transform * vec3(pos, 1)).xy;
+}
+
+void output_local_world_space(vec3 pos) {
+    gl_Position = vec4((camera * transform * vec3(pos.xy, 1)).xy, pos.z, 1);
+    posFrag = (transform * vec3(pos.xy, 1)).xy;
 }

@@ -18,9 +18,9 @@ void make_fbo(fbo_t* fbo)
     glGenFramebuffers(2, fbo->fbos);
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&fbo->default_fb);
     fbo->texes[0] = fbo->texes[1] = 0;
+    fbo->depth = 0;
     fbo->width = fbo->height = 0;
     fbo->cur = 0;
-    //Depth?
     
     for (size_t i = 0; i < 2; ++i) {
         glBindFramebuffer(GL_FRAMEBUFFER, fbo->fbos[i]);
@@ -63,6 +63,12 @@ void fbo_window_size(fbo_t* fbo, GLsizei width, GLsizei height)
     
     glDeleteTextures(2, fbo->texes);
     glGenTextures(2, fbo->texes);
+    
+    glDeleteRenderbuffers(1, &fbo->depth);
+    glGenRenderbuffers(1, &fbo->depth);
+    glBindRenderbuffer(GL_RENDERBUFFER, fbo->depth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width/pixel, height/pixel);
+    
     for (size_t i = 0; i < 2; ++i) {
         glBindTexture(GL_TEXTURE_RECTANGLE, fbo->texes[i]);
         //https://www.opengl.org/wiki/Common_Mistakes#Creating_a_complete_texture
@@ -76,19 +82,23 @@ void fbo_window_size(fbo_t* fbo, GLsizei width, GLsizei height)
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                              fbo->texes[i], 0);
         
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->depth);
+        
         check_fbo_status();
     }
+    
     glViewport(0, 0, width/pixel, height/pixel);
 }
 
 void prepare_fbo(fbo_t* fbo)
 {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo->fbos[fbo->cur]);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void do_blit(fbo_t* fbo)
 {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(fbo->quad_shader.program);
     glBindVertexArray(box.vertexArrayObject);
     glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);

@@ -15,7 +15,7 @@ typedef long long usec_t;
 typedef unsigned long long frame_t;
 
 typedef const struct mesh* mesh_t;
-typedef const struct anim_mesh* anim_mesh_t;
+typedef struct anim_mesh* anim_mesh_t;
 typedef const struct animation* animation_t;
 
 struct object

@@ -294,7 +294,7 @@ shader_t lib_vert = &(struct shader){
 "sin(t), cos(t));\n"
 "}\n"
 "\n"
-"vec4 bone_lerp(vec4 from, vec4 to) {\n"
+"vec4 bone_lerp(vec4 from, vec4 to, float alpha) {\n"
 "//Go around the short way\n"
 "if (from.z + pi < to.z)\n"
 "to.z -= 2*pi;\n"
@@ -303,14 +303,37 @@ shader_t lib_vert = &(struct shader){
 "return from * (1. - alpha) + to * alpha;\n"
 "}\n"
 "\n"
-"vec2 skinned_pos() {\n"
-"vec4 eff_bone = bone_lerp(bones_from[bone], bones_to[bone]);\n"
-"vec4 eff_parent = bone_lerp(bones_from[parent], bones_to[parent]);\n"
+"vec2 skinned_pos_at(float alpha) {\n"
+"vec4 eff_bone = bone_lerp(bones_from[bone], bones_to[bone], alpha);\n"
+"vec4 eff_parent = bone_lerp(bones_from[parent], bones_to[parent], alpha);\n"
 "\n"
 "//Interpolate the rotation by 'weight', then translate with the lower bone\n"
 "float rot = eff_parent.z + (eff_bone.z - eff_parent.z) * weight;\n"
 "vec2 bone_rel_pos = rotation(-rot) * position;\n"
 "return eff_bone.xy + bone_rel_pos;\n"
+"}\n"
+"\n"
+"vec2 skinned_pos() {\n"
+"return skinned_pos_at(alpha);\n"
+"}\n"
+"\n"
+"in float blur_alpha;\n"
+"\n"
+"vec3 blur_skinned_pos() {\n"
+"//return skinned_pos_at(alpha - (1. - blur_alpha));\n"
+"float inv_ba = 1. - blur_alpha;\n"
+"vec2 start_pos = skinned_pos_at(0);\n"
+"vec2 end_pos = skinned_pos_at(1);\n"
+"if (distance(start_pos, end_pos) > .05)\n"
+"return vec3(skinned_pos_at(alpha - inv_ba*.4), inv_ba);\n"
+"else\n"
+"return vec3(skinned_pos_at(alpha), 0.);\n"
+"}\n"
+"\n"
+"out float frag_blur_alpha;\n"
+"\n"
+"void set_frag_blur_input() {\n"
+"frag_blur_alpha = blur_alpha;\n"
 "}\n"
 "\n"
 "uniform mat3 camera;\n"
@@ -321,6 +344,11 @@ shader_t lib_vert = &(struct shader){
 "void output_local_world_space(vec2 pos) {\n"
 "gl_Position = vec4((camera * transform * vec3(pos, 1)).xy, 0, 1);\n"
 "posFrag = (transform * vec3(pos, 1)).xy;\n"
+"}\n"
+"\n"
+"void output_local_world_space(vec3 pos) {\n"
+"gl_Position = vec4((camera * transform * vec3(pos.xy, 1)).xy, pos.z, 1);\n"
+"posFrag = (transform * vec3(pos.xy, 1)).xy;\n"
 "}\n"
 };
 shader_t particles_vert = &(struct shader){
@@ -437,6 +465,42 @@ shader_t state_indicator_frag = &(struct shader){
 "else\n"
 "color = vec4(1,1,1,1)*float(bottom)*.33;\n"
 "}\n"
+"}\n"
+};
+shader_t stickman_blur_frag = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/stickman_blur.frag",
+#endif
+.name = "stickman_blur_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"uniform sampler2DRect framebuffer;\n"
+"in float frag_blur_alpha;\n"
+"\n"
+"void main()\n"
+"{\n"
+"color = texture(framebuffer, gl_FragCoord.xy);\n"
+"color += vec4(frag_blur_alpha);//*vec4(.7, .8, .9, 1);\n"
+"}\n"
+};
+shader_t stickman_blur_vert = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/stickman_blur.vert",
+#endif
+.name = "stickman_blur_vert",
+.type = GL_VERTEX_SHADER,
+.source =
+"vec3 blur_skinned_pos();\n"
+"void output_local_world_space(vec3 pos);\n"
+"void set_frag_blur_input();\n"
+"\n"
+"void main()\n"
+"{\n"
+"set_frag_blur_input();\n"
+"output_local_world_space(blur_skinned_pos());\n"
 "}\n"
 };
 shader_t waves_frag = &(struct shader){
