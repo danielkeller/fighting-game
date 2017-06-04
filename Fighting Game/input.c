@@ -45,6 +45,10 @@ struct key_events key_left, key_right;
 //State should be pressed=1 or released=0
 void binding(struct button* button, int state)
 {
+    //Ignore repeat events from joystick
+    if (button->down == state)
+        return;
+    
     if (state && !button->down) {
         ++button->pressed;
         button->press_time = game_time.frame;
@@ -120,13 +124,15 @@ void poll_input()
                  key_left.start = axes[9];
         binding(&key_left.move,   axes[7]);
         binding(&key_left.dodge,  axes[1]);
-        binding(&key_left.attack, axes[2]);
+        binding(&key_left.attack, axes[0]);
+        binding(&key_left.special, axes[3]);
     }
     if (joy_right != -1) {
         const unsigned char* axes = glfwGetJoystickButtons(joy_right,  &count);
                  key_right.start = axes[9];
         binding(&key_right.move,   axes[7]);
         binding(&key_right.dodge,  axes[1]);
-        binding(&key_right.attack, axes[2]);
+        binding(&key_right.attack, axes[0]);
+        binding(&key_right.special, axes[3]);
     }
 }
