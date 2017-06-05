@@ -14,6 +14,9 @@
 //Enable dodge/block button
 #define DODGE 1
 
+//"Advance" button down = dodge
+#define REVERSE_DODGE 0
+
 //Enable cancelling
 #define CANCELLING 1
 

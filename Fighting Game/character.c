@@ -94,11 +94,14 @@ void attack(character_t* attacker, struct attack* attack)
 void set_character_draw_state(character_t* c, struct program* program, anim_mesh_t mesh, animation_t anim, float frame)
 {
     assert(anim && "Animation not implemented");
-    //In case we're off the end
-    if (frame >= anim->length)
-        frame = anim->length - 1;
     
     int frame_num = frame;
+    //In case we're off the end
+    if (frame > anim->length) {
+        frame = anim->length;
+        frame_num = anim->length - 1;
+    }
+    
     glUniform4fv(program->bones_from, mesh->num_bones, (float*)anim->frames[frame_num]);
     glUniform4fv(program->bones_to, mesh->num_bones, (float*)anim->frames[frame_num+1]);
     glUniform1f(program->alpha, frame - frame_num);
