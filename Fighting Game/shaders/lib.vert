@@ -26,7 +26,9 @@ vec2 skinned_pos_at(float alpha) {
     
     //Interpolate the rotation by 'weight', then translate with the lower bone
     float rot = eff_parent.z + (eff_bone.z - eff_parent.z) * weight;
-    vec2 bone_rel_pos = rotation(-rot) * position;
+    float y_scale = eff_parent.w + (eff_bone.w - eff_parent.w) * weight;
+    vec2 scale = vec2(1./y_scale, y_scale);
+    vec2 bone_rel_pos = rotation(-rot) * (position * scale);
     return eff_bone.xy + bone_rel_pos;
 }
 

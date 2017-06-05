@@ -56,14 +56,16 @@ static const struct state states[NUM_STICKMAN_STATES] = {
     [forward]       = {40, forward,       speed*.75,    rev_speed*.75, REACHING},
     [poke]          = {4,  poke_recover,  0,            0,             REACHING},
     [poke_recover]  = {6,  forward,       0,            0,             REACHING},
-    [unlunge]       = {5,  bottom,        0,            block_dist/5., REACHING},
+    [unlunge]       = {5,  bottom,        -REVERSE_DODGE*block_dist/5., (1-REVERSE_DODGE)*block_dist/5., REACHING},
     //Knockback would look weird here
     [drop]          = {30, top,           0,            0, {50,  {{0, WEAK},    {0, WEAK}}}},
     
 #define BLOCKED                               {10, {{20, HEAVY},  {20, HEAVY}}}
 #define UNBLOCKED                             {10,  {{0, WEAK},    {0, WEAK}}}
-    [hi_block]   = {3, block,      0, block_dist/3., BLOCKED},
-    [lo_block]   = {5, block,      0, block_dist/5., BLOCKED},
+#define BLOCK_DIST_F (1-REVERSE_DODGE)*block_dist
+#define BLOCK_DIST_R -REVERSE_DODGE*block_dist
+    [hi_block]   = {3, block,      BLOCK_DIST_R/3., BLOCK_DIST_F/3., BLOCKED},
+    [lo_block]   = {5, block,      BLOCK_DIST_R/5., BLOCK_DIST_F/5., BLOCKED},
     [block]      = {6, hi_unblock, 0, 0,             BLOCKED},
     [hi_unblock] = {5, top,        0, 0,             UNBLOCKED},
     [lo_unblock] = {5, bottom,     0, 0,             UNBLOCKED},
@@ -72,7 +74,7 @@ static const struct state states[NUM_STICKMAN_STATES] = {
 static const frame_t cancel_frames[NUM_STICKMAN_STATES] = {
     [swing] = 4, [swingup] = 6,
     [lo_block] = 3, [hi_block] = 5,
-    [lift] = 10, [big_swing_1] = 5,
+    [lift] = 5, [big_swing_1] = 4,
 };
 
 //Attacks can be in cancellable states, but *only* on the last frame. Otherwise
@@ -142,10 +144,10 @@ int stickman_actions(struct stickman* sm)
             attack(c, &up_attack);
             if (c->next.attack_result & PARRIED) push_effect(&effects, make_parry_effect(sm, .7));
             break;
-            
+
         case lift:
-            if (is_cancel_frame && shift_button_cancel(&c->buttons.special))
-                goto_state(c, unlift);
+            if (is_cancel_frame && (shift_button_cancel(&c->buttons.special) || c->buttons.dodge.down))
+                goto_state(c, top);
             break;
         case overhead:
             if (shift_button_press(&c->buttons.attack))
@@ -156,7 +158,7 @@ int stickman_actions(struct stickman* sm)
         
         case big_swing_1:
             if (is_cancel_frame && shift_button_cancel(&c->buttons.attack))
-                goto_state(c, top);
+                goto_state(c, overhead);
             break;
         case big_swing_2:
             attack(c, &overhead_attack);
@@ -240,7 +242,7 @@ int draw_stickman(struct stickman* sm)
     draw_health_bar(c);
     
     const struct animation* anim = animations[state];
-    if (!c->next.advancing) {
+    if (!c->next.advancing ^ REVERSE_DODGE) {
         if (anim == &stickman_hi_block) anim = &stickman_hi_dodge;
         if (anim == &stickman_lo_block) anim = &stickman_lo_dodge;
     }
