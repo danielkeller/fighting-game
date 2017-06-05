@@ -1,15 +1,15 @@
 const float pi = 3.1415926535897;
 
+mat2 rotation(float t) {
+    return mat2(cos(t), -sin(t),
+                sin(t), cos(t));
+}
+
 in vec2 position;
 in int bone, parent;
 in float weight;
 uniform float alpha;
 uniform vec4 bones_from[32], bones_to[32];
-
-mat2 rotation(float t) {
-    return mat2(cos(t), -sin(t),
-                sin(t), cos(t));
-}
 
 vec4 bone_lerp(vec4 from, vec4 to, float alpha) {
     //Go around the short way
@@ -39,7 +39,6 @@ vec2 skinned_pos() {
 in float blur_alpha;
 
 vec3 blur_skinned_pos(float threshold, float exaggeration) {
-    //return skinned_pos_at(alpha - (1. - blur_alpha));
     float inv_ba = 1. - blur_alpha;
     vec2 start_pos = skinned_pos_at(0);
     vec2 end_pos = skinned_pos_at(1);

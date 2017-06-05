@@ -68,7 +68,7 @@ int draw_parry_effect(parry_effect_t* pe)
     glUniform1f(program->time, (float)elapsed / 1000000.f);
     
     glBindVertexArray(box.vertexArrayObject);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, box.numVertecies, 100);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, box.numVertecies, 50);
     
     return elapsed < 500000ll;
 }

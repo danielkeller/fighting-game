@@ -14,19 +14,19 @@ int rand(int x) {
 
 void main()
 {
-    vec2 pos = position*.005;
-    
     int seed = rand(gl_InstanceID) ^ int(1/fract(transform[0,2] + transform[1,2]));
     int angle = rand(seed);
-    int vel = rand(angle);
+    int speed = rand(angle);
     
     float theta = float(angle) / pow(2., 20);
     vec2 dir = vec2(cos(theta), sin(theta));
+    vec2 vel = dir * (float(speed) / pow(2., 32)) + init_vel + vec2(0, -time);
     
-    pos += time * (dir * (float(vel) / pow(2., 32)) + init_vel);
+    vec2 pos = position*vec2(.05,.002);
+    vec2 vel_dir = normalize(vel);
+    pos = mat2(vel_dir.x, vel_dir.y, -vel_dir.y, vel_dir.x) * pos;
     
-    float gravity = time * time;
-    pos.y -= gravity;
+    pos += time * (vel);
     
     gl_Position = vec4((camera * transform * vec3(pos, 1)).xy, 0, 1);
     posFrag = (transform * vec3(pos, 1)).xy;
