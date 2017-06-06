@@ -37,13 +37,15 @@ vec2 skinned_pos() {
 }
 
 in float blur_alpha;
+uniform float ground_speed;
 
 vec3 blur_skinned_pos(float threshold, float exaggeration) {
     float inv_ba = 1. - blur_alpha;
+    vec2 offset = vec2(-1, 0)*ground_speed*inv_ba;
     vec2 start_pos = skinned_pos_at(0);
-    vec2 end_pos = skinned_pos_at(1);
+    vec2 end_pos = skinned_pos_at(1) + offset;
     if (distance(start_pos, end_pos) > threshold)
-        return vec3(skinned_pos_at(alpha - inv_ba*exaggeration), inv_ba);
+        return vec3(skinned_pos_at(alpha - inv_ba*exaggeration) + offset*exaggeration, inv_ba);
     else
         return vec3(skinned_pos_at(alpha), 0.);
 }

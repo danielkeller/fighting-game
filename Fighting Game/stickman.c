@@ -271,6 +271,7 @@ int draw_stickman(struct stickman* sm)
         glUniform1i(sm->attacking_unif, 1);
     else
         glUniform1i(sm->attacking_unif, 0);
+    glUniform1f(sm->ground_speed_unif, c->next.ground_pos - c->prev.ground_pos);
     
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -326,6 +327,7 @@ void make_stickman(character_t* c, character_t* other, enum direction direction)
     glUniform3f(sm->color_unif, 1., 1., 1.);
     load_shader_program(&sm->blur_program, stickman_blur_vert, stickman_blur_frag);
     sm->attacking_unif = glGetUniformLocation(sm->blur_program.program, "attacking");
+    sm->ground_speed_unif = glGetUniformLocation(sm->blur_program.program, "ground_speed");
     
     c->direction = direction;
     c->states = states;
