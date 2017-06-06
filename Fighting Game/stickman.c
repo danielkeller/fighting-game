@@ -26,6 +26,14 @@ static const float speed = .015;
 static const float rev_speed = RETREAT * speed;
 static const float block_dist = .3;
 
+#if FAST_ATTACK
+#define UP_FRAMES 7
+#define DN_FRAMES 9
+#else
+#define DN_FRAMES 12
+#define UP_FRAMES 13
+#endif
+
 //For attacks that give defense/momentum buffs, used symmetrically:
 //If the attack is before the midpoint of the animation, advantage goes to the
 //first player. After the midpoint, it goes to the second. If it is at the midpoint
@@ -39,8 +47,8 @@ static const struct state states[NUM_STICKMAN_STATES] = {
     [top_step]    = {7,  top,    speed, -speed,    {10, {{8,  MIDDLE}, {0,  WEAK}}}},
     [bottom]      = {40, bottom, 0,     rev_speed, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
     [bottom_step] = {7,  bottom, speed, -speed,    {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
-    [swing]       = {7,  bottom, 0,     0,         {5,  {{10, HEAVY},  {0,  WEAK}}}},
-    [swingup]     = {9,  top,    0,     0,         {20, {{0,  WEAK},   {10, HEAVY}}}},
+    [swing]       = {DN_FRAMES, bottom, 0,     0,         {5,  {{10, HEAVY},  {0,  WEAK}}}},
+    [swingup]     = {DN_FRAMES, top,    0,     0,         {20, {{0,  WEAK},   {10, HEAVY}}}},
     
 #define UNSTEADY                              {4,  {{0, WEAK},    {0, WEAK}}}
     [lift]        = {10, overhead,    0,         0,             UNSTEADY},

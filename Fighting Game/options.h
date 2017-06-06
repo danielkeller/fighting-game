@@ -11,6 +11,9 @@
 
 //Various gameplay options
 
+//Faster attacks
+#define FAST_ATTACK 0
+
 //Enable dodge/block button
 #define DODGE 1
 
