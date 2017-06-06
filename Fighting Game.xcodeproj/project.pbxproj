@@ -138,6 +138,47 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		37026DAA1EE7004A00440F60 /* stickman */ = {
+			isa = PBXGroup;
+			children = (
+				37F36A371EB239FC00E30D1D /* blast.frag */,
+				37EA38331EA2C18400848254 /* chevron_hit.frag */,
+				37F36A391EB23A1600E30D1D /* chevron.frag */,
+				37026DA81EE2B01500440F60 /* stickman_blur.vert */,
+				37026DA51EE1C43300440F60 /* stickman_blur.frag */,
+			);
+			name = stickman;
+			sourceTree = "<group>";
+		};
+		37026DAB1EE700B800440F60 /* basic */ = {
+			isa = PBXGroup;
+			children = (
+				3791266B1E866E8F00613418 /* color.frag */,
+				3791266D1E866E8F00613418 /* anim.vert */,
+				3791266E1E866E8F00613418 /* simple.vert */,
+			);
+			name = basic;
+			sourceTree = "<group>";
+		};
+		37026DAC1EE700D500440F60 /* character */ = {
+			isa = PBXGroup;
+			children = (
+				37EA382A1E9F726E00848254 /* health bar.frag */,
+				37F36A411EB6467900E30D1D /* state_indicator.frag */,
+				37EA38351EA4F0F700848254 /* particles.vert */,
+			);
+			name = character;
+			sourceTree = "<group>";
+		};
+		37026DAD1EE700F000440F60 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				37EA382F1EA24B0B00848254 /* screenspace.vert */,
+				37EA38311EA24B4400848254 /* blit.frag */,
+			);
+			name = util;
+			sourceTree = "<group>";
+		};
 		372F30A91EA89E7600F9AE22 /* engine */ = {
 			isa = PBXGroup;
 			children = (
@@ -258,20 +299,11 @@
 		3791266A1E866E8600613418 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
-				37F36A371EB239FC00E30D1D /* blast.frag */,
-				37EA38331EA2C18400848254 /* chevron_hit.frag */,
-				37F36A391EB23A1600E30D1D /* chevron.frag */,
-				3791266B1E866E8F00613418 /* color.frag */,
+				37026DAD1EE700F000440F60 /* util */,
+				37026DAB1EE700B800440F60 /* basic */,
+				37026DAC1EE700D500440F60 /* character */,
+				37026DAA1EE7004A00440F60 /* stickman */,
 				3791266C1E866E8F00613418 /* waves.frag */,
-				3791266D1E866E8F00613418 /* anim.vert */,
-				37026DA81EE2B01500440F60 /* stickman_blur.vert */,
-				37026DA51EE1C43300440F60 /* stickman_blur.frag */,
-				3791266E1E866E8F00613418 /* simple.vert */,
-				37EA382A1E9F726E00848254 /* health bar.frag */,
-				37EA382F1EA24B0B00848254 /* screenspace.vert */,
-				37EA38311EA24B4400848254 /* blit.frag */,
-				37EA38351EA4F0F700848254 /* particles.vert */,
-				37F36A411EB6467900E30D1D /* state_indicator.frag */,
 				37F36A311EB2124800E30D1D /* lib.frag */,
 				37F36A331EB22C0800E30D1D /* lib.vert */,
 				379126731E86786100613418 /* shaders.c */,
