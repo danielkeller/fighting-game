@@ -10,6 +10,7 @@
 #include "objects/stickman.h"
 #include "engine.h"
 #include <math.h>
+#include <assert.h>
 
 enum stickman_states {
     top, bottom, overhead, forward, block,
@@ -81,7 +82,7 @@ static const struct state states[NUM_STICKMAN_STATES] = {
 
 static const frame_t cancel_frames[NUM_STICKMAN_STATES] = {
     [swing] = 4, [swingup] = 6,
-    [lo_block] = 3, [hi_block] = 5,
+    [lo_block] = 3, [hi_block] = 3,
     [lift] = 5, [big_swing_1] = 4,
 };
 
@@ -105,6 +106,9 @@ poke_attack     = {2, LO, .7, .8, 8,  0,  LIGHT};
 int stickman_actions(struct stickman* sm)
 {
     character_t* c = sm->character;
+    
+    assert(cancel_frames[c->prev.state] <= states[c->prev.state].frames
+           && "Cancel frame is after the end of the state");
     
     frame_t frame = game_time.frame - c->anim_start;
     int is_last_frame = frame >= states[c->prev.state].frames;
