@@ -36,7 +36,8 @@ void update_key_events(struct key_events* to, struct key_events* from)
 {
     update_button(&to->attack, &from->attack);
     update_button(&to->dodge, &from->dodge);
-    update_button(&to->move, &from->move);
+    update_button(&to->fwd, &from->fwd);
+    update_button(&to->back, &from->back);
     update_button(&to->special, &from->special);
 }
 
@@ -63,14 +64,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
     if (action == GLFW_REPEAT) return;
     
-    if (key == GLFW_KEY_C)      binding(&key_left.move, action);
-    if (key == GLFW_KEY_SLASH)  binding(&key_right.move, action);
-    if (key == GLFW_KEY_X)      binding(&key_left.attack, action);
-    if (key == GLFW_KEY_PERIOD) binding(&key_right.attack, action);
-    if (key == GLFW_KEY_Z)      binding(&key_left.dodge, action);
-    if (key == GLFW_KEY_COMMA)  binding(&key_right.dodge, action);
-    if (key == GLFW_KEY_S)      binding(&key_left.special, action);
-    if (key == GLFW_KEY_L)      binding(&key_right.special, action);
+    if (key == GLFW_KEY_V)           binding(&key_left.back, action);
+    if (key == GLFW_KEY_C)           binding(&key_left.fwd, action);
+    if (key == GLFW_KEY_RIGHT_SHIFT) binding(&key_right.back, action);
+    if (key == GLFW_KEY_SLASH)       binding(&key_right.fwd, action);
+    if (key == GLFW_KEY_X)           binding(&key_left.attack, action);
+    if (key == GLFW_KEY_PERIOD)      binding(&key_right.attack, action);
+    if (key == GLFW_KEY_Z)           binding(&key_left.dodge, action);
+    if (key == GLFW_KEY_COMMA)       binding(&key_right.dodge, action);
+    if (key == GLFW_KEY_S)           binding(&key_left.special, action);
+    if (key == GLFW_KEY_L)           binding(&key_right.special, action);
     
     if (action == GLFW_RELEASE) return;
     if (key == GLFW_KEY_F) toggle_fullscreen(window);
@@ -122,7 +125,7 @@ void poll_input()
         */
         
                  key_left.start = axes[9];
-        binding(&key_left.move,   axes[7]);
+        //binding(&key_left.move,   axes[7]);
         binding(&key_left.dodge,  axes[1]);
         binding(&key_left.attack, axes[0]);
         binding(&key_left.special, axes[3]);
@@ -130,7 +133,7 @@ void poll_input()
     if (joy_right != -1) {
         const unsigned char* axes = glfwGetJoystickButtons(joy_right,  &count);
                  key_right.start = axes[9];
-        binding(&key_right.move,   axes[7]);
+        //binding(&key_right.move,   axes[7]);
         binding(&key_right.dodge,  axes[1]);
         binding(&key_right.attack, axes[0]);
         binding(&key_right.special, axes[3]);

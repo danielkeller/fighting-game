@@ -17,14 +17,8 @@
 //Enable dodge/block button
 #define DODGE 1
 
-//"Advance" button down = dodge
-#define REVERSE_DODGE 0
-
 //Enable cancelling
 #define CANCELLING 1
-
-//Enable retreat when attack is not pushed
-#define RETREAT 0
 
 //Disable vsync and print the fps
 #define PROFILE 0

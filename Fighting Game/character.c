@@ -27,10 +27,7 @@ void next_state(character_t *c)
 
 void move_character(character_t* c)
 {
-    float move_amt = c->prev.advancing
-        ? c->states[c->next.state].fwd_speed
-        : c->states[c->next.state].rev_speed * -1.;
-    c->next.ground_pos += move_amt;
+    c->next.ground_pos += c->states[c->next.state].speed;
     
     //using next may not be fair here, but using prev causes weird oscillations
     float other_pos = -c->other->next.ground_pos;
@@ -43,7 +40,6 @@ int step_character(character_t* c, struct key_events* events)
     c->prev = c->next;
     c->next.attack_result = 0;
     update_key_events(&c->buttons, events);
-    c->next.advancing = c->buttons.move.down;
     return c->prev.health > 0;
 }
 

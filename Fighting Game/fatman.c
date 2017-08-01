@@ -21,9 +21,9 @@ static const float speed = .018;
 
 //            frames  next  fwd_speed rev_speed    balance   hi        lo
 static const struct state states[NUM_FATMAN_STATES] = {
-    [still]     = {20, still, speed,     0, {10, {{8,  WEAK}, {10,  WEAK}}}},
-    [sway_fwd]  = {20, still, speed,     0, {10, {{8,  WEAK}, {10,  WEAK}}}},
-    [sway_back] = {20, still, speed,     0, {10, {{8,  WEAK}, {10,  WEAK}}}},
+    [still]     = {20, still, 0, {10, {{8,  WEAK}, {10,  WEAK}}}},
+    [sway_fwd]  = {20, still, 0, {10, {{8,  WEAK}, {10,  WEAK}}}},
+    [sway_back] = {20, still, 0, {10, {{8,  WEAK}, {10,  WEAK}}}},
 };
 
 static const frame_t cancel_frames[NUM_FATMAN_STATES] = {0};
@@ -43,8 +43,8 @@ int fatman_actions(struct fatman* fm)
         case still:
             if (shift_button_press(&c->buttons.dodge))
                 goto_state(c, sway_back);
-            if (c->prev.advancing && !c->next.advancing)
-                goto_state(c, sway_fwd);
+            //if (c->prev.advancing && !c->next.advancing)
+            //    goto_state(c, sway_fwd);
             break;
         case sway_fwd:
             if (is_last_frame && shift_button_press(&c->buttons.dodge))

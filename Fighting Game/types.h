@@ -41,7 +41,7 @@ struct button {
 };
 
 struct key_events {
-    struct button move, attack, special, dodge;
+    struct button fwd, back, attack, special, dodge;
     int start;
 };
 

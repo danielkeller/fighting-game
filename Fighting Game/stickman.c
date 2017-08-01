@@ -19,13 +19,13 @@ enum stickman_states {
     lift, unlift, big_swing_1, big_swing_2,
     lunge, unlunge, lunge_recover,
     poke, drop, poke_recover,
-    hi_block, lo_block, hi_unblock, lo_unblock,
+    hi_block, lo_block, hi_dodge, lo_dodge,
+    hi_unblock, lo_unblock,
     NUM_STICKMAN_STATES
 };
 
 static const float speed = .015;
-static const float rev_speed = RETREAT * speed;
-static const float block_dist = .3;
+static const float dodge_dist = .3;
 
 #if FAST_ATTACK
 #define UP_FRAMES 7
@@ -42,42 +42,42 @@ static const float block_dist = .3;
 
 //To make dodging make sense, the player must be stationary or slow during attacks
 
-//            frames  next  fwd_speed rev_speed    balance   hi        lo
+//                frames  next  speed   balance   hi        lo
 static const struct state states[NUM_STICKMAN_STATES] = {
-    [top]         = {40, top,    0,     rev_speed, {10, {{8,  MIDDLE}, {0,  WEAK}}}},
-    [top_step]    = {7,  top,    speed, -speed,    {10, {{8,  MIDDLE}, {0,  WEAK}}}},
-    [bottom]      = {40, bottom, 0,     rev_speed, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
-    [bottom_step] = {7,  bottom, speed, -speed,    {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
-    [swing]       = {DN_FRAMES, bottom, 0,     0,         {5,  {{10, HEAVY},  {0,  WEAK}}}},
-    [swingup]     = {DN_FRAMES, top,    0,     0,         {20, {{0,  WEAK},   {10, HEAVY}}}},
+    [top]         = {40,    top,        0, {10, {{8,  MIDDLE}, {0,  WEAK}}}},
+    [top_step]    = {7,     top,    speed, {10, {{8,  MIDDLE}, {0,  WEAK}}}},
+    [bottom]      = {40,    bottom,     0, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
+    [bottom_step] = {7,     bottom, speed, {8,  {{0,  WEAK},   {8,  MIDDLE}}}},
+    [swing]       = {DN_FRAMES, bottom, 0, {5,  {{10, HEAVY},  {0,  WEAK}}}},
+    [swingup]     = {DN_FRAMES, top,    0, {20, {{0,  WEAK},   {10, HEAVY}}}},
     
-#define UNSTEADY                              {4,  {{0, WEAK},    {0, WEAK}}}
-    [lift]        = {10, overhead,    0,         0,             UNSTEADY},
-    [unlift]      = {6,  top,         0,         0,             UNSTEADY},
-    [overhead]    = {40, overhead,    speed*.75, rev_speed*.75, UNSTEADY},
-    [big_swing_1] = {4,  big_swing_2, 0,         0,             UNSTEADY},
-    [big_swing_2] = {7,  bottom,      0,         0, {5,  {{10, HEAVY},  {0,  WEAK}}}},
+#define UNSTEADY                           {4,  {{0, WEAK},    {0, WEAK}}}
+    [lift]        = {10,   overhead,    0, UNSTEADY},
+    [unlift]      = {6,    top,         0, UNSTEADY},
+    [overhead]    = {40,   overhead,    0, UNSTEADY},
+    [big_swing_1] = {4,    big_swing_2, 0, UNSTEADY},
+    [big_swing_2] = {7,    bottom,      0, {5,  {{10, HEAVY},  {0, WEAK}}}},
 
 //Can't have knockback here, otherwise the drop-punish is too weak
-#define REACHING                              {50,  {{8,  WEAK}, {8,  WEAK}}}
-    [lunge]         = {4,  lunge_recover, speed*20./4., 0,             REACHING},
-    [lunge_recover] = {6,  forward,       0,            0,             REACHING},
-    [forward]       = {40, forward,       speed*.75,    rev_speed*.75, REACHING},
-    [poke]          = {4,  poke_recover,  0,            0,             REACHING},
-    [poke_recover]  = {6,  forward,       0,            0,             REACHING},
-    [unlunge]       = {5,  bottom,        -REVERSE_DODGE*block_dist/5., (1-REVERSE_DODGE)*block_dist/5., REACHING},
+#define REACHING                             {50,  {{8,  WEAK}, {8,  WEAK}}}
+    [lunge]         = {4,  lunge_recover, speed*20./4., REACHING},
+    [lunge_recover] = {6,  forward,       0,            REACHING},
+    [forward]       = {40, forward,       0,            REACHING},
+    [poke]          = {4,  poke_recover,  0,            REACHING},
+    [poke_recover]  = {6,  forward,       0,            REACHING},
+    [unlunge]       = {5,  bottom,        0,            REACHING},
     //Knockback would look weird here
-    [drop]          = {30, top,           0,            0, {50,  {{0, WEAK},    {0, WEAK}}}},
+    [drop]          = {30, top,           0, {50,  {{0, WEAK},    {0, WEAK}}}},
     
-#define BLOCKED                               {10, {{20, HEAVY},  {20, HEAVY}}}
-#define UNBLOCKED                             {10,  {{0, WEAK},    {0, WEAK}}}
-#define BLOCK_DIST_F (1-REVERSE_DODGE)*block_dist
-#define BLOCK_DIST_R -REVERSE_DODGE*block_dist
-    [hi_block]   = {3, block,      BLOCK_DIST_R/3., BLOCK_DIST_F/3., BLOCKED},
-    [lo_block]   = {5, block,      BLOCK_DIST_R/5., BLOCK_DIST_F/5., BLOCKED},
-    [block]      = {6, hi_unblock, 0, 0,             BLOCKED},
-    [hi_unblock] = {5, top,        0, 0,             UNBLOCKED},
-    [lo_unblock] = {5, bottom,     0, 0,             UNBLOCKED},
+#define BLOCKED                              {10, {{20, HEAVY},  {20, HEAVY}}}
+#define UNBLOCKED                            {10,  {{0, WEAK},    {0, WEAK}}}
+    [hi_block]   = {3, block,      0,              BLOCKED},
+    [lo_block]   = {5, block,      0,              BLOCKED},
+    [hi_dodge]   = {3, block,      -dodge_dist/3., BLOCKED},
+    [lo_dodge]   = {5, block,      -dodge_dist/5., BLOCKED},
+    [block]      = {6, hi_unblock, 0,              BLOCKED},
+    [hi_unblock] = {5, top,        0,              UNBLOCKED},
+    [lo_unblock] = {5, bottom,     0,              UNBLOCKED},
 };
 
 static const frame_t cancel_frames[NUM_STICKMAN_STATES] = {
@@ -118,11 +118,11 @@ int stickman_actions(struct stickman* sm)
     
     switch (c->prev.state) {
         case top:
-            if (c->buttons.move.down)
+            if (c->buttons.fwd.down)
                 goto_state(c, top_step);
         case top_step:
             if (shift_button_press(&c->buttons.dodge))
-                goto_state(c, hi_block);
+                goto_state(c, c->buttons.back.down ? hi_dodge : hi_block);
             else if (shift_button_press(&c->buttons.attack))
                 goto_state(c, swing);
             else if (shift_button_press(&c->buttons.special))
@@ -130,7 +130,7 @@ int stickman_actions(struct stickman* sm)
             break;
         case swing:
             if (is_cancel_frame && shift_button_press(&c->buttons.dodge))
-                goto_state(c, hi_block);
+                goto_state(c, c->buttons.back.down ? hi_dodge : hi_block);
             else if (is_cancel_frame && shift_button_cancel(&c->buttons.attack))
                 goto_state(c, top);
             attack(c, &down_attack);
@@ -138,11 +138,11 @@ int stickman_actions(struct stickman* sm)
             break;
             
         case bottom:
-            if (c->buttons.move.down)
+            if (c->buttons.fwd.down)
                 goto_state(c, bottom_step);
         case bottom_step:
             if (shift_button_press(&c->buttons.dodge))
-                goto_state(c, lo_block);
+                goto_state(c, c->buttons.back.down ? lo_dodge : lo_block);
             else if (shift_button_press(&c->buttons.attack))
                 goto_state(c, swingup);
             else if (shift_button_press(&c->buttons.special))
@@ -150,7 +150,7 @@ int stickman_actions(struct stickman* sm)
             break;
         case swingup:
             if (is_cancel_frame && shift_button_press(&c->buttons.dodge))
-                goto_state(c, lo_block);
+                goto_state(c, c->buttons.back.down ? lo_dodge : lo_block);
             else if (is_cancel_frame && shift_button_cancel(&c->buttons.attack))
                 goto_state(c, bottom);
             attack(c, &up_attack);
@@ -239,6 +239,7 @@ static animation_t animations[NUM_STICKMAN_STATES] = {
     [lift] = &stickman_lift, [overhead] = &stickman_overhead, [unlift] = &stickman_unlift,
     [big_swing_1] = &stickman_big_swing, [big_swing_2] = &stickman_big_swing,
     [hi_block] = &stickman_hi_block, [lo_block] = &stickman_lo_block,
+    [hi_dodge] = &stickman_hi_dodge, [lo_dodge] = &stickman_lo_dodge,
     [block] = &stickman_block, [hi_unblock] = &stickman_hi_unblock, [lo_unblock] = &stickman_lo_unblock,
     [lunge] = &stickman_lunge, [lunge_recover] = &stickman_lunge, [unlunge] = &stickman_unlunge,
     [forward] = &stickman_forward,
@@ -254,11 +255,7 @@ int draw_stickman(struct stickman* sm)
     draw_health_bar(c);
     
     const struct animation* anim = animations[state];
-    if (!c->next.advancing ^ REVERSE_DODGE) {
-        if (anim == &stickman_hi_block) anim = &stickman_hi_dodge;
-        if (anim == &stickman_lo_block) anim = &stickman_lo_dodge;
-    }
-    
+
     float frame = game_time.frame - c->anim_start + game_time.alpha;
     if (state == big_swing_2)
         frame += states[big_swing_1].frames;

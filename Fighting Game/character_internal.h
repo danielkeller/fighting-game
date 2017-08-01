@@ -43,7 +43,7 @@ struct state
 {
     int frames;
     int next_state;
-    float fwd_speed, rev_speed;
+    float speed;
     struct fight_state fight_state;
 };
 
@@ -64,7 +64,6 @@ struct state_indicator {
 struct character_state {
     int state;
     float ground_pos;
-    int advancing;
     struct fight_state fight_state;
     enum attack_result attack_result;
     int health;
