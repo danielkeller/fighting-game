@@ -25,7 +25,8 @@ void draw_character(character_t*);
 //Must clear effects after calling this
 void free_character(character_t*);
 
-//Relies on init_game_time having been called
+//Rely on init_game_time having been called
 void make_stickman(character_t* c, character_t* other, enum direction direction);
+void make_fatman(character_t* c, character_t* other, enum direction direction);
 
 #endif /* character_h */

@@ -17,8 +17,6 @@ typedef struct Mat3 {
     float d[9];
 } Mat3;
 
-extern Mat3 eye3;
-
 Mat3 affine(float theta, float x, float y);
 
 //*** Object
@@ -37,6 +35,7 @@ struct bone {
     float x, y, theta, length;
 };
 
+//See lib.vert > skinned_pos
 #define MAX_BONES 32
 
 struct animation {
@@ -172,6 +171,7 @@ int shift_button_cancel(struct button*);
 
 //*** Globals
 //Read-only
+extern Mat3 eye3;
 extern struct key_events no_key_events;
 extern struct object box;
 extern Mat3 camera;

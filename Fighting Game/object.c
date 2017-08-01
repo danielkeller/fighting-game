@@ -120,8 +120,13 @@ void draw_object(struct object* obj)
 
 void draw_blur_object(struct object* obj)
 {
+    glEnable(GL_DEPTH_TEST);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    
     glBindVertexArray(obj->vertexArrayObject);
     glDrawElements(GL_TRIANGLES, obj->numVertecies*7, GL_UNSIGNED_SHORT, NULL);
+    
+    glDisable(GL_DEPTH_TEST);
 }
 
 void free_object(struct object* obj)

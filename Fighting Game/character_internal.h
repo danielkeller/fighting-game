@@ -125,8 +125,17 @@ struct stickman {
 
 static const float stickman_hitbox_width = .15;
 
-typedef struct bound bound_t;
 bound_t make_hit_effect(struct stickman* sm);
 bound_t make_parry_effect(struct stickman* sm, float y);
+
+//*** Fatman
+struct fatman {
+    character_t* character;
+    struct program program, blur_program;
+    struct object object;
+    GLint color_unif, attacking_unif, ground_speed_unif;
+};
+
+static const float fatman_hitbox_width = .2;
 
 #endif /* character_internal_h */

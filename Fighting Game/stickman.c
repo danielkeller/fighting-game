@@ -86,8 +86,7 @@ static const frame_t cancel_frames[NUM_STICKMAN_STATES] = {
     [lift] = 5, [big_swing_1] = 4,
 };
 
-//Attacks can be in cancellable states, but *only* on the last frame. Otherwise
-//the player can cancel the action after the attack comes out.
+//Attacks should obviously come after the cancel frame.
 
 static struct attack
 //          frame target min- range damage knock force
@@ -103,6 +102,7 @@ poke_attack     = {2, LO, .7, .8, 8,  0,  LIGHT};
 //       _____#-----=-----=.....@
 // anim_start ^  +1 ^  +2 ^
 // where '=' are calls to _actions() in the '-' state
+
 int stickman_actions(struct stickman* sm)
 {
     character_t* c = sm->character;
@@ -111,7 +111,7 @@ int stickman_actions(struct stickman* sm)
            && "Cancel frame is after the end of the state");
     
     frame_t frame = game_time.frame - c->anim_start;
-    int is_last_frame = frame >= states[c->prev.state].frames;
+    int is_last_frame = frame == states[c->prev.state].frames;
     int is_cancel_frame = frame == cancel_frames[c->prev.state];
     
     //Remember not to call shift_button_press until we're really ready to use the input
@@ -277,10 +277,7 @@ int draw_stickman(struct stickman* sm)
         glUniform1i(sm->attacking_unif, 0);
     glUniform1f(sm->ground_speed_unif, c->next.ground_pos - c->prev.ground_pos);
     
-    glEnable(GL_DEPTH_TEST);
-    glClear(GL_DEPTH_BUFFER_BIT);
     draw_blur_object(&sm->object);
-    glDisable(GL_DEPTH_TEST);
     
     glUseProgram(sm->program.program);
     set_character_draw_state(c, &sm->program, stickman, anim, frame);
@@ -336,15 +333,11 @@ void make_stickman(character_t* c, character_t* other, enum direction direction)
     c->direction = direction;
     c->states = states;
     c->hitbox_width = stickman_hitbox_width;
+    c->buttons = no_key_events;
     c->prev = c->next = (struct character_state){
         .ground_pos = -1.f,
         .health = 100,
-        .advancing = 0,
+        .state = top,
     };
-    c->buttons = no_key_events;
     goto_state(c, top);
-    
-    //Do nothing for one frame so the state is consistent
-    step_character(c, &no_key_events);
-    stickman_actions(sm);
 }

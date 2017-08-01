@@ -27,6 +27,8 @@
 		37853D6B1D68AA720052A8C8 /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D691D68AA720052A8C8 /* object.c */; };
 		379126751E86786100613418 /* shaders.c in Sources */ = {isa = PBXBuildFile; fileRef = 379126731E86786100613418 /* shaders.c */; };
 		37B7BC501D6F311400EF0A7E /* fbo.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B7BC4E1D6F311400EF0A7E /* fbo.c */; };
+		37C8FD471F0D829A00EE268D /* fatman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37C8FD451F0D829A00EE268D /* fatman.c */; };
+		37C8FD4A1F0D838C00EE268D /* fatman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37C8FD491F0D838C00EE268D /* fatman.c */; };
 		37CFC0E91D7B2584000A795E /* world.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0E71D7B2584000A795E /* world.c */; };
 		37CFC0EC1D7B2671000A795E /* math.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0EA1D7B2671000A795E /* math.c */; };
 		37E3B5681EAF8834004DBE36 /* game over.c in Sources */ = {isa = PBXBuildFile; fileRef = 37E3B5661EAF8834004DBE36 /* game over.c */; };
@@ -98,6 +100,9 @@
 		379126731E86786100613418 /* shaders.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shaders.c; sourceTree = "<group>"; };
 		379126741E86786100613418 /* shaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shaders.h; sourceTree = "<group>"; };
 		37B7BC4E1D6F311400EF0A7E /* fbo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fbo.c; sourceTree = "<group>"; };
+		37C8FD451F0D829A00EE268D /* fatman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fatman.c; path = objects/fatman.c; sourceTree = "<group>"; };
+		37C8FD461F0D829A00EE268D /* fatman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fatman.h; path = objects/fatman.h; sourceTree = "<group>"; };
+		37C8FD491F0D838C00EE268D /* fatman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fatman.c; sourceTree = "<group>"; };
 		37CFC0E71D7B2584000A795E /* world.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = world.c; sourceTree = "<group>"; };
 		37CFC0EA1D7B2671000A795E /* math.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = math.c; sourceTree = "<group>"; };
 		37E3B5661EAF8834004DBE36 /* game over.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "game over.c"; path = "objects/game over.c"; sourceTree = "<group>"; };
@@ -207,6 +212,7 @@
 				37F36A301EB1EE2400E30D1D /* character_internal.h */,
 				372F30B21EA8AA3200F9AE22 /* character.c */,
 				372F337C1D78A9020076D98E /* stickman.c */,
+				37C8FD491F0D838C00EE268D /* fatman.c */,
 				372F30B51EA910AD00F9AE22 /* stickman_effects.c */,
 			);
 			name = game;
@@ -315,6 +321,8 @@
 		37B695091D737A04009A40B1 /* objects */ = {
 			isa = PBXGroup;
 			children = (
+				37C8FD451F0D829A00EE268D /* fatman.c */,
+				37C8FD461F0D829A00EE268D /* fatman.h */,
 				377D3FE41ECE2FED00531846 /* stickman.h */,
 				377D3FE11ECE27B500531846 /* stickman.c */,
 				37E3B5661EAF8834004DBE36 /* game over.c */,
@@ -456,6 +464,7 @@
 				372F30AF1EA89F6200F9AE22 /* AppDelegate.m in Sources */,
 				37421AC01CB2FFE50027B7D4 /* main.c in Sources */,
 				371FF0AC1EA528A0003274FE /* function.c in Sources */,
+				37C8FD4A1F0D838C00EE268D /* fatman.c in Sources */,
 				37853D681D662D520052A8C8 /* error.c in Sources */,
 				379126751E86786100613418 /* shaders.c in Sources */,
 				37CFC0E91D7B2584000A795E /* world.c in Sources */,
@@ -469,6 +478,7 @@
 				372F30B41EA8AA3200F9AE22 /* character.c in Sources */,
 				371FF0B01EA5FE81003274FE /* effects.c in Sources */,
 				37853D5D1D6622680052A8C8 /* shader.c in Sources */,
+				37C8FD471F0D829A00EE268D /* fatman.c in Sources */,
 				372F337E1D78A9020076D98E /* stickman.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

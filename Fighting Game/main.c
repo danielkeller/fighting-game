@@ -36,8 +36,8 @@ int main (int argc, char* argv[])
         character_t
             *left = alloc_character(),
             *right = alloc_character();
-        make_stickman(left, right, RIGHT),
-        make_stickman(right, left, LEFT);
+        make_stickman(left, right, RIGHT);
+        make_fatman(right, left, LEFT);
         
         key_right = key_left = (struct key_events){{0}};
         
