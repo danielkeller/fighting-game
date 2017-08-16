@@ -13,17 +13,25 @@
 #include <assert.h>
 
 enum fatman_states {
-    still, sway_fwd, sway_back,
+    still, step_fwd, step_fwd_1, step_back, sway_fwd, sway_back,
+    backflip, backflip_recover,
     NUM_FATMAN_STATES
 };
 
-static const float speed = .018;
+static const float speed = .02;
+static const float backflip_dist = .6;
 
 //            frames  next  fwd_speed rev_speed    balance   hi        lo
 static const struct state states[NUM_FATMAN_STATES] = {
-    [still]     = {20, still, 0, {10, {{8,  WEAK}, {10,  WEAK}}}},
-    [sway_fwd]  = {20, still, 0, {10, {{8,  WEAK}, {10,  WEAK}}}},
-    [sway_back] = {20, still, 0, {10, {{8,  WEAK}, {10,  WEAK}}}},
+#define REST                     {4, {{0,  WEAK}, {6,  WEAK}}}
+    [still]      = {20, still,     0,     REST},
+    [step_fwd_1] = {6,  sway_fwd,  speed, REST},
+    [step_fwd]   = {6,  sway_fwd,  speed, REST},
+    [sway_fwd]   = {15, still,     0,     REST},
+    [step_back]  = {8,  still,    -speed, REST},
+    [sway_back]  = {20, still,     0,     REST},
+    [backflip]   = {12, backflip_recover, -backflip_dist/12., REST},
+    [backflip_recover] = {8, still, 0,    REST},
 };
 
 static const frame_t cancel_frames[NUM_FATMAN_STATES] = {0};
@@ -41,14 +49,31 @@ int fatman_actions(struct fatman* fm)
     
     switch (c->prev.state) {
         case still:
+            if (c->buttons.fwd.down)
+                goto_state(c, step_fwd_1);
+            if (c->buttons.back.down)
+                goto_state(c, step_back);
             if (shift_button_press(&c->buttons.dodge))
                 goto_state(c, sway_back);
             //if (c->prev.advancing && !c->next.advancing)
             //    goto_state(c, sway_fwd);
             break;
+        case step_fwd_1:
+        case step_fwd:
+            if (is_last_frame && shift_button_press(&c->buttons.dodge))
+                goto_state(c, backflip);
+            else if (is_last_frame && c->buttons.fwd.down)
+                goto_state(c, step_fwd);
+            break;
+        case step_back:
+            if (is_last_frame && c->buttons.back.down)
+                goto_state(c, step_back);
+            break;
         case sway_fwd:
             if (is_last_frame && shift_button_press(&c->buttons.dodge))
                 goto_state(c, sway_back);
+            if (is_last_frame && c->buttons.back.down)
+                goto_state(c, step_back);
             break;
         default:
             break;
@@ -63,7 +88,10 @@ BINDABLE(fatman_actions, struct fatman)
 
 static animation_t animations[NUM_FATMAN_STATES] = {
     [still] = &fatman_still,
+    [step_fwd] = &fatman_step_fwd, [step_back] = &fatman_step_back,
+    [step_fwd_1] = &fatman_step_fwd1,
     [sway_fwd] = &fatman_sway_fwd, [sway_back] = &fatman_sway_back,
+    [backflip] = &fatman_backflip, [backflip_recover] = &fatman_backflip_recover,
 };
 
 int draw_fatman(struct fatman* fm)
