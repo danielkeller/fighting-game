@@ -66,8 +66,8 @@ void attack(character_t* attacker, struct attack* attack)
     
     int knockback = attack->knock - victim->prev.fight_state.balance;
     
-    if (attack->force > target->block) { //Attack lands
-        int damage = attack->damage - target->defense;
+    int damage = attack->damage - target->defense;
+    if (attack->force > target->block && damage > 0) { //Attack lands
         
         victim->next.health -= damage;
         if (victim->next.health < 0)
