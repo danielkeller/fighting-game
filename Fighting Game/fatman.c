@@ -13,9 +13,10 @@
 #include <assert.h>
 
 enum fatman_states {
-    still, step_fwd, step_fwd_1, step_back, sway_fwd, sway_back,
+    still, step_fwd, step_fwd_1, step_back, sway_fwd,
     backflip, backflip_recover,
     punch, kick, kick_recover,
+    dodge_1, undodge, dodge_2,
     NUM_FATMAN_STATES
 };
 
@@ -30,12 +31,14 @@ static const struct state states[NUM_FATMAN_STATES] = {
     [step_fwd]   = {6,  sway_fwd,  speed, REST},
     [sway_fwd]   = {15, still,     0,     REST},
     [step_back]  = {8,  still,    -speed, REST},
-    [sway_back]  = {20, still,     0,     REST},
     [backflip]   = {12, backflip_recover, -backflip_dist/12., REST},
     [backflip_recover] = {8, still, 0,    REST},
     [punch]      = {7,  still,     0,     REST},
     [kick]       = {14, kick_recover, 0,  REST},
     [kick_recover] = {14, still,   0,     REST},
+    [dodge_1]    = {13, dodge_2, -.4/13., REST},
+    [undodge]    = {6,  still,    .4/6.,  REST},
+    [dodge_2]    = {12, still,     0,     REST},
 };
 
 static const frame_t cancel_frames[NUM_FATMAN_STATES] = {0};
@@ -64,7 +67,7 @@ int fatman_actions(struct fatman* fm)
             else if (c->buttons.back.down && c->prev.ground_pos > -1.f)
                 goto_state(c, step_back);
             else if (shift_button_press(&c->buttons.dodge))
-                goto_state(c, sway_back);
+                goto_state(c, dodge_1);
             else if (shift_button_press(&c->buttons.attack))
                 goto_state(c, punch);
             //if (c->prev.advancing && !c->next.advancing)
@@ -72,7 +75,9 @@ int fatman_actions(struct fatman* fm)
             break;
         case step_fwd_1:
         case step_fwd:
-            if (is_last_frame && shift_button_press(&c->buttons.dodge))
+            if (shift_button_press(&c->buttons.attack))
+                goto_state(c, punch);
+            else if (is_last_frame && shift_button_press(&c->buttons.dodge))
                 goto_state(c, backflip);
             else if (is_last_frame && c->buttons.fwd.down)
                 goto_state(c, step_fwd);
@@ -85,9 +90,20 @@ int fatman_actions(struct fatman* fm)
             break;
         case sway_fwd:
             if (is_last_frame && shift_button_press(&c->buttons.dodge))
-                goto_state(c, sway_back);
+                goto_state(c, dodge_1);
             if (is_last_frame && c->buttons.back.down)
                 goto_state(c, step_back);
+            break;
+        case dodge_1:
+            if (!c->buttons.dodge.down || c->buttons.attack.down) {
+                goto_state(c, undodge);
+                float progress = (float)frame / states[dodge_1].frames;
+                float rev_progress = (1.f - progress) * states[undodge].frames;
+                //back up the starting point, since we start in the middle
+                c->anim_start -= rev_progress - .5f;
+                if (game_time.frame - c->anim_start >= states[undodge].frames)
+                    goto_state(c, still);
+            }
             break;
         case punch:
             attack(c, &punch_1_attack);
@@ -111,7 +127,8 @@ static animation_t animations[NUM_FATMAN_STATES] = {
     [still] = &fatman_rest,
     [step_fwd] = &fatman_step_fwd, [step_back] = &fatman_step_back,
     [step_fwd_1] = &fatman_step_fwd1,
-    [sway_fwd] = &fatman_sway_fwd, [sway_back] = &fatman_sway_back,
+    [sway_fwd] = &fatman_sway_fwd,
+    [dodge_1] = &fatman_sway_back, [undodge] = &fatman_sway_back, [dodge_2] = &fatman_sway_back,
     [backflip] = &fatman_backflip, [backflip_recover] = &fatman_backflip_recover,
     [punch] = &fatman_punch, [kick] = &fatman_kick, [kick_recover] = &fatman_kick,
 };
@@ -126,6 +143,13 @@ int draw_fatman(struct fatman* fm)
     
     if (state == kick_recover)
         frame += states[kick].frames;
+    if (state == dodge_2)
+        frame += states[dodge_1].frames;
+    if (state == undodge) {
+        //play backwards from the middle
+        frame *= (float)states[dodge_1].frames / states[undodge].frames;
+        frame = fatman_sway_back.length - states[dodge_2].frames - frame;
+    }
     
     draw_health_bar(c);
     
