@@ -136,7 +136,7 @@ static animation_t animations[NUM_FATMAN_STATES] = {
     [sway_fwd] = &fatman_sway_fwd,
     [dodge_1] = &fatman_sway_back, [dodge_held] = &fatman_sway_back,
     [undodge] = &fatman_sway_back, [back_undodge] = &fatman_sway_back,
-    [backflip] = &fatman_backflip, [backflip_recover] = &fatman_backflip_recover,
+    [backflip] = &fatman_backflip, [backflip_recover] = &fatman_backflip,
     [punch] = &fatman_punch, [kick] = &fatman_kick, [kick_recover] = &fatman_kick,
 };
 
@@ -150,6 +150,8 @@ int draw_fatman(struct fatman* fm)
     
     if (state == kick_recover)
         frame += states[kick].frames;
+    if (state == backflip_recover)
+        frame += states[backflip].frames;
     if (state == back_undodge)
         frame += states[dodge_1].frames;
     if (state == dodge_held)
