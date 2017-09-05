@@ -13,7 +13,7 @@
 #include <assert.h>
 
 enum fatman_states {
-    still, step_fwd, step_fwd_1, step_back, sway_fwd,
+    still, step_fwd, step_fwd_1, step_back, stop,
     backflip, backflip_recover,
     frontflip, frontflip_recover,
     punch, kick, kick_recover,
@@ -30,9 +30,9 @@ static const float flip_dist = .6;
 //                     frames  next             speed              fight 
 static const struct state states[NUM_FATMAN_STATES] = {
     [still]             = {20, still,              0,             REST},
-    [step_fwd_1]        = {6,  sway_fwd,           speed,         REST},
-    [step_fwd]          = {6,  sway_fwd,           speed,         REST},
-    [sway_fwd]          = {15, still,              0,             REST},
+    [step_fwd_1]        = {6,  stop,               speed,         REST},
+    [step_fwd]          = {6,  stop,               speed,         REST},
+    [stop]              = {2,  still,              0,             REST},
     [step_back]         = {8,  still,             -speed,         REST},
     [backflip]          = {12, backflip_recover,  -flip_dist/12., REST},
     //maybe make backflip slower than walking?
@@ -80,11 +80,13 @@ int fatman_actions(struct fatman* fm)
             break;
         case step_fwd_1:
         case step_fwd:
-            if (shift_button_press(&c->buttons.attack))
+            if (!c->buttons.fwd.down)
+                /*don't do anything, so the player can change the stick position*/;
+            else if (shift_button_press(&c->buttons.attack))
                 goto_state(c, punch);
             else if (shift_button_press(&c->buttons.special))
                 goto_state(c, frontflip);
-            else if (is_last_frame && c->buttons.fwd.down)
+            else if (is_last_frame)
                 goto_state(c, step_fwd);
             break;
         case back_undodge:
@@ -92,11 +94,13 @@ int fatman_actions(struct fatman* fm)
                 goto_state(c, step_back);
             break;
         case step_back:
-            if (shift_button_press(&c->buttons.attack))
+            if (!c->buttons.back.down)
+                /*don't do anything, so the player can change the stick position*/;
+            else if (shift_button_press(&c->buttons.attack))
                 goto_state(c, kick);
             else if (shift_button_press(&c->buttons.special))
                 goto_state(c, backflip);
-            else if (is_last_frame && c->buttons.back.down && c->prev.ground_pos > -1.f)
+            else if (is_last_frame && c->prev.ground_pos > -1.f)
                 goto_state(c, step_back);
             break;
         case dodge_1:
@@ -138,7 +142,7 @@ static animation_t animations[NUM_FATMAN_STATES] = {
     [still] = &fatman_rest,
     [step_fwd] = &fatman_step_fwd, [step_back] = &fatman_step_back,
     [step_fwd_1] = &fatman_step_fwd1,
-    [sway_fwd] = &fatman_sway_fwd,
+    [stop] = &fatman_stop,
     [dodge_1] = &fatman_sway_back, [dodge_held] = &fatman_sway_back,
     [undodge] = &fatman_sway_back, [back_undodge] = &fatman_sway_back,
     [backflip] = &fatman_backflip, [backflip_recover] = &fatman_backflip,
@@ -169,6 +173,7 @@ int draw_fatman(struct fatman* fm)
     
     flip_fbo(&fbo);
     glUseProgram(fm->blur_program.program);
+    set_character_draw_state(c, &fm->blur_program, fatman, anim, frame);
     glUniform1f(fm->ground_speed_unif, c->next.ground_pos - c->prev.ground_pos);
     draw_blur_object(&fm->object);
     
