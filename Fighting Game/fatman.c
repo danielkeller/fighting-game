@@ -16,7 +16,7 @@ enum fatman_states {
     still, step_fwd, step_fwd_1, step_back, stop,
     backflip, backflip_recover,
     frontflip, frontflip_recover,
-    punch, kick, kick_recover,
+    punch, kick,
     dodge_1, dodge_held, undodge, back_undodge,
     NUM_FATMAN_STATES
 };
@@ -40,8 +40,7 @@ static const struct state states[NUM_FATMAN_STATES] = {
     [frontflip]         = {12, frontflip_recover,  flip_dist/12., REST},
     [frontflip_recover] = {8,  still,              0,             REST},
     [punch]             = {7,  still,              0,             REST},
-    [kick]              = {14, kick_recover,       0,             REST},
-    [kick_recover]      = {14, still,              0,             REST},
+    [kick]              = {9,  still,              0,             REST},
     [dodge_1]           = {13, dodge_held,        -.4/13.,        REST},
     [dodge_held]        = {1,  dodge_held,         0,             REST},
     [undodge]           = {6,  still,              .4/6.,         REST},
@@ -52,9 +51,9 @@ static const frame_t cancel_frames[NUM_FATMAN_STATES] = {0};
 
 static struct attack
 //          frame target min- range damage knock force
-punch_1_attack   = {1, HI, 0, .4, 5, 0, MIDDLE},
-punch_2_attack   = {4, HI, 0, .4, 5, 5, MIDDLE},
-kick_attack      = {9, LO, 0, .5, 10, 10, MIDDLE};
+punch_1_attack   = {1, HI, 0, .4, 5, 0,  MIDDLE},
+punch_2_attack   = {4, HI, 0, .4, 5, 5,  MIDDLE},
+kick_attack      = {5, LO, 0, .5, 6, 10, MIDDLE};
 
 int fatman_actions(struct fatman* fm)
 {
@@ -83,7 +82,7 @@ int fatman_actions(struct fatman* fm)
             if (!c->buttons.fwd.down)
                 /*don't do anything, so the player can change the stick position*/;
             else if (shift_button_press(&c->buttons.attack))
-                goto_state(c, punch);
+                goto_state(c, kick);
             else if (shift_button_press(&c->buttons.special))
                 goto_state(c, frontflip);
             else if (is_last_frame)
@@ -147,7 +146,7 @@ static animation_t animations[NUM_FATMAN_STATES] = {
     [undodge] = &fatman_sway_back, [back_undodge] = &fatman_sway_back,
     [backflip] = &fatman_backflip, [backflip_recover] = &fatman_backflip,
     [frontflip] = &fatman_frontflip, [frontflip_recover] = &fatman_frontflip,
-    [punch] = &fatman_punch, [kick] = &fatman_kick, [kick_recover] = &fatman_kick,
+    [punch] = &fatman_punch, [kick] = &fatman_kick,
 };
 
 int draw_fatman(struct fatman* fm)
@@ -158,7 +157,6 @@ int draw_fatman(struct fatman* fm)
     float frame = game_time.frame - c->anim_start + game_time.alpha;
     const struct animation* anim = animations[state];
     
-    if (state == kick_recover)      frame += states[kick].frames;
     if (state == backflip_recover)  frame += states[backflip].frames;
     if (state == frontflip_recover) frame += states[frontflip].frames;
     if (state == back_undodge)      frame += states[dodge_1].frames;
