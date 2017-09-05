@@ -15,34 +15,37 @@
 enum fatman_states {
     still, step_fwd, step_fwd_1, step_back, sway_fwd,
     backflip, backflip_recover,
+    frontflip, frontflip_recover,
     punch, kick, kick_recover,
     dodge_1, dodge_held, undodge, back_undodge,
     NUM_FATMAN_STATES
 };
 
 static const float speed = .02;
-static const float backflip_dist = .6;
+static const float flip_dist = .6;
 
 //         balance   hi        lo
 #define REST {4, {{0,  WEAK}, {6,  WEAK}}}
 
 //                     frames  next             speed              fight 
 static const struct state states[NUM_FATMAN_STATES] = {
-    [still]            = {20, still,             0,                 REST},
-    [step_fwd_1]       = {6,  sway_fwd,          speed,             REST},
-    [step_fwd]         = {6,  sway_fwd,          speed,             REST},
-    [sway_fwd]         = {15, still,             0,                 REST},
-    [step_back]        = {8,  still,            -speed,             REST},
-    [backflip]         = {12, backflip_recover, -backflip_dist/12., REST},
+    [still]             = {20, still,              0,             REST},
+    [step_fwd_1]        = {6,  sway_fwd,           speed,         REST},
+    [step_fwd]          = {6,  sway_fwd,           speed,         REST},
+    [sway_fwd]          = {15, still,              0,             REST},
+    [step_back]         = {8,  still,             -speed,         REST},
+    [backflip]          = {12, backflip_recover,  -flip_dist/12., REST},
     //maybe make backflip slower than walking?
-    [backflip_recover] = {8,  still,             0,                 REST},
-    [punch]            = {7,  still,             0,                 REST},
-    [kick]             = {14, kick_recover,      0,                 REST},
-    [kick_recover]     = {14, still,             0,                 REST},
-    [dodge_1]          = {13, dodge_held,       -.4/13.,            REST},
-    [dodge_held]       = {1,  dodge_held,        0,                 REST},
-    [undodge]          = {6,  still,             .4/6.,             REST},
-    [back_undodge]     = {12, still,             0,                 REST},
+    [backflip_recover]  = {8,  still,              0,             REST},
+    [frontflip]         = {12, frontflip_recover,  flip_dist/12., REST},
+    [frontflip_recover] = {8,  still,              0,             REST},
+    [punch]             = {7,  still,              0,             REST},
+    [kick]              = {14, kick_recover,       0,             REST},
+    [kick_recover]      = {14, still,              0,             REST},
+    [dodge_1]           = {13, dodge_held,        -.4/13.,        REST},
+    [dodge_held]        = {1,  dodge_held,         0,             REST},
+    [undodge]           = {6,  still,              .4/6.,         REST},
+    [back_undodge]      = {12, still,              0,             REST},
 };
 
 static const frame_t cancel_frames[NUM_FATMAN_STATES] = {0};
@@ -79,6 +82,8 @@ int fatman_actions(struct fatman* fm)
         case step_fwd:
             if (shift_button_press(&c->buttons.attack))
                 goto_state(c, punch);
+            else if (shift_button_press(&c->buttons.special))
+                goto_state(c, frontflip);
             else if (is_last_frame && c->buttons.fwd.down)
                 goto_state(c, step_fwd);
             break;
@@ -137,6 +142,7 @@ static animation_t animations[NUM_FATMAN_STATES] = {
     [dodge_1] = &fatman_sway_back, [dodge_held] = &fatman_sway_back,
     [undodge] = &fatman_sway_back, [back_undodge] = &fatman_sway_back,
     [backflip] = &fatman_backflip, [backflip_recover] = &fatman_backflip,
+    [frontflip] = &fatman_frontflip, [frontflip_recover] = &fatman_frontflip,
     [punch] = &fatman_punch, [kick] = &fatman_kick, [kick_recover] = &fatman_kick,
 };
 
@@ -148,14 +154,11 @@ int draw_fatman(struct fatman* fm)
     float frame = game_time.frame - c->anim_start + game_time.alpha;
     const struct animation* anim = animations[state];
     
-    if (state == kick_recover)
-        frame += states[kick].frames;
-    if (state == backflip_recover)
-        frame += states[backflip].frames;
-    if (state == back_undodge)
-        frame += states[dodge_1].frames;
-    if (state == dodge_held)
-        frame = states[dodge_1].frames;
+    if (state == kick_recover)      frame += states[kick].frames;
+    if (state == backflip_recover)  frame += states[backflip].frames;
+    if (state == frontflip_recover) frame += states[frontflip].frames;
+    if (state == back_undodge)      frame += states[dodge_1].frames;
+    if (state == dodge_held)        frame = states[dodge_1].frames;
     if (state == undodge) {
         //play backwards from the middle
         frame *= (float)states[dodge_1].frames / states[undodge].frames;
