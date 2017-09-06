@@ -59,7 +59,7 @@ static const struct state states[NUM_STICKMAN_STATES] = {
     [big_swing_2] = {7,    bottom,      0, {5,  {{10, HEAVY},  {0, WEAK}}}},
 
 //Can't have knockback here, otherwise the drop-punish is too weak
-#define REACHING                             {50,  {{8,  WEAK}, {8,  WEAK}}}
+#define REACHING                             {50,  {{0,  WEAK}, {0,  WEAK}}}
     [lunge]         = {4,  lunge_recover, speed*20./4., REACHING},
     [lunge_recover] = {6,  forward,       0,            REACHING},
     [forward]       = {40, forward,       0,            REACHING},

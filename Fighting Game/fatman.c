@@ -41,9 +41,9 @@ static const struct state states[NUM_FATMAN_STATES] = {
     [frontflip_recover] = {8,  still,              0,             REST},
     [punch]             = {7,  still,              0,             REST},
     [kick]              = {9,  still,              0,             REST},
-    [dodge_1]           = {13, dodge_held,        -.4/13.,        REST},
+    [dodge_1]           = {8,  dodge_held,        -.4/8.,        REST},
     [dodge_held]        = {1,  dodge_held,         0,             REST},
-    [undodge]           = {6,  still,              .4/6.,         REST},
+    [undodge]           = {5,  still,              .4/5.,         REST},
     [back_undodge]      = {12, still,              0,             REST},
 };
 
@@ -69,7 +69,7 @@ int fatman_actions(struct fatman* fm)
     switch (c->prev.state) {
         case still:
             if (shift_button_press(&c->buttons.attack))
-                goto_state(c, punch);
+                goto_state(c, c->buttons.fwd.down ? punch : kick);
             else if (c->buttons.dodge.down)
                 goto_state(c, dodge_1);
             else if (c->buttons.fwd.down)
@@ -82,7 +82,7 @@ int fatman_actions(struct fatman* fm)
             if (!c->buttons.fwd.down)
                 /*don't do anything, so the player can change the stick position*/;
             else if (shift_button_press(&c->buttons.attack))
-                goto_state(c, kick);
+                goto_state(c, punch);
             else if (shift_button_press(&c->buttons.special))
                 goto_state(c, frontflip);
             else if (is_last_frame)
