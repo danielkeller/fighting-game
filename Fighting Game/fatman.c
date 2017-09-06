@@ -68,9 +68,26 @@ int fatman_actions(struct fatman* fm)
     
     switch (c->prev.state) {
         case still:
+        case step_fwd_1:
+        case step_fwd:
+        case step_back:
             if (shift_button_press(&c->buttons.attack))
                 goto_state(c, c->buttons.fwd.down ? punch : kick);
-            else if (c->buttons.dodge.down)
+            else if (shift_button_press(&c->buttons.special)) {
+                if (c->buttons.fwd.down)
+                    goto_state(c, frontflip);
+                else if (c->buttons.back.down)
+                    goto_state(c, backflip);
+            }
+        default:
+            break;
+    }
+    
+    //Use next state to respect the changes made above. If that didn't happen,
+    //c->next.state would be equal to c->prev.state
+    switch (c->next.state) {
+        case still:
+            if (c->buttons.dodge.down)
                 goto_state(c, dodge_1);
             else if (c->buttons.fwd.down)
                 goto_state(c, step_fwd_1);
@@ -79,13 +96,7 @@ int fatman_actions(struct fatman* fm)
             break;
         case step_fwd_1:
         case step_fwd:
-            if (!c->buttons.fwd.down)
-                /*don't do anything, so the player can change the stick position*/;
-            else if (shift_button_press(&c->buttons.attack))
-                goto_state(c, punch);
-            else if (shift_button_press(&c->buttons.special))
-                goto_state(c, frontflip);
-            else if (is_last_frame)
+            if (is_last_frame && c->buttons.fwd.down)
                 goto_state(c, step_fwd);
             break;
         case back_undodge:
@@ -93,13 +104,7 @@ int fatman_actions(struct fatman* fm)
                 goto_state(c, step_back);
             break;
         case step_back:
-            if (!c->buttons.back.down)
-                /*don't do anything, so the player can change the stick position*/;
-            else if (shift_button_press(&c->buttons.attack))
-                goto_state(c, kick);
-            else if (shift_button_press(&c->buttons.special))
-                goto_state(c, backflip);
-            else if (is_last_frame && c->prev.ground_pos > -1.f)
+            if (is_last_frame && c->buttons.back.down && c->prev.ground_pos > -1.f)
                 goto_state(c, step_back);
             break;
         case dodge_1:
