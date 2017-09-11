@@ -99,43 +99,51 @@ void init_input(GLFWwindow* window)
     glfwSetKeyCallback(window, key_callback);
     glfwSetJoystickCallback(joystick_callback);
     
-    for (int j = 0; j <= GLFW_JOYSTICK_LAST; ++j) {
-        if (glfwJoystickPresent(j)) {
-            if (joy_left != -1) {
-                joy_right = j;
-                return;
-            }
-            joy_left = j;
-        }
-    }
+    for (int j = 0; j <= GLFW_JOYSTICK_LAST; ++j)
+        if (glfwJoystickPresent(j))
+            joystick_callback(j, GLFW_CONNECTED);
 }
+
+static const float axis_button_threshold = 1./3.;
 
 void poll_input()
 {
     glfwPollEvents();
     int count;
     if (joy_left != -1) {
-        const unsigned char* axes = glfwGetJoystickButtons(joy_left,  &count);
+        const unsigned char* buttons = glfwGetJoystickButtons(joy_left,  &count);
+        const float* axes = glfwGetJoystickAxes(joy_left, &count);
         //Button-finding code
         /*
         for (int i = 0; i < count; ++i)
-            if (axes[i])
+            if (buttons[i])
                 printf("%d ", i);
         printf("\n");
-        */
+         */
         
-                 key_left.start = axes[9];
-        //binding(&key_left.move,   axes[7]);
-        binding(&key_left.dodge,  axes[1]);
-        binding(&key_left.attack, axes[0]);
-        binding(&key_left.special, axes[3]);
+        //Axis-finding code
+        /*
+         for (int i = 0; i < count; ++i)
+         printf("%f ", axes[i]);
+         printf("\n");
+         */
+        
+                 key_left.start =  buttons[9];
+        binding(&key_left.fwd,     axes[0] >  axis_button_threshold);
+        binding(&key_left.back,    axes[0] < -axis_button_threshold);
+        binding(&key_left.dodge,   buttons[1]);
+        binding(&key_left.attack,  buttons[0]);
+        binding(&key_left.special, buttons[3]);
     }
     if (joy_right != -1) {
-        const unsigned char* axes = glfwGetJoystickButtons(joy_right,  &count);
-                 key_right.start = axes[9];
-        //binding(&key_right.move,   axes[7]);
-        binding(&key_right.dodge,  axes[1]);
-        binding(&key_right.attack, axes[0]);
-        binding(&key_right.special, axes[3]);
+        const unsigned char* buttons = glfwGetJoystickButtons(joy_right,  &count);
+        const float* axes = glfwGetJoystickAxes(joy_right, &count);
+        
+                 key_right.start =  buttons[9];
+        binding(&key_right.fwd,     axes[0] < -axis_button_threshold);
+        binding(&key_right.back,    axes[0] >  axis_button_threshold);
+        binding(&key_right.dodge,   buttons[1]);
+        binding(&key_right.attack,  buttons[0]);
+        binding(&key_right.special, buttons[3]);
     }
 }
