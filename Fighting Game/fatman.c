@@ -63,7 +63,8 @@ punch_1_attack   = {1, HI, 0, .4, 5,  0,  MIDDLE},
 punch_2_attack   = {4, HI, 0, .4, 5,  5,  MIDDLE},
 kick_attack      = {5, LO, 0, .5, 6,  10, MIDDLE},
 lunge_attack     = {3, HI, 0, .4, 12, 15, HEAVY},
-dive_attack      = {9, LO, 0, .9, 10, 20, HEAVY};
+dive_attack      = {9, LO, 0, .9, 10, 20, HEAVY},
+flip_attack      = {9, HI, 0, .4, 2,  20, HEAVY};
 
 int fatman_actions(struct fatman* fm)
 {
@@ -72,6 +73,7 @@ int fatman_actions(struct fatman* fm)
     assert(cancel_frames[c->prev.state] <= states[c->prev.state].frames
            && "Cancel frame is after the end of the state");
     
+    int direction = c->buttons.fwd.down ? 1 : c->buttons.back.down ? -1 : 0;
     frame_t frame = game_time.frame - c->anim_start;
     int is_last_frame = frame == states[c->prev.state].frames;
     //int is_cancel_frame = frame == cancel_frames[c->prev.state];
@@ -95,7 +97,15 @@ int fatman_actions(struct fatman* fm)
                 else if (c->buttons.back.down && c->prev.ground_pos > -1.f)
                     goto_state(c, backflip);
             }
+            break;
         default:
+            //Dequeue these actions if the stick direction changed. This prevents
+            //a confusing result e.g. if the user double-taps a button then moves
+            //the stick.
+            if (direction != fm->last_direction) {
+                shift_button_press(&c->buttons.attack);
+                shift_button_press(&c->buttons.special);
+            }
             break;
     }
     
@@ -103,7 +113,7 @@ int fatman_actions(struct fatman* fm)
     //c->next.state would be equal to c->prev.state
     switch (c->next.state) {
         case still:
-            if (c->buttons.dodge.down)
+            if (c->buttons.dodge.down && c->prev.ground_pos > -1.f)
                 goto_state(c, dodge_1);
             else if (c->buttons.fwd.down)
                 goto_state(c, step_fwd_1);
@@ -155,9 +165,14 @@ int fatman_actions(struct fatman* fm)
         case dive_1:
             attack(c, &dive_attack);
             break;
+        case frontflip:
+            attack(c, &flip_attack);
+            break;
         default:
             break;
     }
+    
+    fm->last_direction = direction;
     
     next_state(c);
     move_character(c);
@@ -265,4 +280,5 @@ void make_fatman(character_t* c, character_t* other, enum direction direction)
         .state = still,
     };
     goto_state(c, still);
+    fm->last_direction = 0;
 }

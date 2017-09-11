@@ -130,6 +130,7 @@ bound_t make_parry_effect(struct stickman* sm, float y);
 //*** Fatman
 struct fatman {
     character_t* character;
+    int last_direction;
     struct program program, blur_program;
     struct object object;
     GLint color_unif, attacking_unif, ground_speed_unif;
