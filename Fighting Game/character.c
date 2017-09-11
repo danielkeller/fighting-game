@@ -68,7 +68,6 @@ void attack(character_t* attacker, struct attack* attack)
     
     int damage = attack->damage - target->defense;
     if (attack->force > target->block && damage > 0) { //Attack lands
-        
         victim->next.health -= damage;
         if (victim->next.health < 0)
             victim->next.health = 0;

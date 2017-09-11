@@ -17,6 +17,8 @@ enum fatman_states {
     backflip, backflip_recover,
     frontflip, frontflip_recover,
     punch, kick,
+    lunge_1, lunge_2,
+    dive_1, dive_2,
     dodge_1, dodge_held, undodge, back_undodge,
     NUM_FATMAN_STATES
 };
@@ -24,8 +26,10 @@ enum fatman_states {
 static const float speed = .02;
 static const float flip_dist = .6;
 
-//         balance   hi        lo
-#define REST {4, {{0,  WEAK}, {6,  WEAK}}}
+//         balance   hi           lo
+#define REST  {6,  {{0,  WEAK},   {6,  WEAK}}}
+#define AIR   {0,  {{5,  WEAK},   {0,  XHEAVY}}}
+#define FLOOR {12, {{0,  XHEAVY}, {5,  WEAK}}}
 
 //                     frames  next             speed              fight 
 static const struct state states[NUM_FATMAN_STATES] = {
@@ -34,14 +38,18 @@ static const struct state states[NUM_FATMAN_STATES] = {
     [step_fwd]          = {6,  stop,               speed,         REST},
     [stop]              = {2,  still,              0,             REST},
     [step_back]         = {8,  still,             -speed,         REST},
-    [backflip]          = {12, backflip_recover,  -flip_dist/12., REST},
+    [backflip]          = {12, backflip_recover,  -flip_dist/12., AIR},
     //maybe make backflip slower than walking?
     [backflip_recover]  = {8,  still,              0,             REST},
-    [frontflip]         = {12, frontflip_recover,  flip_dist/12., REST},
+    [frontflip]         = {12, frontflip_recover,  flip_dist/12., AIR},
     [frontflip_recover] = {8,  still,              0,             REST},
-    [punch]             = {7,  still,              0,             REST},
-    [kick]              = {9,  still,              0,             REST},
-    [dodge_1]           = {8,  dodge_held,        -.4/8.,        REST},
+    [punch]             = {7,  still,              0,             {6, {{10, HEAVY}, {6, WEAK}}}},
+    [kick]              = {9,  still,              0,             {6, {{0, WEAK},   {15, HEAVY}}}},
+    [lunge_1]           = {5,  lunge_2,            .7/5.,         AIR},
+    [lunge_2]           = {9,  still,              0,             REST},
+    [dive_1]            = {10, dive_2,             .04,           FLOOR},
+    [dive_2]            = {10, still,              0,             FLOOR},
+    [dodge_1]           = {8,  dodge_held,        -.4/8.,         REST},
     [dodge_held]        = {1,  dodge_held,         0,             REST},
     [undodge]           = {5,  still,              .4/5.,         REST},
     [back_undodge]      = {12, still,              0,             REST},
@@ -51,9 +59,11 @@ static const frame_t cancel_frames[NUM_FATMAN_STATES] = {0};
 
 static struct attack
 //          frame target min- range damage knock force
-punch_1_attack   = {1, HI, 0, .4, 5, 0,  MIDDLE},
-punch_2_attack   = {4, HI, 0, .4, 5, 5,  MIDDLE},
-kick_attack      = {5, LO, 0, .5, 6, 10, MIDDLE};
+punch_1_attack   = {1, HI, 0, .4, 5,  0,  MIDDLE},
+punch_2_attack   = {4, HI, 0, .4, 5,  5,  MIDDLE},
+kick_attack      = {5, LO, 0, .5, 6,  10, MIDDLE},
+lunge_attack     = {3, HI, 0, .4, 12, 15, HEAVY},
+dive_attack      = {9, LO, 0, .9, 10, 20, HEAVY};
 
 int fatman_actions(struct fatman* fm)
 {
@@ -71,12 +81,18 @@ int fatman_actions(struct fatman* fm)
         case step_fwd_1:
         case step_fwd:
         case step_back:
-            if (shift_button_press(&c->buttons.attack))
-                goto_state(c, c->buttons.fwd.down ? punch : kick);
+            if (shift_button_press(&c->buttons.attack)) {
+                if (c->buttons.fwd.down)
+                    goto_state(c, punch);
+                else if (c->buttons.back.down)
+                    goto_state(c, dive_1);
+                else
+                    goto_state(c, kick);
+            }
             else if (shift_button_press(&c->buttons.special)) {
                 if (c->buttons.fwd.down)
                     goto_state(c, frontflip);
-                else if (c->buttons.back.down)
+                else if (c->buttons.back.down && c->prev.ground_pos > -1.f)
                     goto_state(c, backflip);
             }
         default:
@@ -108,7 +124,7 @@ int fatman_actions(struct fatman* fm)
                 goto_state(c, step_back);
             break;
         case dodge_1:
-            if (c->buttons.attack.down || (!c->buttons.dodge.down && !c->buttons.back.down)) {
+            if (!c->buttons.dodge.down && !c->buttons.back.down) {
                 goto_state(c, undodge);
                 float progress = (float)frame / states[dodge_1].frames;
                 float rev_progress = (1.f - progress) * states[undodge].frames;
@@ -119,10 +135,12 @@ int fatman_actions(struct fatman* fm)
             }
             break;
         case dodge_held:
-            if (c->buttons.attack.down || (!c->buttons.dodge.down && !c->buttons.back.down))
-                goto_state(c, undodge);
+            if (shift_button_press(&c->buttons.attack))
+                goto_state(c, lunge_1);
             else if (c->buttons.back.down)
                 goto_state(c, back_undodge);
+            else if (!c->buttons.dodge.down)
+                goto_state(c, undodge);
             break;
         case punch:
             attack(c, &punch_1_attack);
@@ -130,6 +148,12 @@ int fatman_actions(struct fatman* fm)
             break;
         case kick:
             attack(c, &kick_attack);
+            break;
+        case lunge_2:
+            attack(c, &lunge_attack);
+            break;
+        case dive_1:
+            attack(c, &dive_attack);
             break;
         default:
             break;
@@ -143,7 +167,7 @@ int fatman_actions(struct fatman* fm)
 BINDABLE(fatman_actions, struct fatman)
 
 static animation_t animations[NUM_FATMAN_STATES] = {
-    [still] = &fatman_rest,
+    [still] = &fatman_still,
     [step_fwd] = &fatman_step_fwd, [step_back] = &fatman_step_back,
     [step_fwd_1] = &fatman_step_fwd1,
     [stop] = &fatman_stop,
@@ -152,6 +176,8 @@ static animation_t animations[NUM_FATMAN_STATES] = {
     [backflip] = &fatman_backflip, [backflip_recover] = &fatman_backflip,
     [frontflip] = &fatman_frontflip, [frontflip_recover] = &fatman_frontflip,
     [punch] = &fatman_punch, [kick] = &fatman_kick,
+    [lunge_1] = &fatman_lunge, [lunge_2] = &fatman_lunge,
+    [dive_1] = &fatman_dive, [dive_2] = &fatman_dive,
 };
 
 int draw_fatman(struct fatman* fm)
@@ -166,6 +192,8 @@ int draw_fatman(struct fatman* fm)
     if (state == frontflip_recover) frame += states[frontflip].frames;
     if (state == back_undodge)      frame += states[dodge_1].frames;
     if (state == dodge_held)        frame = states[dodge_1].frames;
+    if (state == lunge_2)           frame += states[lunge_1].frames;
+    if (state == dive_2)            frame += states[dive_1].frames;
     if (state == undodge) {
         //play backwards from the middle
         frame *= (float)states[dodge_1].frames / states[undodge].frames;
