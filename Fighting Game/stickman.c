@@ -303,16 +303,33 @@ int free_stickman(struct stickman* sm)
 }
 BINDABLE(free_stickman, struct stickman)
 
+void make_simulation_stickman(struct stickman* sm, character_t* c, character_t* other)
+{
+    sm->character = c;
+    sm->character->other = other;
+    
+    c->states = states;
+    c->hitbox_width = stickman_hitbox_width;
+    c->buttons = no_key_events;
+    c->prev = c->next = (struct character_state){
+        .ground_pos = -1.f,
+        .health = 100,
+        .state = top,
+    };
+    goto_state(c, top);
+}
+
 void make_stickman(character_t* c, character_t* other, enum direction direction)
 {
     struct stickman* sm = malloc(sizeof(struct stickman));
     
-    sm->character = c;
-    sm->character->other = other;
+    make_simulation_stickman(sm, c, other);
     
     c->actions = ref_bind_stickman_actions(sm);
     c->draw = ref_bind_draw_stickman(sm);
     c->free = ref_bind_free_stickman(sm);
+    
+    c->direction = direction;
     
     make_heath_bar(&c->health_bar, direction);
     make_state_indicator(&c->state_indicator);
@@ -326,15 +343,4 @@ void make_stickman(character_t* c, character_t* other, enum direction direction)
     load_shader_program(&sm->blur_program, stickman_blur_vert, stickman_blur_frag);
     sm->attacking_unif = glGetUniformLocation(sm->blur_program.program, "attacking");
     sm->ground_speed_unif = glGetUniformLocation(sm->blur_program.program, "ground_speed");
-    
-    c->direction = direction;
-    c->states = states;
-    c->hitbox_width = stickman_hitbox_width;
-    c->buttons = no_key_events;
-    c->prev = c->next = (struct character_state){
-        .ground_pos = -1.f,
-        .health = 100,
-        .state = top,
-    };
-    goto_state(c, top);
 }

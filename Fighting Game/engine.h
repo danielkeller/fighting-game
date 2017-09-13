@@ -11,6 +11,7 @@
 #include "types.h"
 #include "function.h"
 #include "gl_core_3_3.h"
+#include "threads.h"
 
 //*** Math
 typedef struct Mat3 {
@@ -176,7 +177,7 @@ extern struct key_events no_key_events;
 extern struct object box;
 extern Mat3 camera;
 //One-directional data flow
-extern struct game_time game_time;
+extern thread_local struct game_time game_time;
 extern int learning_mode;
 extern struct key_events key_left, key_right;
 extern effects_t effects;

@@ -17,7 +17,7 @@ Mat3 camera = {{
 
 struct key_events no_key_events; //Auto-initialized to 0
 fbo_t fbo;
-struct game_time game_time;
+thread_local struct game_time game_time;
 struct object box;
 effects_t effects;
 int learning_mode = 0;

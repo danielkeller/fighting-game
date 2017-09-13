@@ -248,16 +248,34 @@ int free_fatman(struct fatman* fm)
 }
 BINDABLE(free_fatman, struct fatman)
 
+void make_simulation_fatman(struct fatman* fm, character_t* c, character_t* other)
+{
+    fm->character = c;
+    fm->character->other = other;
+    
+    c->states = states;
+    c->hitbox_width = fatman_hitbox_width;
+    c->buttons = no_key_events;
+    c->prev = c->next = (struct character_state){
+        .ground_pos = -1.f,
+        .health = 100,
+        .state = still,
+    };
+    goto_state(c, still);
+    fm->last_direction = 0;
+}
+
 void make_fatman(character_t* c, character_t* other, enum direction direction)
 {
     struct fatman* fm = malloc(sizeof(struct fatman));
     
-    fm->character = c;
-    fm->character->other = other;
+    make_simulation_fatman(fm, c, other);
     
     c->actions = ref_bind_fatman_actions(fm);
     c->draw = ref_bind_draw_fatman(fm);
     c->free = ref_bind_free_fatman(fm);
+    
+    c->direction = direction;
     
     make_heath_bar(&c->health_bar, direction);
     make_state_indicator(&c->state_indicator);
@@ -269,16 +287,4 @@ void make_fatman(character_t* c, character_t* other, enum direction direction)
     load_shader_program(&fm->blur_program, stickman_blur_vert, stickman_blur_frag);
     fm->attacking_unif = glGetUniformLocation(fm->blur_program.program, "attacking");
     fm->ground_speed_unif = glGetUniformLocation(fm->blur_program.program, "ground_speed");
-    
-    c->direction = direction;
-    c->states = states;
-    c->hitbox_width = fatman_hitbox_width;
-    c->buttons = no_key_events;
-    c->prev = c->next = (struct character_state){
-        .ground_pos = -1.f,
-        .health = 100,
-        .state = still,
-    };
-    goto_state(c, still);
-    fm->last_direction = 0;
 }

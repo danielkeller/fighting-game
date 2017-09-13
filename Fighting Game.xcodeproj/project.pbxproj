@@ -7,10 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		37026DA61EE1C43300440F60 /* stickman_blur.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37026DA51EE1C43300440F60 /* stickman_blur.frag */; };
-		37026DA91EE2B01500440F60 /* stickman_blur.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37026DA81EE2B01500440F60 /* stickman_blur.vert */; };
+		37105CB51F69710900E14694 /* fatman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37C8FD451F0D829A00EE268D /* fatman.c */; };
+		37105CB61F69710900E14694 /* stickman.c in Sources */ = {isa = PBXBuildFile; fileRef = 377D3FE11ECE27B500531846 /* stickman.c */; };
+		37105CB71F69712800E14694 /* shaders.c in Sources */ = {isa = PBXBuildFile; fileRef = 379126731E86786100613418 /* shaders.c */; };
+		37105CB91F69715900E14694 /* stubs.c in Sources */ = {isa = PBXBuildFile; fileRef = 37105CB81F69715900E14694 /* stubs.c */; };
+		37105CBB1F6984B400E14694 /* world.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0E71D7B2584000A795E /* world.c */; };
+		37105CBD1F698AC300E14694 /* fake_input.c in Sources */ = {isa = PBXBuildFile; fileRef = 37105CBC1F698AC300E14694 /* fake_input.c */; };
 		371FF0AC1EA528A0003274FE /* function.c in Sources */ = {isa = PBXBuildFile; fileRef = 371FF0AA1EA528A0003274FE /* function.c */; };
 		371FF0B01EA5FE81003274FE /* effects.c in Sources */ = {isa = PBXBuildFile; fileRef = 371FF0AE1EA5FE81003274FE /* effects.c */; };
+		3724D04E1F696CAA0079DD4E /* character.c in Sources */ = {isa = PBXBuildFile; fileRef = 372F30B21EA8AA3200F9AE22 /* character.c */; };
+		3724D04F1F696CAA0079DD4E /* stickman.c in Sources */ = {isa = PBXBuildFile; fileRef = 372F337C1D78A9020076D98E /* stickman.c */; };
+		3724D0501F696CAA0079DD4E /* fatman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37C8FD491F0D838C00EE268D /* fatman.c */; };
+		3724D0521F696CCD0079DD4E /* gl_core_3_3.c in Sources */ = {isa = PBXBuildFile; fileRef = 37421ACC1CB306220027B7D4 /* gl_core_3_3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
+		3724D0551F696CE30079DD4E /* math.c in Sources */ = {isa = PBXBuildFile; fileRef = 37CFC0EA1D7B2671000A795E /* math.c */; };
+		3724D0631F696D880079DD4E /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 3724D0621F696D880079DD4E /* main.c */; };
 		372F30AF1EA89F6200F9AE22 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 372F30AD1EA89F6200F9AE22 /* AppDelegate.m */; };
 		372F30B41EA8AA3200F9AE22 /* character.c in Sources */ = {isa = PBXBuildFile; fileRef = 372F30B21EA8AA3200F9AE22 /* character.c */; };
 		372F30B61EA910AD00F9AE22 /* stickman_effects.c in Sources */ = {isa = PBXBuildFile; fileRef = 372F30B51EA910AD00F9AE22 /* stickman_effects.c */; };
@@ -34,20 +44,10 @@
 		37E3B5681EAF8834004DBE36 /* game over.c in Sources */ = {isa = PBXBuildFile; fileRef = 37E3B5661EAF8834004DBE36 /* game over.c */; };
 		37E3B56D1EAFA283004DBE36 /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = 37E3B56B1EAFA283004DBE36 /* input.c */; };
 		37EA38291E9F65E300848254 /* libGLFW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37421AC61CB301AE0027B7D4 /* libGLFW.a */; };
-		37EA382B1E9F726E00848254 /* health bar.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37EA382A1E9F726E00848254 /* health bar.frag */; };
 		37EA382E1E9F986900848254 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 37EA382D1E9F986900848254 /* file.c */; };
-		37EA38301EA24B0B00848254 /* screenspace.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37EA382F1EA24B0B00848254 /* screenspace.vert */; };
-		37EA38321EA24B4400848254 /* blit.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37EA38311EA24B4400848254 /* blit.frag */; };
-		37EA38341EA2C18400848254 /* chevron_hit.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37EA38331EA2C18400848254 /* chevron_hit.frag */; };
-		37EA38361EA4F0F700848254 /* particles.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37EA38351EA4F0F700848254 /* particles.vert */; };
 		37EA38401EA5139900848254 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA383F1EA5139900848254 /* AppKit.framework */; };
 		37EA38441EA513F400848254 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA38431EA513F400848254 /* IOKit.framework */; };
 		37EA384A1EA5147000848254 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EA38491EA5147000848254 /* CoreVideo.framework */; };
-		37F36A321EB2124800E30D1D /* lib.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37F36A311EB2124800E30D1D /* lib.frag */; };
-		37F36A341EB22C0800E30D1D /* lib.vert in Resources */ = {isa = PBXBuildFile; fileRef = 37F36A331EB22C0800E30D1D /* lib.vert */; };
-		37F36A381EB239FC00E30D1D /* blast.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37F36A371EB239FC00E30D1D /* blast.frag */; };
-		37F36A3A1EB23A1600E30D1D /* chevron.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37F36A391EB23A1600E30D1D /* chevron.frag */; };
-		37F36A421EB6467900E30D1D /* state_indicator.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37F36A411EB6467900E30D1D /* state_indicator.frag */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,12 +60,29 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		3724D03E1F696B250079DD4E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		37026DA51EE1C43300440F60 /* stickman_blur.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = stickman_blur.frag; path = shaders/stickman_blur.frag; sourceTree = "<group>"; };
 		37026DA81EE2B01500440F60 /* stickman_blur.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = stickman_blur.vert; path = shaders/stickman_blur.vert; sourceTree = "<group>"; };
+		37105CB81F69715900E14694 /* stubs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stubs.c; path = Simulation/stubs.c; sourceTree = SOURCE_ROOT; };
+		37105CBA1F697E6600E14694 /* threads.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = threads.h; path = Libs/threads.h; sourceTree = "<group>"; };
+		37105CBC1F698AC300E14694 /* fake_input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fake_input.c; path = Simulation/fake_input.c; sourceTree = SOURCE_ROOT; };
 		371FF0AA1EA528A0003274FE /* function.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = function.c; sourceTree = "<group>"; };
 		371FF0AB1EA528A0003274FE /* function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = function.h; sourceTree = "<group>"; };
 		371FF0AE1EA5FE81003274FE /* effects.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = effects.c; sourceTree = "<group>"; };
+		3724D0401F696B250079DD4E /* Fighting Game Simulation */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Fighting Game Simulation"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3724D0621F696D880079DD4E /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = Simulation/main.c; sourceTree = SOURCE_ROOT; };
 		372F30AD1EA89F6200F9AE22 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		372F30AE1EA89F6200F9AE22 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		372F30B01EA8A0D200F9AE22 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
@@ -129,6 +146,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		3724D03D1F696B250079DD4E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		37421A9E1CB2FDCB0027B7D4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -184,6 +208,17 @@
 			name = util;
 			sourceTree = "<group>";
 		};
+		3724D0411F696B250079DD4E /* Simulation */ = {
+			isa = PBXGroup;
+			children = (
+				3724D0621F696D880079DD4E /* main.c */,
+				37105CB81F69715900E14694 /* stubs.c */,
+				37105CBC1F698AC300E14694 /* fake_input.c */,
+			);
+			name = Simulation;
+			path = "Fighting Game Simulation";
+			sourceTree = "<group>";
+		};
 		372F30A91EA89E7600F9AE22 /* engine */ = {
 			isa = PBXGroup;
 			children = (
@@ -223,10 +258,10 @@
 			children = (
 				37EA382C1E9F986900848254 /* file.h */,
 				37EA382D1E9F986900848254 /* file.c */,
-				37853D661D662D520052A8C8 /* error.c */,
 				37853D671D662D520052A8C8 /* error.h */,
-				371FF0AA1EA528A0003274FE /* function.c */,
+				37853D661D662D520052A8C8 /* error.c */,
 				371FF0AB1EA528A0003274FE /* function.h */,
+				371FF0AA1EA528A0003274FE /* function.c */,
 			);
 			name = util;
 			sourceTree = "<group>";
@@ -238,6 +273,7 @@
 				37421AC91CB305FF0027B7D4 /* Libs */,
 				37421AC11CB301AE0027B7D4 /* GLFW.xcodeproj */,
 				37421AA31CB2FDCB0027B7D4 /* Fighting Game */,
+				3724D0411F696B250079DD4E /* Simulation */,
 				37421AA21CB2FDCB0027B7D4 /* Products */,
 				37EA383E1EA5139900848254 /* Frameworks */,
 			);
@@ -247,6 +283,7 @@
 			isa = PBXGroup;
 			children = (
 				37421AA11CB2FDCB0027B7D4 /* Fighting Game.app */,
+				3724D0401F696B250079DD4E /* Fighting Game Simulation */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -288,6 +325,7 @@
 			isa = PBXGroup;
 			children = (
 				37421ACA1CB306090027B7D4 /* GL */,
+				37105CBA1F697E6600E14694 /* threads.h */,
 			);
 			name = Libs;
 			sourceTree = "<group>";
@@ -345,6 +383,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		3724D03F1F696B250079DD4E /* Fighting Game Simulation */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3724D0471F696B250079DD4E /* Build configuration list for PBXNativeTarget "Fighting Game Simulation" */;
+			buildPhases = (
+				3724D03C1F696B250079DD4E /* Sources */,
+				3724D03D1F696B250079DD4E /* Frameworks */,
+				3724D03E1F696B250079DD4E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Fighting Game Simulation";
+			productName = "Fighting Game Simulation";
+			productReference = 3724D0401F696B250079DD4E /* Fighting Game Simulation */;
+			productType = "com.apple.product-type.tool";
+		};
 		37421AA01CB2FDCB0027B7D4 /* Fighting Game */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 37421AB21CB2FDCC0027B7D4 /* Build configuration list for PBXNativeTarget "Fighting Game" */;
@@ -372,6 +427,10 @@
 				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Daniel Keller";
 				TargetAttributes = {
+					3724D03F1F696B250079DD4E = {
+						CreatedOnToolsVersion = 8.3.3;
+						ProvisioningStyle = Automatic;
+					};
 					37421AA01CB2FDCB0027B7D4 = {
 						CreatedOnToolsVersion = 7.3;
 					};
@@ -397,6 +456,7 @@
 			projectRoot = "";
 			targets = (
 				37421AA01CB2FDCB0027B7D4 /* Fighting Game */,
+				3724D03F1F696B250079DD4E /* Fighting Game Simulation */,
 			);
 		};
 /* End PBXProject section */
@@ -416,19 +476,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37EA38361EA4F0F700848254 /* particles.vert in Resources */,
-				37F36A321EB2124800E30D1D /* lib.frag in Resources */,
-				37026DA61EE1C43300440F60 /* stickman_blur.frag in Resources */,
-				37F36A381EB239FC00E30D1D /* blast.frag in Resources */,
-				37F36A341EB22C0800E30D1D /* lib.vert in Resources */,
 				37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */,
-				37026DA91EE2B01500440F60 /* stickman_blur.vert in Resources */,
-				37EA38321EA24B4400848254 /* blit.frag in Resources */,
-				37EA38301EA24B0B00848254 /* screenspace.vert in Resources */,
-				37F36A421EB6467900E30D1D /* state_indicator.frag in Resources */,
-				37EA382B1E9F726E00848254 /* health bar.frag in Resources */,
-				37F36A3A1EB23A1600E30D1D /* chevron.frag in Resources */,
-				37EA38341EA2C18400848254 /* chevron_hit.frag in Resources */,
 				37421AAE1CB2FDCC0027B7D4 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -453,6 +501,25 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		3724D03C1F696B250079DD4E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3724D04E1F696CAA0079DD4E /* character.c in Sources */,
+				3724D04F1F696CAA0079DD4E /* stickman.c in Sources */,
+				3724D0501F696CAA0079DD4E /* fatman.c in Sources */,
+				37105CB51F69710900E14694 /* fatman.c in Sources */,
+				37105CB61F69710900E14694 /* stickman.c in Sources */,
+				37105CB71F69712800E14694 /* shaders.c in Sources */,
+				3724D0521F696CCD0079DD4E /* gl_core_3_3.c in Sources */,
+				37105CB91F69715900E14694 /* stubs.c in Sources */,
+				37105CBB1F6984B400E14694 /* world.c in Sources */,
+				37105CBD1F698AC300E14694 /* fake_input.c in Sources */,
+				3724D0631F696D880079DD4E /* main.c in Sources */,
+				3724D0551F696CE30079DD4E /* math.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		37421A9D1CB2FDCB0027B7D4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -497,6 +564,25 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		3724D0491F696C2B0079DD4E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "Fighting Game Simulation";
+			};
+			name = Debug;
+		};
+		3724D04A1F696C2B0079DD4E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				PRODUCT_NAME = "Fighting Game Simulation";
+			};
+			name = Release;
+		};
 		37421AB01CB2FDCC0027B7D4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -504,7 +590,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -522,7 +608,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -532,6 +618,7 @@
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_PEDANTIC = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
@@ -539,6 +626,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-Wall";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -550,7 +638,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -568,16 +656,18 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_PEDANTIC = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "-Wall";
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -593,7 +683,7 @@
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Libs";
 				INFOPLIST_FILE = "Fighting Game/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				OTHER_CFLAGS = "-Wall";
+				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "dan.Fighting-Game";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -610,7 +700,7 @@
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Libs";
 				INFOPLIST_FILE = "Fighting Game/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				OTHER_CFLAGS = "-Wall";
+				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "dan.Fighting-Game";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -619,6 +709,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3724D0471F696B250079DD4E /* Build configuration list for PBXNativeTarget "Fighting Game Simulation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3724D0491F696C2B0079DD4E /* Debug */,
+				3724D04A1F696C2B0079DD4E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		37421A9C1CB2FDCB0027B7D4 /* Build configuration list for PBXProject "Fighting Game" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
