@@ -92,7 +92,7 @@ void set_character_draw_state(character_t* c, struct program* program, anim_mesh
     
     int frame_num = frame;
     //In case we're off the end
-    if (frame > anim->length) {
+    if (frame >= anim->length) {
         frame = anim->length;
         frame_num = anim->length - 1;
     }
