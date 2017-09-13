@@ -105,7 +105,7 @@ poke_attack     = {2, LO, .7, .8, 8,  0,  LIGHT};
 
 int stickman_actions(struct stickman* sm)
 {
-    character_t* c = sm->character;
+    struct character* c = sm->character;
     
     assert(cancel_frames[c->prev.state] <= states[c->prev.state].frames
            && "Cancel frame is after the end of the state");
@@ -288,7 +288,7 @@ BINDABLE(draw_stickman, struct stickman)
 
 int free_stickman(struct stickman* sm)
 {
-    character_t* c = sm->character;
+    struct character* c = sm->character;
     
     free_health_bar(&c->health_bar);
     free_state_indicator(&c->state_indicator);

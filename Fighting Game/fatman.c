@@ -68,7 +68,7 @@ flip_attack      = {9, HI, 0, .4, 2,  20, HEAVY};
 
 int fatman_actions(struct fatman* fm)
 {
-    character_t* c = fm->character;
+    struct character* c = fm->character;
     
     assert(cancel_frames[c->prev.state] <= states[c->prev.state].frames
            && "Cancel frame is after the end of the state");
@@ -235,7 +235,7 @@ BINDABLE(draw_fatman, struct fatman)
 
 int free_fatman(struct fatman* fm)
 {
-    character_t* c = fm->character;
+    struct character* c = fm->character;
     
     free_health_bar(&c->health_bar);
     free_state_indicator(&c->state_indicator);

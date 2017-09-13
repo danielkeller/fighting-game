@@ -12,20 +12,20 @@
 #include <assert.h>
 
 //This overrides next_state because it updates anim_start
-void goto_state(character_t *c, int state)
+void goto_state(struct character *c, int state)
 {
     c->next.state = state;
     c->next.fight_state = c->states[state].fight_state;
     c->anim_start = game_time.frame;
 }
 
-void next_state(character_t *c)
+void next_state(struct character *c)
 {
     if (game_time.frame - c->anim_start >= c->states[c->prev.state].frames)
         goto_state(c, c->states[c->prev.state].next_state);
 }
 
-void move_character(character_t* c)
+void move_character(struct character* c)
 {
     c->next.ground_pos += c->states[c->next.state].speed;
     
@@ -46,7 +46,7 @@ int step_character(character_t* c, struct key_events* events)
 //The attack is resolved against the previous state. This
 //is so the character which is updated first doesn't have
 //an advantage.
-void attack(character_t* attacker, struct attack* attack)
+void attack(struct character* attacker, struct attack* attack)
 {
     character_t* victim = attacker->other;
     
@@ -86,7 +86,7 @@ void attack(character_t* attacker, struct attack* attack)
     }
 }
 
-void set_character_draw_state(character_t* c, struct program* program, anim_mesh_t mesh, animation_t anim, float frame)
+void set_character_draw_state(struct character* c, struct program* program, anim_mesh_t mesh, animation_t anim, float frame)
 {
     assert(anim && "Animation not implemented");
     
@@ -149,7 +149,7 @@ void make_heath_bar(struct health_bar* hb, enum direction direction)
     glUniformMatrix3fv(hb->program.transform, 1, GL_FALSE, transform.d);
 }
 
-void draw_health_bar(character_t *c)
+void draw_health_bar(struct character *c)
 {
     struct health_bar* hb = &c->health_bar;
     
@@ -184,7 +184,7 @@ void make_state_indicator(struct state_indicator* si)
     si->attack[HI] = si->attack[LO] = 0;
 }
 
-void draw_state_indicator(character_t* c)
+void draw_state_indicator(struct character* c)
 {
     struct state_indicator* si = &c->state_indicator;
     

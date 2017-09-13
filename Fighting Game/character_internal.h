@@ -69,7 +69,7 @@ struct character_state {
     int health;
 };
 
-typedef struct character {
+struct character {
     bound_t actions, draw, free;
     
     const struct state* states;
@@ -84,7 +84,7 @@ typedef struct character {
     long long anim_start;
     struct character_state prev, next;
     float ground_pos;
-} character_t;
+};
 
 struct attack {
     //The frame of the attack can never be 0. This is intentional: at frame 0 of a
@@ -97,25 +97,25 @@ struct attack {
     enum force force;
 };
 
-void goto_state(character_t *c, int state);
-void next_state(character_t *c);
+void goto_state(struct character *c, int state);
+void next_state(struct character *c);
 
-void move_character(character_t* c);
-void attack(character_t* attacker, struct attack* attack);
+void move_character(struct character* c);
+void attack(struct character* attacker, struct attack* attack);
 
-void set_character_draw_state(character_t* c, struct program*, anim_mesh_t, animation_t, float frame);
+void set_character_draw_state(struct character* c, struct program*, anim_mesh_t, animation_t, float frame);
 
 void make_heath_bar(struct health_bar* hb, enum direction direction);
-void draw_health_bar(character_t *c);
+void draw_health_bar(struct character *c);
 void free_health_bar(struct health_bar* hb);
 
 void make_state_indicator(struct state_indicator*);
-void draw_state_indicator(character_t*);
+void draw_state_indicator(struct character*);
 void free_state_indicator(struct state_indicator*);
 
 //*** Stickman
 struct stickman {
-    character_t* character;
+    struct character* character;
     struct program program, blur_program;
     struct object object;
     GLint color_unif, attacking_unif, ground_speed_unif;
@@ -129,7 +129,7 @@ bound_t make_parry_effect(struct stickman* sm, float y);
 
 //*** Fatman
 struct fatman {
-    character_t* character;
+    struct character* character;
     int last_direction;
     struct program program, blur_program;
     struct object object;
