@@ -127,9 +127,6 @@ static const float stickman_hitbox_width = .15;
 bound_t make_hit_effect(struct stickman* sm);
 bound_t make_parry_effect(struct stickman* sm, float y);
 
-void make_simulation_stickman(struct stickman* sm, character_t* c, character_t* other);
-int stickman_actions(struct stickman* sm);
-
 //*** Fatman
 struct fatman {
     struct character* character;
@@ -141,6 +138,9 @@ struct fatman {
 
 static const float fatman_hitbox_width = .2;
 
+//*** API used only for simulator
+void make_simulation_stickman(struct stickman* sm, character_t* c, character_t* other);
+int stickman_actions(struct stickman* sm);
 void make_simulation_fatman(struct fatman* fm, character_t* c, character_t* other);
 int fatman_actions(struct fatman* fm);
 

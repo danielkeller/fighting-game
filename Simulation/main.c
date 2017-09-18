@@ -9,6 +9,23 @@
 #include "character_internal.h"
 #include "engine.h"
 #include <stdio.h>
+#include <stdint.h>
+
+const unsigned max_input = (5 << 4) + 10;
+
+struct key_events int_to_input(unsigned i) {
+    unsigned d = i >> 4; //down
+    unsigned e = i & 0xF; //event
+    return (struct key_events){
+        {d==1, e==1, e==2},
+        {d==2, e==3, e==4},
+        {d==3, e==5, e==6},
+        {d==4, e==7, e==8},
+        {d==5, e==9, e==10},
+    };
+}
+
+#define NUM_STATES 24
 
 int main (int argc, char* argv[])
 {
@@ -20,14 +37,45 @@ int main (int argc, char* argv[])
     make_simulation_stickman(&struct_stickman, &stickman, &fatman);
     make_simulation_fatman(&struct_fatman, &fatman, &stickman);
     
-    while (game_time.frame < 20) {
-        printf("%d ", stickman.next.state);
-        step_character(&stickman, &(struct key_events){.attack = {.pressed = 1}});
-        stickman_actions(&struct_stickman);
-        ++game_time.frame;
+    for (int state = 0; state < NUM_STATES; ++state) {
+        int gotten_times[NUM_STATES] = {0};
+        unsigned gotten_input[NUM_STATES] = {0};
+        frame_t gotten_frame[NUM_STATES] = {0};
+        
+        for (frame_t frame = 0; frame <= stickman.states[state].frames; ++frame) {
+            game_time.frame = frame;
+            
+            int gotten_states[NUM_STATES] = {0};
+            for (unsigned input = 0; input < max_input; ++input) {
+                stickman.anim_start = 0;
+                stickman.next.state = state;
+                struct key_events key_events = int_to_input(input);
+                
+                step_character(&stickman, &key_events);
+                stickman_actions(&struct_stickman);
+                int found_state = stickman.next.state;
+                
+                if (!gotten_states[found_state]) {
+                    gotten_states[found_state] = 1;
+                    ++gotten_times[found_state];
+                    gotten_input[found_state] = input;
+                    gotten_frame[found_state] = frame;
+                }
+            }
+        }
+        
+        printf("%-2d  ", state);
+        for (int found_state = 0; found_state < NUM_STATES; ++found_state) {
+            if (gotten_times[found_state] > 0) {
+                printf("->%-2d %2d ", found_state, gotten_input[found_state]);
+                if (gotten_times[found_state] > 1)
+                    printf(" *  ");
+                else
+                    printf("%2llu  ", gotten_frame[found_state]);
+            }
+        }
+        printf("\n");
     }
-    
-    printf("\n");
     
     return 0;
 }
