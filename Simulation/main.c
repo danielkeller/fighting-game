@@ -64,8 +64,27 @@ int main (int argc, char* argv[])
             }
         }
         
-        printf("%-2d  ", state);
+        printf("%-2d ", state);
+        
+        //print missing self-loop
+        if (gotten_times[state] > 1 && gotten_input[state] == 0)
+            printf(" ");
+        else
+            printf("X");
+        
+        //print default exit
+        int exit = stickman.states[state].next_state;
+        if (gotten_times[exit] == 1 && gotten_input[exit] == 0)
+            printf(">%-2d ", exit);
+        else
+            printf("-   ");
+            
         for (int found_state = 0; found_state < NUM_STATES; ++found_state) {
+            if (found_state == state && gotten_times[state] > 1 && gotten_input[state] == 0)
+                continue; //self-loop
+            if (found_state == exit && gotten_times[exit] == 1 && gotten_input[exit] == 0)
+                continue; //default exit
+            
             if (gotten_times[found_state] > 0) {
                 printf("->%-2d %2d ", found_state, gotten_input[found_state]);
                 if (gotten_times[found_state] > 1)
