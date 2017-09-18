@@ -25,7 +25,7 @@ struct key_events int_to_input(unsigned i) {
     };
 }
 
-#define NUM_STATES 24
+#define NUM_STATES 25
 
 int main (int argc, char* argv[])
 {
