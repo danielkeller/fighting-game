@@ -216,7 +216,7 @@
 				37105CBC1F698AC300E14694 /* fake_input.c */,
 			);
 			name = Simulation;
-			path = "Fighting Game Simulation";
+			path = "Simulation";
 			sourceTree = "<group>";
 		};
 		372F30A91EA89E7600F9AE22 /* engine */ = {

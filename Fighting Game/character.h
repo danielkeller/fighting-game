@@ -18,7 +18,7 @@ enum direction {
     RIGHT = 1
 };
 
-character_t* alloc_character();
+character_t* alloc_character(void);
 int step_character(character_t*, struct key_events* keys);
 void character_actions(character_t*);
 void draw_character(character_t*);

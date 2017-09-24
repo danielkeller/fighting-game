@@ -10,10 +10,12 @@
 #include "engine.h"
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 
 const unsigned max_input = (5 << 4) + 10;
 
-struct key_events int_to_input(unsigned i) {
+struct key_events int_to_input(unsigned i)
+{
     unsigned d = i >> 4; //down
     unsigned e = i & 0xF; //event
     return (struct key_events){
@@ -25,35 +27,26 @@ struct key_events int_to_input(unsigned i) {
     };
 }
 
-#define NUM_STATES 25
-
-int main (int argc, char* argv[])
+void explore_state_space(character_t* c, int num_states)
 {
-    struct character stickman, fatman;
-    struct stickman struct_stickman;
-    struct fatman struct_fatman;
-    
-    game_time.frame = 0;
-    make_simulation_stickman(&struct_stickman, &stickman, &fatman);
-    make_simulation_fatman(&struct_fatman, &fatman, &stickman);
-    
-    for (int state = 0; state < NUM_STATES; ++state) {
-        int gotten_times[NUM_STATES] = {0};
-        unsigned gotten_input[NUM_STATES] = {0};
-        frame_t gotten_frame[NUM_STATES] = {0};
+    for (int state = 0; state < num_states; ++state) {
+        int gotten_times[num_states]; memset(gotten_times, 0, sizeof gotten_times);
+        unsigned gotten_input[num_states]; memset(gotten_input, 0, sizeof gotten_input);
+        frame_t gotten_frame[num_states]; memset(gotten_frame, 0, sizeof gotten_frame);
         
-        for (frame_t frame = 0; frame <= stickman.states[state].frames; ++frame) {
+        for (frame_t frame = 0; frame <= c->states[state].frames; ++frame) {
             game_time.frame = frame;
             
-            int gotten_states[NUM_STATES] = {0};
+            //Used to pick the simplest input
+            int gotten_states[num_states]; memset(gotten_states, 0, sizeof gotten_states);
             for (unsigned input = 0; input < max_input; ++input) {
-                stickman.anim_start = 0;
-                stickman.next.state = state;
+                c->anim_start = 0;
+                c->next.state = state;
                 struct key_events key_events = int_to_input(input);
                 
-                step_character(&stickman, &key_events);
-                stickman_actions(&struct_stickman);
-                int found_state = stickman.next.state;
+                step_character(c, &key_events);
+                character_actions(c);
+                int found_state = c->next.state;
                 
                 if (!gotten_states[found_state]) {
                     gotten_states[found_state] = 1;
@@ -73,13 +66,13 @@ int main (int argc, char* argv[])
             printf("X");
         
         //print default exit
-        int exit = stickman.states[state].next_state;
+        int exit = c->states[state].next_state;
         if (gotten_times[exit] == 1 && gotten_input[exit] == 0)
             printf(">%-2d ", exit);
         else
             printf("-   ");
-            
-        for (int found_state = 0; found_state < NUM_STATES; ++found_state) {
+        
+        for (int found_state = 0; found_state < num_states; ++found_state) {
             if (found_state == state && gotten_times[state] > 1 && gotten_input[state] == 0)
                 continue; //self-loop
             if (found_state == exit && gotten_times[exit] == 1 && gotten_input[exit] == 0)
@@ -95,6 +88,22 @@ int main (int argc, char* argv[])
         }
         printf("\n");
     }
+}
+
+#define NUM_STATES 25
+
+int main (int argc, char* argv[])
+{
+    struct character stickman, fatman;
+    struct stickman struct_stickman;
+    struct fatman struct_fatman;
+    
+    game_time.frame = 0;
+    make_simulation_stickman(&struct_stickman, &stickman, &fatman);
+    make_simulation_fatman(&struct_fatman, &fatman, &stickman);
+    
+    explore_state_space(&stickman, 25);
+    explore_state_space(&fatman, 19);
     
     return 0;
 }

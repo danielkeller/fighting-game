@@ -84,7 +84,7 @@ void free_program(struct program*);
 
 #ifdef DEBUG
 //This assumes the program objects don't move around in memory
-void poll_shader_changes();
+void poll_shader_changes(void);
 #else
 inline void poll_shader_changes() {}
 #endif
@@ -163,7 +163,7 @@ void free_effects(effects_t*);
 //*** Input
 struct GLFWwindow;
 void init_input(struct GLFWwindow* window);
-void poll_input();
+void poll_input(void);
 #define TAP_FRAMES 3
 
 void update_key_events(struct key_events* to, struct key_events* from);

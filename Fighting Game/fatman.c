@@ -252,6 +252,7 @@ void make_simulation_fatman(struct fatman* fm, character_t* c, character_t* othe
 {
     fm->character = c;
     fm->character->other = other;
+    c->actions = ref_bind_fatman_actions(fm);
     
     c->states = states;
     c->hitbox_width = fatman_hitbox_width;
@@ -271,7 +272,6 @@ void make_fatman(character_t* c, character_t* other, enum direction direction)
     
     make_simulation_fatman(fm, c, other);
     
-    c->actions = ref_bind_fatman_actions(fm);
     c->draw = ref_bind_draw_fatman(fm);
     c->free = ref_bind_free_fatman(fm);
     

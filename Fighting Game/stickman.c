@@ -307,6 +307,7 @@ void make_simulation_stickman(struct stickman* sm, character_t* c, character_t* 
 {
     sm->character = c;
     sm->character->other = other;
+    c->actions = ref_bind_stickman_actions(sm);
     
     c->states = states;
     c->hitbox_width = stickman_hitbox_width;
@@ -325,7 +326,6 @@ void make_stickman(character_t* c, character_t* other, enum direction direction)
     
     make_simulation_stickman(sm, c, other);
     
-    c->actions = ref_bind_stickman_actions(sm);
     c->draw = ref_bind_draw_stickman(sm);
     c->free = ref_bind_free_stickman(sm);
     
