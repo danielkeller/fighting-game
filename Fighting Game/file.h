@@ -13,7 +13,7 @@
 typedef int watch_t;
 #endif
 
-watch_t make_watch();
+watch_t make_watch(void);
 void free_watch(watch_t);
 void watch_file(watch_t watch, const char* name, void* udata);
 void* poll_watch(watch_t);

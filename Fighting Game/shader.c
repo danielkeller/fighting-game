@@ -139,7 +139,7 @@ void load_shader(shader_t shader)
 //useful in the future, if geometry shaders (for instance) are needed.
 void load_shader_program(struct program* prog, shader_t vert, shader_t frag)
 {
-    prog->vert = vert, prog->frag = frag;
+    prog->vert = vert; prog->frag = frag;
     
     load_shader(vert);
     load_shader(frag);
@@ -205,10 +205,13 @@ void poll_shader_changes()
     //Now find programs using this shader
     int updated = 0;
     
-    for (size_t i = 0; all_programs[i]; ++i)
+    for (size_t i = 0; all_programs[i]; ++i) {
         if (changed == lib_vert || changed == lib_frag
-            || all_programs[i]->vert == changed || all_programs[i]->frag == changed)
-            update_program(all_programs[i]), ++updated;
+            || all_programs[i]->vert == changed || all_programs[i]->frag == changed) {
+            update_program(all_programs[i]);
+            ++updated;
+        }
+    }
     
     printf("Updated %d programs.\n", updated);
 }

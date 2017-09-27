@@ -8,6 +8,7 @@ extern shader_t color_frag;
 extern shader_t health_bar_frag;
 extern shader_t lib_frag;
 extern shader_t lib_vert;
+extern shader_t noise_frag;
 extern shader_t particles_vert;
 extern shader_t screenspace_vert;
 extern shader_t simple_vert;

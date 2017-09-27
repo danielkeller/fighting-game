@@ -35,7 +35,8 @@
 		37853D5D1D6622680052A8C8 /* shader.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D5B1D6622680052A8C8 /* shader.c */; };
 		37853D681D662D520052A8C8 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D661D662D520052A8C8 /* error.c */; };
 		37853D6B1D68AA720052A8C8 /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = 37853D691D68AA720052A8C8 /* object.c */; };
-		379126751E86786100613418 /* shaders.c in Sources */ = {isa = PBXBuildFile; fileRef = 379126731E86786100613418 /* shaders.c */; };
+		379126751E86786100613418 /* shaders.c in Sources */ = {isa = PBXBuildFile; fileRef = 379126731E86786100613418 /* shaders.c */; settings = {COMPILER_FLAGS = "-Wno-overlength-strings"; }; };
+		37B557361F78456B00786854 /* noise.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37B557351F78456B00786854 /* noise.frag */; };
 		37B7BC501D6F311400EF0A7E /* fbo.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B7BC4E1D6F311400EF0A7E /* fbo.c */; };
 		37C8FD471F0D829A00EE268D /* fatman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37C8FD451F0D829A00EE268D /* fatman.c */; };
 		37C8FD4A1F0D838C00EE268D /* fatman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37C8FD491F0D838C00EE268D /* fatman.c */; };
@@ -116,6 +117,7 @@
 		3791266E1E866E8F00613418 /* simple.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = simple.vert; path = shaders/simple.vert; sourceTree = "<group>"; };
 		379126731E86786100613418 /* shaders.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shaders.c; sourceTree = "<group>"; };
 		379126741E86786100613418 /* shaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shaders.h; sourceTree = "<group>"; };
+		37B557351F78456B00786854 /* noise.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = noise.frag; path = shaders/noise.frag; sourceTree = "<group>"; };
 		37B7BC4E1D6F311400EF0A7E /* fbo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fbo.c; sourceTree = "<group>"; };
 		37C8FD451F0D829A00EE268D /* fatman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fatman.c; path = objects/fatman.c; sourceTree = "<group>"; };
 		37C8FD461F0D829A00EE268D /* fatman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fatman.h; path = objects/fatman.h; sourceTree = "<group>"; };
@@ -215,8 +217,7 @@
 				37105CB81F69715900E14694 /* stubs.c */,
 				37105CBC1F698AC300E14694 /* fake_input.c */,
 			);
-			name = Simulation;
-			path = "Simulation";
+			path = Simulation;
 			sourceTree = "<group>";
 		};
 		372F30A91EA89E7600F9AE22 /* engine */ = {
@@ -352,6 +353,7 @@
 				37F36A331EB22C0800E30D1D /* lib.vert */,
 				379126731E86786100613418 /* shaders.c */,
 				379126741E86786100613418 /* shaders.h */,
+				37B557351F78456B00786854 /* noise.frag */,
 			);
 			name = shaders;
 			sourceTree = "<group>";
@@ -476,6 +478,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37B557361F78456B00786854 /* noise.frag in Resources */,
 				37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */,
 				37421AAE1CB2FDCC0027B7D4 /* MainMenu.xib in Resources */,
 			);

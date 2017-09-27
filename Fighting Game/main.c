@@ -24,10 +24,16 @@ int main (int argc, char* argv[])
     make_fbo(&fbo);
     make_effects(&effects);
     
+    /*struct program screen_noise;
+    load_shader_program(&screen_noise, screenspace_vert, noise_frag);
+    */
 #if PROFILE
-    uint64_t load_total = 0;
-    int64_t frame_count = 0;
+    int64_t frame_count = 0, with_frame_count = 0, without_frame_count = 0;
     usec_t last_fps = get_time();
+    int run_with = 0;
+    #define TIME if (run_with)
+#else
+    #define TIME
 #endif
     
     while (!glfwWindowShouldClose(window)) {
@@ -69,27 +75,38 @@ int main (int argc, char* argv[])
             draw_character(right);
             draw_effects(&effects);
             
-            blit_fbo(&fbo);
-#if PROFILE
-            usec_t frame_work_time = get_time() - game_time.last_render;
-#endif
+            /*TIME {
+                swap_fbo(&fbo);
+                glUseProgram(screen_noise.program);
+                glUniform1f(screen_noise.time, (float)game_time.current_time / 1000000.f);
+                glBindVertexArray(box.vertexArrayObject);
+                glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
+            }*/
             
+            blit_fbo(&fbo);
+            glfwSwapBuffers(window);
             //render_tick must be called immediately after the frame appears
             //onscreen for the algorithm to work.
-            glfwSwapBuffers(window);
             render_tick(&game_time);
             
 #if PROFILE
+            if (run_with) ++with_frame_count;
+            else ++without_frame_count;
             ++frame_count;
-            load_total += (frame_work_time * 100ull) / game_time.last_frame_length;
-            usec_t elapsed = get_time() - last_fps;
-            if (elapsed > 4000000ll)
+            
+            usec_t finish = get_time();
+            usec_t elapsed = finish - last_fps;
+            run_with = elapsed & 0x20000ll; //Alternate exactly 32 times in one period
+            if (elapsed > 0x400000ll) //About 4 seconds
             {
-                printf("%llu%% ", load_total / frame_count);
-                printf("%lld fps %lld uspf\n", (frame_count * 1000) / (elapsed / 1000), elapsed / frame_count);
-                load_total = 0;
+                usec_t frame_time = elapsed / frame_count;
+                int pct = (float)frame_time / (1000000.f / 60.f) * 100.f;
+                usec_t difference = elapsed / 2 / with_frame_count - elapsed / 2 / without_frame_count;
+                printf("%lldus %d%% TIME(%lldus)\n", frame_time, pct, difference);
                 frame_count = 0;
-                last_fps += elapsed;
+                with_frame_count = 0;
+                without_frame_count = 0;
+                last_fps = finish;
             }
 #endif
         }

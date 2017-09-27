@@ -1,5 +1,7 @@
 #ifndef OPENGL_NOLOAD_STYLE_H
 #define OPENGL_NOLOAD_STYLE_H
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
 
 #if defined(__glew_h__) || defined(__GLEW_H__)
 #error Attempt to include auto-generated header after including glew.h
@@ -1762,5 +1764,5 @@ typedef unsigned int GLhandleARB;
 		#ifdef __cplusplus
 		}
 		#endif /*__cplusplus*/
-		
+		#pragma clang diagnostic pop
 		#endif //OPENGL_NOLOAD_STYLE_H

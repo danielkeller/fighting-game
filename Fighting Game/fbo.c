@@ -59,7 +59,7 @@ void fbo_window_size(fbo_t* fbo, GLsizei width, GLsizei height)
 {
     if (width == fbo->width && height == fbo->height)
         return;
-    fbo->width = width, fbo->height = height;
+    fbo->width = width; fbo->height = height;
     
     glDeleteTextures(2, fbo->texes);
     glGenTextures(2, fbo->texes);
