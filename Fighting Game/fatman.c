@@ -217,7 +217,7 @@ int draw_fatman(struct fatman* fm)
     
     draw_health_bar(c);
     
-    flip_fbo(&fbo);
+    flip_fbos(&fbos);
     glUseProgram(fm->blur_program.program);
     set_character_draw_state(c, &fm->blur_program, fatman, anim, frame);
     glUniform1f(fm->ground_speed_unif, c->next.ground_pos - c->prev.ground_pos);

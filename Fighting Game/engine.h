@@ -91,32 +91,38 @@ inline void poll_shader_changes() {}
 
 //*** FBO
 typedef struct fbo {
-    GLsizei width, height;
-    GLuint fbos[2], default_fb;
-    GLuint texes[2], depth;
-    size_t cur;
-    struct program quad_shader;
+    GLuint fbo, tex, depth;
 } fbo_t;
 
-//Note: fbo_window_size must be called before the fbo can be used
 void make_fbo(fbo_t* fbo);
+void fbo_size(fbo_t* fbo, GLsizei width, GLsizei height);
+void read_fbo(fbo_t* fbo);
+void draw_fbo(fbo_t* fbo);
+void free_fbo(fbo_t* fbo);
+
+typedef struct fbos {
+    GLsizei width, height;
+    fbo_t fbos[2];
+    GLuint default_fb;
+    size_t cur;
+    struct program quad_shader;
+} fbos_t;
+
+//Note: fbos_window_size must be called before the fbo can be used
+//Depends on default FB being bound
+void make_fbos(fbos_t* fbos);
+void free_fbos(fbos_t* fbos);
 
 //Note: prepare_fbo must be called before the fbo can be used
-void fbo_window_size(fbo_t* fbo, GLsizei width, GLsizei height);
+void fbos_window_size(fbos_t* fbos, GLsizei width, GLsizei height);
+//Clears buffers.
+void prepare_fbos(fbos_t* fbos);
 
-//Clears buffers. Note: changes read and draw fb bindings
-void prepare_fbo(fbo_t* fbo);
-
-//Note: changes read and draw fb bindings
-void flip_fbo(fbo_t* fbo);
-
+void flip_fbos(fbos_t* fbos);
 //same as flip_fbo, but doesn't copy pixels
-void swap_fbo(fbo_t* fbo);
-
-//Note: changes read and draw fb bindings
-void blit_fbo(fbo_t* fbo);
-
-void free_fbo(fbo_t* fbo);
+void swap_fbos(fbos_t* fbos);
+//Copy to default fb
+void blit_fbos(fbos_t* fbos);
 
 //*** Time
 //25 FPS
@@ -182,7 +188,7 @@ extern int learning_mode;
 extern struct key_events key_left, key_right;
 extern effects_t effects;
 //N-directional data flow
-extern fbo_t fbo;
+extern fbos_t fbos;
 
 void calculate_camera(float width_px, float height_px);
 

@@ -265,7 +265,7 @@ int draw_stickman(struct stickman* sm)
              || anim == &stickman_overhead || anim == &stickman_forward)
         frame /= 10.;
     
-    flip_fbo(&fbo);
+    flip_fbos(&fbos);
     glUseProgram(sm->blur_program.program);
     set_character_draw_state(c, &sm->blur_program, stickman, anim, frame);
     if (state == swing || state == swingup || state == big_swing_1 || state == big_swing_2)

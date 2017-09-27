@@ -20,7 +20,7 @@ int draw_hit_effect(hit_effect_t* he)
 {
     usec_t elapsed = game_time.current_time - he->start_time;
     
-    swap_fbo(&fbo);
+    swap_fbos(&fbos);
     glUseProgram(he->attacker->hit_effect.program);
     glUniform1f(he->attacker->hit_effect.time, (float)elapsed / 1000000.f);
     glUniform2f(he->origin_unif, he->x, .4);

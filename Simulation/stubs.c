@@ -14,8 +14,8 @@ void draw_blur_object(struct object* o) {}
 void free_object(struct object* o) {}
 void load_shader_program(struct program* p, shader_t vert, shader_t frag) {}
 void free_program(struct program* p) {}
-void flip_fbo(fbo_t* fbo) {}
-void swap_fbo(fbo_t* fbo) {}
+void flip_fbos(fbos_t* fbo) {}
+void swap_fbos(fbos_t* fbo) {}
 void push_effect(effects_t* e, bound_t effect) {}
 
 #include "character_internal.h"

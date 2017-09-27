@@ -21,7 +21,7 @@ int main (int argc, char* argv[])
     init_input(window);
     
     make_box(&box);
-    make_fbo(&fbo);
+    make_fbos(&fbos);
     make_effects(&effects);
     
     /*struct program screen_noise;
@@ -64,26 +64,26 @@ int main (int argc, char* argv[])
             
             int width, height;
             glfwGetFramebufferSize(window, &width, &height);
-            fbo_window_size(&fbo, width, height);
+            fbos_window_size(&fbos, width, height);
             calculate_camera((float)width, (float)height);
             
             poll_shader_changes();
             
-            prepare_fbo(&fbo);
+            prepare_fbos(&fbos);
             
             draw_character(left);
             draw_character(right);
             draw_effects(&effects);
             
             /*TIME {
-                swap_fbo(&fbo);
+                swap_fbos(&fbo);
                 glUseProgram(screen_noise.program);
                 glUniform1f(screen_noise.time, (float)game_time.current_time / 1000000.f);
                 glBindVertexArray(box.vertexArrayObject);
                 glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
             }*/
             
-            blit_fbo(&fbo);
+            blit_fbos(&fbos);
             glfwSwapBuffers(window);
             //render_tick must be called immediately after the frame appears
             //onscreen for the algorithm to work.
@@ -134,7 +134,7 @@ int main (int argc, char* argv[])
             while (phys_tick(&game_time))
                 ;
             
-            prepare_fbo(&fbo);
+            prepare_fbos(&fbos);
             draw_character(left);
             draw_character(right);
             draw_effects(&effects);
@@ -143,7 +143,7 @@ int main (int argc, char* argv[])
             glBindVertexArray(game_over_text.vertexArrayObject);
             glDrawArrays(GL_TRIANGLES, 0, game_over_text.numVertecies);
             
-            blit_fbo(&fbo);
+            blit_fbos(&fbos);
             glfwSwapBuffers(window);
             poll_input();
             poll_shader_changes();
@@ -160,7 +160,7 @@ int main (int argc, char* argv[])
     
     free_object(&box);
     free_effects(&effects);
-    free_fbo(&fbo);
+    free_fbos(&fbos);
     glfwTerminate();
     
     return 0;
