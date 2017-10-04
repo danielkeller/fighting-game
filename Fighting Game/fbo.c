@@ -27,6 +27,13 @@ void check_fbo_status(void)
 #undef FBO_ERROR_CASE
 }
 
+void do_blit(fbos_t* fbos)
+{
+    glUseProgram(fbos->quad_shader.program);
+    glBindVertexArray(box.vertexArrayObject);
+    glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
+}
+
 void make_fbo(fbo_t* fbo)
 {
     glGenFramebuffers(1, &fbo->fbo);
@@ -34,10 +41,22 @@ void make_fbo(fbo_t* fbo)
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
     fbo->tex = fbo->depth = 0;
+    fbo->width = fbo->height = 0;
+}
+
+void free_fbo(fbo_t* fbo)
+{
+    glDeleteFramebuffers(1, &fbo->fbo);
+    glDeleteTextures(1, &fbo->tex);
+    glDeleteRenderbuffers(1, &fbo->depth);
 }
 
 void fbo_size(fbo_t* fbo, GLsizei width, GLsizei height)
 {
+    if (width == fbo->width && height == fbo->height)
+        return;
+    fbo->width = width; fbo->height = height;
+    
     glDeleteTextures(1, &fbo->tex);
     glGenTextures(1, &fbo->tex);
     
@@ -70,19 +89,12 @@ void read_fbo(fbo_t* fbo)
 void draw_fbo(fbo_t* fbo)
 {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo->fbo);
-}
-
-void free_fbo(fbo_t* fbo)
-{
-    glDeleteFramebuffers(1, &fbo->fbo);
-    glDeleteTextures(1, &fbo->tex);
-    glDeleteRenderbuffers(1, &fbo->depth);
+    glViewport(0, 0, fbo->width, fbo->height);
 }
 
 void make_fbos(fbos_t* fbos)
 {
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&fbos->default_fb);
-    fbos->width = fbos->height = 0;
     fbos->cur = 0;
     
     for (size_t i = 0; i < 2; ++i)
@@ -99,10 +111,6 @@ void free_fbos(fbos_t* fbos)
 
 void fbos_window_size(fbos_t* fbos, GLsizei width, GLsizei height)
 {
-    if (width == fbos->width && height == fbos->height)
-        return;
-    fbos->width = width; fbos->height = height;
-    
     for (size_t i = 0; i < 2; ++i)
         fbo_size(&fbos->fbos[i], width, height);
 }
@@ -110,16 +118,7 @@ void fbos_window_size(fbos_t* fbos, GLsizei width, GLsizei height)
 void prepare_fbos(fbos_t* fbos)
 {
     draw_fbo(&fbos->fbos[fbos->cur]);
-    glViewport(0, 0, fbos->width, fbos->height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void do_blit(fbos_t* fbos)
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glUseProgram(fbos->quad_shader.program);
-    glBindVertexArray(box.vertexArrayObject);
-    glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
 }
 
 void swap_fbos(fbos_t* fbos)
@@ -132,6 +131,13 @@ void swap_fbos(fbos_t* fbos)
 void flip_fbos(fbos_t* fbos)
 {
     swap_fbos(fbos);
+    do_blit(fbos);
+}
+
+void blit_other_fbo(fbos_t* fbos, fbo_t* fbo)
+{
+    read_fbo(fbo);
+    draw_fbo(&fbos->fbos[fbos->cur]);
     do_blit(fbos);
 }
 

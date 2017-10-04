@@ -265,6 +265,7 @@ void update_program(struct program* program)
             }
         
         COPY_UNIF(GL_SAMPLER_2D, GLint, 1, i)
+        COPY_UNIF(GL_SAMPLER_2D_RECT, GLint, 1, i)
         COPY_UNIF(GL_FLOAT, GLfloat, 1, f)
         COPY_UNIF(GL_FLOAT_VEC2, GLfloat, 2, f)
         COPY_UNIF(GL_FLOAT_VEC3, GLfloat, 3, f)

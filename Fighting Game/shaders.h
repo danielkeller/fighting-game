@@ -2,6 +2,7 @@ typedef struct shader* shader_t;
 extern shader_t anim_vert;
 extern shader_t blast_frag;
 extern shader_t blit_frag;
+extern shader_t blur_frag;
 extern shader_t chevron_frag;
 extern shader_t chevron_hit_frag;
 extern shader_t color_frag;

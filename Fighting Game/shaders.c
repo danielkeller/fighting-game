@@ -59,6 +59,26 @@ shader_t blit_frag = &(struct shader){
 "color = texture(framebuffer, gl_FragCoord.xy);\n"
 "}\n"
 };
+shader_t blur_frag = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/blur.frag",
+#endif
+.name = "blur_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"uniform sampler2DRect framebuffer;\n"
+"uniform sampler2DRect noise;\n"
+"in vec2 posFrag;\n"
+"\n"
+"void main()\n"
+"{\n"
+"vec2 noise_coord = gl_FragCoord.xy / textureSize(framebuffer) * textureSize(noise);\n"
+"vec4 noise_val = texture(noise, noise_coord);\n"
+"color = texture(framebuffer, gl_FragCoord.xy + (noise_val.xy - .5) * 20);\n"
+"}\n"
+};
 shader_t chevron_frag = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
@@ -445,56 +465,18 @@ shader_t noise_frag = &(struct shader){
 .type = GL_FRAGMENT_SHADER,
 .source =
 "out vec4 color;\n"
-"uniform sampler2DRect framebuffer;\n"
-"in vec2 posFrag;\n"
 "uniform float time;\n"
 "float snoise(vec3 v);\n"
-"\n"
-"float hash(vec3 p)\n"
-"{\n"
-"p  = fract( p*0.3183099+.1 );\n"
-"p *= 17.0;\n"
-"return fract( p.x*p.y*p.z*(p.x+p.y+p.z) );\n"
-"}\n"
-"\n"
-"float noise( in vec3 x )\n"
-"{\n"
-"vec3 p = floor(x);\n"
-"vec3 f = fract(x);\n"
-"f = f*f*(3.0-2.0*f);\n"
-"\n"
-"return mix(mix(mix( hash(p+vec3(0,0,0)),\n"
-"hash(p+vec3(1,0,0)),f.x),\n"
-"mix( hash(p+vec3(0,1,0)),\n"
-"hash(p+vec3(1,1,0)),f.x),f.y),\n"
-"mix(mix( hash(p+vec3(0,0,1)),\n"
-"hash(p+vec3(1,0,1)),f.x),\n"
-"mix( hash(p+vec3(0,1,1)),\n"
-"hash(p+vec3(1,1,1)),f.x),f.y),f.z);\n"
-"}\n"
-"\n"
-"const mat3 m = mat3( 0.00,  0.80,  0.60,\n"
-"-0.80,  0.36, -0.48,\n"
-"-0.60, -0.48,  0.64 );\n"
-"\n"
-"float fractnoise(in vec3 pos) {\n"
-"vec3 q = pos;\n"
-"float f  = 0.5000*noise( q ); q = m*q*2.01;\n"
-"f += 0.2500*noise( q ); q = m*q*2.02;\n"
-"f += 0.1250*noise( q ); q = m*q*2.03;\n"
-"f += 0.0625*noise( q ); q = m*q*2.01;\n"
-"return f;\n"
-"}\n"
+"float srdnoise(in vec2 P, in float rot, out vec2 grad);\n"
 "\n"
 "void main()\n"
 "{\n"
-"//ivec2 init = ivec2(gl_FragCoord.xy+23462232);\n"
-"//init = rand(rand(~rand(init))*ivec2(time*50, time*73));\n"
-"\n"
-"color = texture(framebuffer, gl_FragCoord.xy) + vec4(1,1,1,0) // *float(init.x+init.y) / pow(2., 32)\n"
-"* smoothstep(.4, .5, fractnoise(vec3(gl_FragCoord.xy*.1, time)));\n"
+"float pulse = pow(sin(time*7), 6);\n"
+"vec2 grad, grad1;\n"
+"float noise = srdnoise(gl_FragCoord.xy*.3, time*1.5, grad);\n"
+"float noise1 = max(srdnoise(gl_FragCoord.xy*.005, time*.2, grad1) - .1 + pulse*.4, 0) * (pulse+1);\n"
+"color = vec4(grad * noise1 * .5 + .5, noise*noise1, 0);\n"
 "}\n"
-"\n"
 };
 shader_t particles_vert = &(struct shader){
 .shader = 0,

@@ -13,6 +13,7 @@
 #include "engine.h"
 #include "objects/game over.h"
 #include "character.h"
+#include "screen_effects.h"
 #include <math.h>
 
 int main (int argc, char* argv[])
@@ -23,10 +24,9 @@ int main (int argc, char* argv[])
     make_box(&box);
     make_fbos(&fbos);
     make_effects(&effects);
+    struct screen_effects screen_effects;
+    make_screen_effects(&screen_effects);
     
-    /*struct program screen_noise;
-    load_shader_program(&screen_noise, screenspace_vert, noise_frag);
-    */
 #if PROFILE
     int64_t frame_count = 0, with_frame_count = 0, without_frame_count = 0;
     usec_t last_fps = get_time();
@@ -74,14 +74,7 @@ int main (int argc, char* argv[])
             draw_character(left);
             draw_character(right);
             draw_effects(&effects);
-            
-            /*TIME {
-                swap_fbos(&fbo);
-                glUseProgram(screen_noise.program);
-                glUniform1f(screen_noise.time, (float)game_time.current_time / 1000000.f);
-                glBindVertexArray(box.vertexArrayObject);
-                glDrawArrays(GL_TRIANGLES, 0, box.numVertecies);
-            }*/
+            draw_screen_effects(&screen_effects);
             
             blit_fbos(&fbos);
             glfwSwapBuffers(window);
@@ -138,6 +131,7 @@ int main (int argc, char* argv[])
             draw_character(left);
             draw_character(right);
             draw_effects(&effects);
+            draw_screen_effects(&screen_effects);
             
             glUseProgram(game_over_shader.program);
             glBindVertexArray(game_over_text.vertexArrayObject);
@@ -158,6 +152,7 @@ int main (int argc, char* argv[])
         free_character(right);
     }
     
+    free_screen_effects(&screen_effects);
     free_object(&box);
     free_effects(&effects);
     free_fbos(&fbos);

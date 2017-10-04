@@ -92,21 +92,21 @@ inline void poll_shader_changes() {}
 //*** FBO
 typedef struct fbo {
     GLuint fbo, tex, depth;
+    GLsizei width, height;
 } fbo_t;
+
+typedef struct fbos {
+    fbo_t fbos[2];
+    GLuint default_fb;
+    size_t cur;
+    struct program quad_shader;
+} fbos_t;
 
 void make_fbo(fbo_t* fbo);
 void fbo_size(fbo_t* fbo, GLsizei width, GLsizei height);
 void read_fbo(fbo_t* fbo);
 void draw_fbo(fbo_t* fbo);
 void free_fbo(fbo_t* fbo);
-
-typedef struct fbos {
-    GLsizei width, height;
-    fbo_t fbos[2];
-    GLuint default_fb;
-    size_t cur;
-    struct program quad_shader;
-} fbos_t;
 
 //Note: fbos_window_size must be called before the fbo can be used
 //Depends on default FB being bound
@@ -121,6 +121,7 @@ void prepare_fbos(fbos_t* fbos);
 void flip_fbos(fbos_t* fbos);
 //same as flip_fbo, but doesn't copy pixels
 void swap_fbos(fbos_t* fbos);
+void blit_other_fbo(fbos_t* fbos, fbo_t* fbo);
 //Copy to default fb
 void blit_fbos(fbos_t* fbos);
 
