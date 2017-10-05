@@ -12,7 +12,7 @@
 #include "window.h"
 #include "engine.h"
 #include "objects/game over.h"
-#include "character.h"
+#include "character_internal.h" //FIXME
 #include "screen_effects.h"
 #include <math.h>
 
@@ -74,7 +74,10 @@ int main (int argc, char* argv[])
             draw_character(left);
             draw_character(right);
             draw_effects(&effects);
-            draw_screen_effects(&screen_effects);
+            TIME {
+                int min_health = left->next.health < right->next.health ? left->next.health : right->next.health;
+                draw_screen_effects(&screen_effects, 1.f - (float)min_health / 100.f);
+            }
             
             blit_fbos(&fbos);
             glfwSwapBuffers(window);
@@ -131,7 +134,7 @@ int main (int argc, char* argv[])
             draw_character(left);
             draw_character(right);
             draw_effects(&effects);
-            draw_screen_effects(&screen_effects);
+            draw_screen_effects(&screen_effects, 0.);
             
             glUseProgram(game_over_shader.program);
             glBindVertexArray(game_over_text.vertexArrayObject);

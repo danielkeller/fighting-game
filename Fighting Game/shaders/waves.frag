@@ -1,8 +1,6 @@
 out vec4 color;
 uniform float time;
-uniform vec2 origin;
-uniform vec3 main_color;
-uniform vec3 lead_color;
+uniform float intensity;
 
 uniform sampler2DRect framebuffer;
 
@@ -10,9 +8,13 @@ in vec2 posFrag;
 
 void main()
 {
+    vec2 origin = vec2(0, 1);
+    vec3 main_color = vec3(1, 0, 0);
+    vec3 lead_color = vec3(1, 1, 0);
+    
     float wave = distance(posFrag, origin)*5 - time*.6;
-    float pulse = 1;// - abs(cos(time*16)) * .2;
-    float val = pow(mod(wave, 1.), 2 * pulse) + .02;// - .3*rand(posFrag + time);
+    float pulse = 1 - pow(sin(time*7), 6) * .2;
+    float val = pow(mod(wave, 1.), pulse*2)*.6*intensity + .02;// - .3*rand(posFrag + time);
     
     float val1 = 0.;//pow(1 - mod(wave, 1.), 16);
     

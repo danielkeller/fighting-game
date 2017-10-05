@@ -39,6 +39,7 @@
 		37B557361F78456B00786854 /* noise.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37B557351F78456B00786854 /* noise.frag */; };
 		37B557391F7C3D7300786854 /* blur.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37B557381F7C3D7300786854 /* blur.frag */; };
 		37B5573C1F85273500786854 /* screen_effects.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B5573A1F85273500786854 /* screen_effects.c */; };
+		37B5573E1F8640CF00786854 /* waves.frag in Resources */ = {isa = PBXBuildFile; fileRef = 37B5573D1F8640CF00786854 /* waves.frag */; };
 		37B7BC501D6F311400EF0A7E /* fbo.c in Sources */ = {isa = PBXBuildFile; fileRef = 37B7BC4E1D6F311400EF0A7E /* fbo.c */; };
 		37C8FD471F0D829A00EE268D /* fatman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37C8FD451F0D829A00EE268D /* fatman.c */; };
 		37C8FD4A1F0D838C00EE268D /* fatman.c in Sources */ = {isa = PBXBuildFile; fileRef = 37C8FD491F0D838C00EE268D /* fatman.c */; };
@@ -114,7 +115,6 @@
 		37853D671D662D520052A8C8 /* error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 		37853D691D68AA720052A8C8 /* object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = object.c; sourceTree = "<group>"; };
 		3791266B1E866E8F00613418 /* color.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = color.frag; path = shaders/color.frag; sourceTree = "<group>"; };
-		3791266C1E866E8F00613418 /* waves.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = waves.frag; path = shaders/waves.frag; sourceTree = "<group>"; };
 		3791266D1E866E8F00613418 /* anim.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = anim.vert; path = shaders/anim.vert; sourceTree = "<group>"; };
 		3791266E1E866E8F00613418 /* simple.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = simple.vert; path = shaders/simple.vert; sourceTree = "<group>"; };
 		379126731E86786100613418 /* shaders.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shaders.c; sourceTree = "<group>"; };
@@ -123,6 +123,7 @@
 		37B557381F7C3D7300786854 /* blur.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = blur.frag; path = shaders/blur.frag; sourceTree = "<group>"; };
 		37B5573A1F85273500786854 /* screen_effects.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = screen_effects.c; sourceTree = "<group>"; };
 		37B5573B1F85273500786854 /* screen_effects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = screen_effects.h; sourceTree = "<group>"; };
+		37B5573D1F8640CF00786854 /* waves.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = waves.frag; path = shaders/waves.frag; sourceTree = "<group>"; };
 		37B7BC4E1D6F311400EF0A7E /* fbo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fbo.c; sourceTree = "<group>"; };
 		37C8FD451F0D829A00EE268D /* fatman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fatman.c; path = objects/fatman.c; sourceTree = "<group>"; };
 		37C8FD461F0D829A00EE268D /* fatman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fatman.h; path = objects/fatman.h; sourceTree = "<group>"; };
@@ -355,13 +356,13 @@
 				37026DAB1EE700B800440F60 /* basic */,
 				37026DAC1EE700D500440F60 /* character */,
 				37026DAA1EE7004A00440F60 /* stickman */,
-				3791266C1E866E8F00613418 /* waves.frag */,
 				37F36A311EB2124800E30D1D /* lib.frag */,
 				37F36A331EB22C0800E30D1D /* lib.vert */,
 				379126731E86786100613418 /* shaders.c */,
 				379126741E86786100613418 /* shaders.h */,
 				37B557351F78456B00786854 /* noise.frag */,
 				37B557381F7C3D7300786854 /* blur.frag */,
+				37B5573D1F8640CF00786854 /* waves.frag */,
 			);
 			name = shaders;
 			sourceTree = "<group>";
@@ -489,6 +490,7 @@
 				37B557391F7C3D7300786854 /* blur.frag in Resources */,
 				37B557361F78456B00786854 /* noise.frag in Resources */,
 				37421AAB1CB2FDCC0027B7D4 /* Assets.xcassets in Resources */,
+				37B5573E1F8640CF00786854 /* waves.frag in Resources */,
 				37421AAE1CB2FDCC0027B7D4 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

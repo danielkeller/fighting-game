@@ -11,12 +11,13 @@
 #include "engine.h"
 
 struct screen_effects {
-    struct program screen_noise, blur;
+    struct program screen_noise, blur, waves;
+    GLint blur_intensity_unif, waves_intensity_unif;
     fbo_t noise_fbo;
 };
 
 void make_screen_effects(struct screen_effects*);
-void draw_screen_effects(struct screen_effects*);
+void draw_screen_effects(struct screen_effects*, float intensity);
 void free_screen_effects(struct screen_effects*);
 
 #endif /* screen_effects_h */
