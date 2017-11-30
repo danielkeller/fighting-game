@@ -74,8 +74,8 @@ int main (int argc, char* argv[])
             draw_character(left);
             draw_character(right);
             draw_effects(&effects);
+            int min_health = left->next.health < right->next.health ? left->next.health : right->next.health;
             TIME {
-                int min_health = left->next.health < right->next.health ? left->next.health : right->next.health;
                 draw_screen_effects(&screen_effects, 1.f - (float)min_health / 100.f);
             }
             

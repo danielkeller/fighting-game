@@ -1,88 +1,100 @@
 #include "engine.h"
-shader_t anim_vert = &(struct shader){
+shader_t noise_frag = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/anim.vert",
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/noise.frag",
 #endif
-.name = "anim_vert",
+.name = "noise_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"uniform float time;\n"
+"uniform float intensity;\n"
+"float snoise(vec3 v);\n"
+"float snoise(vec2 v);\n"
+"float srdnoise(in vec2 P, in float rot, out vec2 grad);\n"
+"in vec2 posFrag;\n"
+"\n"
+"float rand(vec2 co){\n"
+"return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);\n"
+"}\n"
+"\n"
+"void main()\n"
+"{\n"
+"float pulse = pow(sin(time*7), 6);\n"
+"vec2 grad, grad1;\n"
+"float noise = srdnoise(posFrag*100., time*1.5, grad);\n"
+"float noise0 = srdnoise(posFrag*3., time*.2, grad1);\n"
+"float noise1 = max(noise0 - .1 + pulse*.1, .02) * (pulse*.5+1);\n"
+"float noise2 = rand(posFrag + time) * (pulse*.2 + .8);\n"
+"color = vec4(grad * noise1 * .5 + .5, noise2, 0);\n"
+"}\n"
+};
+shader_t particles_vert = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/particles.vert",
+#endif
+.name = "particles_vert",
 .type = GL_VERTEX_SHADER,
 .source =
-"vec2 skinned_pos();\n"
-"void output_local_world_space(vec2 pos);\n"
+"in vec2 position;\n"
 "\n"
-"void main()\n"
-"{\n"
-"output_local_world_space(skinned_pos());\n"
-"}\n"
-};
-shader_t blast_frag = &(struct shader){
-.shader = 0,
-#ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/blast.frag",
-#endif
-.name = "blast_frag",
-.type = GL_FRAGMENT_SHADER,
-.source =
-"out vec4 color;\n"
 "uniform float time;\n"
-"uniform vec2 origin;\n"
+"uniform vec2 init_vel;\n"
+"uniform mat3 camera;\n"
+"uniform mat3 transform;\n"
 "\n"
-"uniform sampler2DRect framebuffer;\n"
+"out vec2 posFrag;\n"
 "\n"
-"in vec2 posFrag;\n"
+"int rand(int x) {\n"
+"x ^= x << 13; x ^= x >> 17; x ^= x << 5;\n"
+"return x;\n"
+"}\n"
 "\n"
 "void main()\n"
 "{\n"
-"vec2 dir = posFrag - origin;\n"
-"float amount = mod(sqrt(length(dir))*10 - time*4, 1);\n"
-"vec2 displacement = amount*normalize(dir)*100;\n"
+"int seed = rand(gl_InstanceID) ^ int(1/fract(transform[0,2] + transform[1,2]));\n"
+"int angle = rand(seed);\n"
+"int speed = rand(angle);\n"
 "\n"
-"color = texture(framebuffer, gl_FragCoord.xy + displacement);\n"
+"float theta = float(angle) / pow(2., 20);\n"
+"vec2 dir = vec2(cos(theta), sin(theta));\n"
+"vec2 vel = dir * (float(speed) / pow(2., 32)) + init_vel + vec2(0, -time);\n"
+"\n"
+"vec2 pos = position*vec2(.05,.002);\n"
+"vec2 vel_dir = normalize(vel);\n"
+"pos = mat2(vel_dir.x, vel_dir.y, -vel_dir.y, vel_dir.x) * pos;\n"
+"\n"
+"pos += time * (vel);\n"
+"\n"
+"gl_Position = vec4((camera * transform * vec3(pos, 1)).xy, 0, 1);\n"
+"posFrag = (transform * vec3(pos, 1)).xy;\n"
+"\n"
 "}\n"
 };
-shader_t blit_frag = &(struct shader){
+shader_t color_frag = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/blit.frag",
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/color.frag",
 #endif
-.name = "blit_frag",
+.name = "color_frag",
 .type = GL_FRAGMENT_SHADER,
 .source =
-"out vec4 color;\n"
-"\n"
-"uniform sampler2DRect framebuffer;\n"
-"\n"
 "in vec2 posFrag;\n"
-"\n"
-"void main()\n"
-"{\n"
-"color = texture(framebuffer, gl_FragCoord.xy);\n"
-"}\n"
-};
-shader_t blur_frag = &(struct shader){
-.shader = 0,
-#ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/blur.frag",
-#endif
-.name = "blur_frag",
-.type = GL_FRAGMENT_SHADER,
-.source =
 "out vec4 color;\n"
-"uniform sampler2DRect framebuffer;\n"
-"uniform sampler2DRect noise;\n"
-"uniform float intensity;\n"
+"uniform vec3 main_color;\n"
+"uniform sampler2D framebuffer;\n"
 "uniform float time;\n"
-"in vec2 posFrag;\n"
+"\n"
+"float snoise(vec2 v);\n"
 "\n"
 "void main()\n"
 "{\n"
-"vec2 noise_coord = gl_FragCoord.xy / textureSize(framebuffer) * textureSize(noise);\n"
-"vec4 noise_val = texture(noise, noise_coord);\n"
-"color = texture(framebuffer, gl_FragCoord.xy + (noise_val.xy - .5) * 30 * intensity);\n"
-"\n"
-"float pulse = pow(sin(time*7), 6);\n"
-"color -= pow(max(length(posFrag) - .3 - .1*pulse* intensity, 0), 4);\n"
-"color = max(color, -.06) + noise_val.z*.2 * (intensity+.2);\n"
+"//vec2 uv = gl_FragCoord.xy/3.;\n"
+"//float noise = snoise(uv) + snoise(uv/2.+time) + snoise(uv/4.);\n"
+"//color = vec4(vec3(noise*.2+.8), 1);\n"
+"color = vec4(main_color, 1);\n"
 "}\n"
 };
 shader_t chevron_frag = &(struct shader){
@@ -111,6 +123,333 @@ shader_t chevron_frag = &(struct shader){
 "color = texture(framebuffer, gl_FragCoord.xy);\n"
 "if (amount > .8 && amount < 1)\n"
 "color += vec4(1,0,0,1);\n"
+"}\n"
+};
+shader_t waves_frag = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/waves.frag",
+#endif
+.name = "waves_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"uniform float time;\n"
+"uniform float intensity;\n"
+"\n"
+"uniform sampler2DRect framebuffer;\n"
+"\n"
+"in vec2 posFrag;\n"
+"\n"
+"void main()\n"
+"{\n"
+"vec2 origin = vec2(0, 1);\n"
+"vec3 main_color = vec3(1, 0, 0);\n"
+"vec3 lead_color = vec3(1, 1, 0);\n"
+"\n"
+"float wave = distance(posFrag, origin)*5 - time*.6;\n"
+"float pulse = 1 - pow(sin(time*7), 6) * .2;\n"
+"float val = pow(mod(wave, 1.), pulse*2)*.6*intensity + .02;// - .3*rand(posFrag + time);\n"
+"\n"
+"float val1 = 0.;//pow(1 - mod(wave, 1.), 16);\n"
+"\n"
+"vec4 dest = texture(framebuffer, gl_FragCoord.xy);\n"
+"float src_a = val + val1;\n"
+"vec3 src = (main_color*val + lead_color*val1)/src_a;\n"
+"float extra_a = max(dest.a - src_a, 0.);\n"
+"src_a = max(src_a - extra_a, 0.);\n"
+"color = dest * (1 - src_a) + vec4(src*src_a, src_a);\n"
+"}\n"
+};
+shader_t stickman_blur_frag = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/stickman_blur.frag",
+#endif
+.name = "stickman_blur_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"uniform sampler2DRect framebuffer;\n"
+"in float frag_blur_alpha;\n"
+"uniform bool attacking;\n"
+"\n"
+"void main()\n"
+"{\n"
+"color = texture(framebuffer, gl_FragCoord.xy);\n"
+"if (attacking)\n"
+"color += frag_blur_alpha*vec4(.9, .6, .7, 1);\n"
+"else\n"
+"color += vec4(frag_blur_alpha);\n"
+"}\n"
+};
+shader_t lib_vert = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/lib.vert",
+#endif
+.name = "lib_vert",
+.type = GL_VERTEX_SHADER,
+.source =
+"const float pi = 3.1415926535897;\n"
+"\n"
+"mat2 rotation(float t) {\n"
+"return mat2(cos(t), -sin(t),\n"
+"sin(t), cos(t));\n"
+"}\n"
+"\n"
+"in vec2 position;\n"
+"in int bone, parent;\n"
+"in float weight;\n"
+"uniform float alpha;\n"
+"uniform vec4 bones_from[32], bones_to[32];\n"
+"\n"
+"vec4 bone_lerp(vec4 from, vec4 to, float alpha) {\n"
+"//Go around the short way\n"
+"if (from.z + pi < to.z)\n"
+"to.z -= 2*pi;\n"
+"if (from.z - pi > to.z)\n"
+"to.z += 2*pi;\n"
+"return from * (1. - alpha) + to * alpha;\n"
+"}\n"
+"\n"
+"vec2 skinned_pos_at(float alpha) {\n"
+"vec4 eff_bone = bone_lerp(bones_from[bone], bones_to[bone], alpha);\n"
+"vec4 eff_parent = bone_lerp(bones_from[parent], bones_to[parent], alpha);\n"
+"\n"
+"//Interpolate the rotation by 'weight', then translate with the lower bone\n"
+"float rot = eff_parent.z + (eff_bone.z - eff_parent.z) * weight;\n"
+"float y_scale = eff_parent.w + (eff_bone.w - eff_parent.w) * weight;\n"
+"vec2 scale = vec2(1./y_scale, y_scale);\n"
+"vec2 bone_rel_pos = rotation(-rot) * (position * scale);\n"
+"return eff_bone.xy + bone_rel_pos;\n"
+"}\n"
+"\n"
+"vec2 skinned_pos() {\n"
+"return skinned_pos_at(alpha);\n"
+"}\n"
+"\n"
+"in float blur_alpha;\n"
+"uniform float ground_speed;\n"
+"\n"
+"vec3 blur_skinned_pos(float threshold, float exaggeration) {\n"
+"float inv_ba = 1. - blur_alpha;\n"
+"vec2 offset = vec2(-1, 0)*ground_speed*inv_ba;\n"
+"vec2 start_pos = skinned_pos_at(0);\n"
+"vec2 end_pos = skinned_pos_at(1) + offset;\n"
+"if (distance(start_pos, end_pos) > threshold)\n"
+"return vec3(skinned_pos_at(alpha - inv_ba*exaggeration) + offset*exaggeration, inv_ba);\n"
+"else\n"
+"return vec3(skinned_pos_at(alpha), 0.);\n"
+"}\n"
+"\n"
+"vec3 blur_skinned_pos() {\n"
+"return blur_skinned_pos(.05, .4);\n"
+"}\n"
+"\n"
+"out float frag_blur_alpha;\n"
+"\n"
+"void set_frag_blur_input() {\n"
+"frag_blur_alpha = blur_alpha;\n"
+"}\n"
+"\n"
+"uniform mat3 camera;\n"
+"uniform mat3 transform;\n"
+"\n"
+"out vec2 posFrag;\n"
+"\n"
+"void output_local_world_space(vec2 pos) {\n"
+"gl_Position = vec4((camera * transform * vec3(pos, 1)).xy, 0, 1);\n"
+"posFrag = (transform * vec3(pos, 1)).xy;\n"
+"}\n"
+"\n"
+"void output_local_world_space(vec3 pos) {\n"
+"gl_Position = vec4((camera * transform * vec3(pos.xy, 1)).xy, pos.z, 1);\n"
+"posFrag = (transform * vec3(pos.xy, 1)).xy;\n"
+"}\n"
+};
+shader_t anim_vert = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/anim.vert",
+#endif
+.name = "anim_vert",
+.type = GL_VERTEX_SHADER,
+.source =
+"vec2 skinned_pos();\n"
+"void output_local_world_space(vec2 pos);\n"
+"\n"
+"void main()\n"
+"{\n"
+"output_local_world_space(skinned_pos());\n"
+"}\n"
+};
+shader_t health_bar_frag = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/health bar.frag",
+#endif
+.name = "health_bar_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"uniform float direction;\n"
+"uniform float health, last_health, time_since_last_change;\n"
+"\n"
+"in vec2 uv;\n"
+"\n"
+"void main()\n"
+"{\n"
+"if (uv.x < health/100.)\n"
+"color = vec4(1, 0, 0, 1);\n"
+"else if (uv.x < last_health/100.) {\n"
+"color = vec4(1, 1, 1, 1) * exp(-3.*time_since_last_change);\n"
+"}\n"
+"else\n"
+"color = vec4(0, 0, 0, 0);\n"
+"}\n"
+};
+shader_t state_indicator_frag = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/state_indicator.frag",
+#endif
+.name = "state_indicator_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"in vec2 uv;\n"
+"\n"
+"uniform int top, bottom, top_attack, bottom_attack;\n"
+"\n"
+"void main()\n"
+"{\n"
+"if (uv.y > .5)\n"
+"{\n"
+"if (uv.x > .5)\n"
+"color = vec4(1,0,0,1)*float(top_attack)*.33;\n"
+"else\n"
+"color = vec4(1,1,1,1)*float(top)*.33;\n"
+"}\n"
+"else\n"
+"{\n"
+"if (uv.x > .5)\n"
+"color = vec4(1,0,0,1)*float(bottom_attack)*.33;\n"
+"else\n"
+"color = vec4(1,1,1,1)*float(bottom)*.33;\n"
+"}\n"
+"}\n"
+};
+shader_t screenspace_vert = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/screenspace.vert",
+#endif
+.name = "screenspace_vert",
+.type = GL_VERTEX_SHADER,
+.source =
+"in vec2 position;\n"
+"out vec2 posFrag;\n"
+"\n"
+"void main()\n"
+"{\n"
+"gl_Position = vec4(position*2-1, 1, 1);\n"
+"//posFrag is supposed to be in world space\n"
+"posFrag = position*2-1;\n"
+"}\n"
+};
+shader_t blur_frag = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/blur.frag",
+#endif
+.name = "blur_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"uniform sampler2DRect framebuffer;\n"
+"uniform sampler2DRect noise;\n"
+"uniform float intensity;\n"
+"uniform float time;\n"
+"in vec2 posFrag;\n"
+"\n"
+"void main()\n"
+"{\n"
+"vec2 noise_coord = gl_FragCoord.xy / textureSize(framebuffer) * textureSize(noise);\n"
+"vec4 noise_val = texture(noise, noise_coord);\n"
+"color = texture(framebuffer, gl_FragCoord.xy + (noise_val.xy - .5) * 40 * intensity);\n"
+"\n"
+"float pulse = pow(sin(time*7), 6);\n"
+"color -= pow(max(length(posFrag) - .5 + intensity*.2 - .1*pulse*intensity, 0), 4);\n"
+"color = max(color, -.06) + noise_val.z*.2 * (intensity+.2);\n"
+"}\n"
+};
+shader_t simple_vert = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/simple.vert",
+#endif
+.name = "simple_vert",
+.type = GL_VERTEX_SHADER,
+.source =
+"in vec2 position;\n"
+"\n"
+"uniform mat3 camera;\n"
+"uniform mat3 transform;\n"
+"\n"
+"out vec2 posFrag;\n"
+"out vec2 uv;\n"
+"\n"
+"void main()\n"
+"{\n"
+"gl_Position = vec4(\n"
+"(camera * transform * vec3(position, 1)).xy, 0, 1);\n"
+"posFrag = (transform * vec3(position, 1)).xy;\n"
+"uv = position;\n"
+"}\n"
+};
+shader_t blit_frag = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/blit.frag",
+#endif
+.name = "blit_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"\n"
+"uniform sampler2DRect framebuffer;\n"
+"\n"
+"in vec2 posFrag;\n"
+"\n"
+"void main()\n"
+"{\n"
+"color = texture(framebuffer, gl_FragCoord.xy);\n"
+"}\n"
+};
+shader_t blast_frag = &(struct shader){
+.shader = 0,
+#ifdef DEBUG
+.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/blast.frag",
+#endif
+.name = "blast_frag",
+.type = GL_FRAGMENT_SHADER,
+.source =
+"out vec4 color;\n"
+"uniform float time;\n"
+"uniform vec2 origin;\n"
+"\n"
+"uniform sampler2DRect framebuffer;\n"
+"\n"
+"in vec2 posFrag;\n"
+"\n"
+"void main()\n"
+"{\n"
+"vec2 dir = posFrag - origin;\n"
+"float amount = mod(sqrt(length(dir))*10 - time*4, 1);\n"
+"vec2 displacement = amount*normalize(dir)*100;\n"
+"\n"
+"color = texture(framebuffer, gl_FragCoord.xy + displacement);\n"
 "}\n"
 };
 shader_t chevron_hit_frag = &(struct shader){
@@ -156,55 +495,6 @@ shader_t chevron_hit_frag = &(struct shader){
 "\n"
 "color = texture(framebuffer, gl_FragCoord.xy - displacement);\n"
 "color = color*(1-draw_color.a) + draw_color;\n"
-"}\n"
-};
-shader_t color_frag = &(struct shader){
-.shader = 0,
-#ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/color.frag",
-#endif
-.name = "color_frag",
-.type = GL_FRAGMENT_SHADER,
-.source =
-"in vec2 posFrag;\n"
-"out vec4 color;\n"
-"uniform vec3 main_color;\n"
-"uniform sampler2D framebuffer;\n"
-"uniform float time;\n"
-"\n"
-"float snoise(vec2 v);\n"
-"\n"
-"void main()\n"
-"{\n"
-"//vec2 uv = gl_FragCoord.xy/3.;\n"
-"//float noise = snoise(uv) + snoise(uv/2.+time) + snoise(uv/4.);\n"
-"//color = vec4(vec3(noise*.2+.8), 1);\n"
-"color = vec4(main_color, 1);\n"
-"}\n"
-};
-shader_t health_bar_frag = &(struct shader){
-.shader = 0,
-#ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/health bar.frag",
-#endif
-.name = "health_bar_frag",
-.type = GL_FRAGMENT_SHADER,
-.source =
-"out vec4 color;\n"
-"uniform float direction;\n"
-"uniform float health, last_health, time_since_last_change;\n"
-"\n"
-"in vec2 uv;\n"
-"\n"
-"void main()\n"
-"{\n"
-"if (uv.x < health/100.)\n"
-"color = vec4(1, 0, 0, 1);\n"
-"else if (uv.x < last_health/100.) {\n"
-"color = vec4(1, 1, 1, 1) * exp(-3.*time_since_last_change);\n"
-"}\n"
-"else\n"
-"color = vec4(0, 0, 0, 0);\n"
 "}\n"
 };
 shader_t lib_frag = &(struct shader){
@@ -377,260 +667,6 @@ shader_t lib_frag = &(struct shader){
 "dot(p2,x2), dot(p3,x3) ) );\n"
 "}\n"
 };
-shader_t lib_vert = &(struct shader){
-.shader = 0,
-#ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/lib.vert",
-#endif
-.name = "lib_vert",
-.type = GL_VERTEX_SHADER,
-.source =
-"const float pi = 3.1415926535897;\n"
-"\n"
-"mat2 rotation(float t) {\n"
-"return mat2(cos(t), -sin(t),\n"
-"sin(t), cos(t));\n"
-"}\n"
-"\n"
-"in vec2 position;\n"
-"in int bone, parent;\n"
-"in float weight;\n"
-"uniform float alpha;\n"
-"uniform vec4 bones_from[32], bones_to[32];\n"
-"\n"
-"vec4 bone_lerp(vec4 from, vec4 to, float alpha) {\n"
-"//Go around the short way\n"
-"if (from.z + pi < to.z)\n"
-"to.z -= 2*pi;\n"
-"if (from.z - pi > to.z)\n"
-"to.z += 2*pi;\n"
-"return from * (1. - alpha) + to * alpha;\n"
-"}\n"
-"\n"
-"vec2 skinned_pos_at(float alpha) {\n"
-"vec4 eff_bone = bone_lerp(bones_from[bone], bones_to[bone], alpha);\n"
-"vec4 eff_parent = bone_lerp(bones_from[parent], bones_to[parent], alpha);\n"
-"\n"
-"//Interpolate the rotation by 'weight', then translate with the lower bone\n"
-"float rot = eff_parent.z + (eff_bone.z - eff_parent.z) * weight;\n"
-"float y_scale = eff_parent.w + (eff_bone.w - eff_parent.w) * weight;\n"
-"vec2 scale = vec2(1./y_scale, y_scale);\n"
-"vec2 bone_rel_pos = rotation(-rot) * (position * scale);\n"
-"return eff_bone.xy + bone_rel_pos;\n"
-"}\n"
-"\n"
-"vec2 skinned_pos() {\n"
-"return skinned_pos_at(alpha);\n"
-"}\n"
-"\n"
-"in float blur_alpha;\n"
-"uniform float ground_speed;\n"
-"\n"
-"vec3 blur_skinned_pos(float threshold, float exaggeration) {\n"
-"float inv_ba = 1. - blur_alpha;\n"
-"vec2 offset = vec2(-1, 0)*ground_speed*inv_ba;\n"
-"vec2 start_pos = skinned_pos_at(0);\n"
-"vec2 end_pos = skinned_pos_at(1) + offset;\n"
-"if (distance(start_pos, end_pos) > threshold)\n"
-"return vec3(skinned_pos_at(alpha - inv_ba*exaggeration) + offset*exaggeration, inv_ba);\n"
-"else\n"
-"return vec3(skinned_pos_at(alpha), 0.);\n"
-"}\n"
-"\n"
-"vec3 blur_skinned_pos() {\n"
-"return blur_skinned_pos(.05, .4);\n"
-"}\n"
-"\n"
-"out float frag_blur_alpha;\n"
-"\n"
-"void set_frag_blur_input() {\n"
-"frag_blur_alpha = blur_alpha;\n"
-"}\n"
-"\n"
-"uniform mat3 camera;\n"
-"uniform mat3 transform;\n"
-"\n"
-"out vec2 posFrag;\n"
-"\n"
-"void output_local_world_space(vec2 pos) {\n"
-"gl_Position = vec4((camera * transform * vec3(pos, 1)).xy, 0, 1);\n"
-"posFrag = (transform * vec3(pos, 1)).xy;\n"
-"}\n"
-"\n"
-"void output_local_world_space(vec3 pos) {\n"
-"gl_Position = vec4((camera * transform * vec3(pos.xy, 1)).xy, pos.z, 1);\n"
-"posFrag = (transform * vec3(pos.xy, 1)).xy;\n"
-"}\n"
-};
-shader_t noise_frag = &(struct shader){
-.shader = 0,
-#ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/noise.frag",
-#endif
-.name = "noise_frag",
-.type = GL_FRAGMENT_SHADER,
-.source =
-"out vec4 color;\n"
-"uniform float time;\n"
-"uniform float intensity;\n"
-"float snoise(vec3 v);\n"
-"float snoise(vec2 v);\n"
-"float srdnoise(in vec2 P, in float rot, out vec2 grad);\n"
-"in vec2 posFrag;\n"
-"\n"
-"float rand(vec2 co){\n"
-"return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);\n"
-"}\n"
-"\n"
-"void main()\n"
-"{\n"
-"float pulse = pow(sin(time*7), 6);\n"
-"vec2 grad, grad1;\n"
-"float noise = srdnoise(posFrag*100., time*1.5, grad);\n"
-"float noise0 = srdnoise(posFrag*3., time*.2, grad1);\n"
-"float noise1 = max(noise0 - .1 + pulse*.1, .05) * (pulse*.5+1);\n"
-"float noise2 = rand(posFrag + time) * (pulse*.2 + .8);\n"
-"color = vec4(grad * noise1 * .5 + .5, noise2, 0);\n"
-"}\n"
-};
-shader_t particles_vert = &(struct shader){
-.shader = 0,
-#ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/particles.vert",
-#endif
-.name = "particles_vert",
-.type = GL_VERTEX_SHADER,
-.source =
-"in vec2 position;\n"
-"\n"
-"uniform float time;\n"
-"uniform vec2 init_vel;\n"
-"uniform mat3 camera;\n"
-"uniform mat3 transform;\n"
-"\n"
-"out vec2 posFrag;\n"
-"\n"
-"int rand(int x) {\n"
-"x ^= x << 13; x ^= x >> 17; x ^= x << 5;\n"
-"return x;\n"
-"}\n"
-"\n"
-"void main()\n"
-"{\n"
-"int seed = rand(gl_InstanceID) ^ int(1/fract(transform[0,2] + transform[1,2]));\n"
-"int angle = rand(seed);\n"
-"int speed = rand(angle);\n"
-"\n"
-"float theta = float(angle) / pow(2., 20);\n"
-"vec2 dir = vec2(cos(theta), sin(theta));\n"
-"vec2 vel = dir * (float(speed) / pow(2., 32)) + init_vel + vec2(0, -time);\n"
-"\n"
-"vec2 pos = position*vec2(.05,.002);\n"
-"vec2 vel_dir = normalize(vel);\n"
-"pos = mat2(vel_dir.x, vel_dir.y, -vel_dir.y, vel_dir.x) * pos;\n"
-"\n"
-"pos += time * (vel);\n"
-"\n"
-"gl_Position = vec4((camera * transform * vec3(pos, 1)).xy, 0, 1);\n"
-"posFrag = (transform * vec3(pos, 1)).xy;\n"
-"\n"
-"}\n"
-};
-shader_t screenspace_vert = &(struct shader){
-.shader = 0,
-#ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/screenspace.vert",
-#endif
-.name = "screenspace_vert",
-.type = GL_VERTEX_SHADER,
-.source =
-"in vec2 position;\n"
-"out vec2 posFrag;\n"
-"\n"
-"void main()\n"
-"{\n"
-"gl_Position = vec4(position*2-1, 1, 1);\n"
-"//posFrag is supposed to be in world space\n"
-"posFrag = position*2-1;\n"
-"}\n"
-};
-shader_t simple_vert = &(struct shader){
-.shader = 0,
-#ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/simple.vert",
-#endif
-.name = "simple_vert",
-.type = GL_VERTEX_SHADER,
-.source =
-"in vec2 position;\n"
-"\n"
-"uniform mat3 camera;\n"
-"uniform mat3 transform;\n"
-"\n"
-"out vec2 posFrag;\n"
-"out vec2 uv;\n"
-"\n"
-"void main()\n"
-"{\n"
-"gl_Position = vec4(\n"
-"(camera * transform * vec3(position, 1)).xy, 0, 1);\n"
-"posFrag = (transform * vec3(position, 1)).xy;\n"
-"uv = position;\n"
-"}\n"
-};
-shader_t state_indicator_frag = &(struct shader){
-.shader = 0,
-#ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/state_indicator.frag",
-#endif
-.name = "state_indicator_frag",
-.type = GL_FRAGMENT_SHADER,
-.source =
-"out vec4 color;\n"
-"in vec2 uv;\n"
-"\n"
-"uniform int top, bottom, top_attack, bottom_attack;\n"
-"\n"
-"void main()\n"
-"{\n"
-"if (uv.y > .5)\n"
-"{\n"
-"if (uv.x > .5)\n"
-"color = vec4(1,0,0,1)*float(top_attack)*.33;\n"
-"else\n"
-"color = vec4(1,1,1,1)*float(top)*.33;\n"
-"}\n"
-"else\n"
-"{\n"
-"if (uv.x > .5)\n"
-"color = vec4(1,0,0,1)*float(bottom_attack)*.33;\n"
-"else\n"
-"color = vec4(1,1,1,1)*float(bottom)*.33;\n"
-"}\n"
-"}\n"
-};
-shader_t stickman_blur_frag = &(struct shader){
-.shader = 0,
-#ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/stickman_blur.frag",
-#endif
-.name = "stickman_blur_frag",
-.type = GL_FRAGMENT_SHADER,
-.source =
-"out vec4 color;\n"
-"uniform sampler2DRect framebuffer;\n"
-"in float frag_blur_alpha;\n"
-"uniform bool attacking;\n"
-"\n"
-"void main()\n"
-"{\n"
-"color = texture(framebuffer, gl_FragCoord.xy);\n"
-"if (attacking)\n"
-"color += frag_blur_alpha*vec4(.9, .6, .7, 1);\n"
-"else\n"
-"color += vec4(frag_blur_alpha);\n"
-"}\n"
-};
 shader_t stickman_blur_vert = &(struct shader){
 .shader = 0,
 #ifdef DEBUG
@@ -653,41 +689,5 @@ shader_t stickman_blur_vert = &(struct shader){
 "output_local_world_space(blur_skinned_pos(0.1, 1.5));\n"
 "else\n"
 "output_local_world_space(blur_skinned_pos());\n"
-"}\n"
-};
-shader_t waves_frag = &(struct shader){
-.shader = 0,
-#ifdef DEBUG
-.fname = "/Users/dan/Projects/Fighting_Game/Fighting Game/shaders/waves.frag",
-#endif
-.name = "waves_frag",
-.type = GL_FRAGMENT_SHADER,
-.source =
-"out vec4 color;\n"
-"uniform float time;\n"
-"uniform float intensity;\n"
-"\n"
-"uniform sampler2DRect framebuffer;\n"
-"\n"
-"in vec2 posFrag;\n"
-"\n"
-"void main()\n"
-"{\n"
-"vec2 origin = vec2(0, 1);\n"
-"vec3 main_color = vec3(1, 0, 0);\n"
-"vec3 lead_color = vec3(1, 1, 0);\n"
-"\n"
-"float wave = distance(posFrag, origin)*5 - time*.6;\n"
-"float pulse = 1 - pow(sin(time*7), 6) * .2;\n"
-"float val = pow(mod(wave, 1.), pulse*2)*.6*intensity + .02;// - .3*rand(posFrag + time);\n"
-"\n"
-"float val1 = 0.;//pow(1 - mod(wave, 1.), 16);\n"
-"\n"
-"vec4 dest = texture(framebuffer, gl_FragCoord.xy);\n"
-"float src_a = val + val1;\n"
-"vec3 src = (main_color*val + lead_color*val1)/src_a;\n"
-"float extra_a = max(dest.a - src_a, 0.);\n"
-"src_a = max(src_a - extra_a, 0.);\n"
-"color = dest * (1 - src_a) + vec4(src*src_a, src_a);\n"
 "}\n"
 };
